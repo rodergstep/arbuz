@@ -70,3 +70,16 @@ ch2:found_balloon,,"A {word} balloon! You found it! {Word}!"
 ch2:back_to_toy_maker,"Несемо кульки іграшкарці!","Let's bring the balloons to the toy maker!"
 ch2:toy_thanks,,"Thank you! Red, blue, yellow and green! My balloons!",toymaker
 ch2:hooray,"Ура! Кульки!","Hooray! Balloons! Red, blue, yellow, green!"
+ch3:to_farmer,"Ходімо на ферму! Фермер нас кличе.","Let's go to the farm! The farmer is calling us."
+hint:to_farmer,"Іди на ферму, до великого червоного сараю!","Go to the farm, to the big red barn!"
+ch3:farmer_hello,,"Hello! Oh no! My animals ran away! The cow, the sheep, the duck and the pig!",farmer
+ch3:farmer_help,,"Can you find them and bring them home? Thank you!",farmer
+ch3:help_farmer,"Тварини втекли! Знайдімо їх!","The animals ran away! Let's find them!"
+ch3:find_animal,"Де {uk_word}? Знайди!","Where is the {word}? Find the {word}!"
+ch3:found_cow,,"Moo! Moo! The cow says moo! Cow! Go home, cow!"
+ch3:found_sheep,,"Baa! Baa! The sheep says baa! Sheep! Go home, sheep!"
+ch3:found_duck,,"Quack! Quack! The duck says quack! Duck! Go home, duck!"
+ch3:found_pig,,"Oink! Oink! The pig says oink! Pig! Go home, pig!"
+ch3:back_to_farmer,"Усі тварини вдома! Ходімо до фермера.","All the animals are home! Let's go to the farmer."
+ch3:farmer_thanks,,"Thank you! The cow, the sheep, the duck and the pig! All home!",farmer
+ch3:hooray,"Ура! Усі вдома!","Hooray! Moo, baa, quack, oink!"

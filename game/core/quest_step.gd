@@ -24,3 +24,5 @@ enum Kind { GET_IN_CAR, DRIVE_TO, WALK_TO, OPEN_DOOR, FIND_OBJECT, TALK_TO, FERR
 ## empty = the chapter 1 defaults.
 @export var find_line: String = ""
 @export var found_line: String = ""
+## COLLECT: things go home when found (animals to the farm): one spot each, in order.
+@export var homes: Array[Vector3] = []

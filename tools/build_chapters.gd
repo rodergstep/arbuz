@@ -90,7 +90,7 @@ func _initialize() -> void:
 	var ch2: ChapterData = ChapterData.new()
 	ch2.id = &"chapter2_balloons"
 	ch2.done_key = "chapter:balloons"
-	ch2.next_chapter = "res://content/chapters/england_practice.tres"
+	ch2.next_chapter = "res://content/chapters/chapter3_animals.tres"
 	var toy_spot: Array[Vector3] = [Vector3(-30, 0, 13.5)]
 	var hello: QuestStep = _step(QuestStep.Kind.TALK_TO, toy_spot, "ch2:to_toy_maker", "hint:to_toy_maker")
 	hello.talk_id = &"toy_intro"
@@ -106,7 +106,37 @@ func _initialize() -> void:
 	]
 	var err5: Error = ResourceSaver.save(ch2, "res://content/chapters/chapter2_balloons.tres")
 	print("chapter2_balloons.tres: ", error_string(err5))
-	quit(0 if err == OK and err2 == OK and err3 == OK and err4 == OK and err5 == OK else 1)
+	# Chapter 3: the farm animals ran away; find the cow, the sheep, the duck and the pig, each
+	# says its sound and name and trots home to the farm.
+	var ch3: ChapterData = ChapterData.new()
+	ch3.id = &"chapter3_animals"
+	ch3.done_key = "chapter:animals"
+	ch3.next_chapter = "res://content/chapters/england_practice.tres"
+	var farm_spot: Array[Vector3] = [Vector3(24, 0, 22.5)]
+	var meet: QuestStep = _step(QuestStep.Kind.TALK_TO, farm_spot, "ch3:to_farmer", "hint:to_farmer")
+	meet.talk_id = &"farmer_intro"
+	var done: QuestStep = _step(QuestStep.Kind.TALK_TO, farm_spot, "ch3:back_to_farmer", "hint:to_farmer")
+	done.talk_id = &"farmer_thanks"
+	ch3.steps = [
+		meet,
+		_animal(&"cow", Vector3(-18, 0, -27), Vector3(28, 0, 21)),
+		_animal(&"sheep", Vector3(-34, 0, 28), Vector3(30.5, 0, 21)),
+		_animal(&"duck", Vector3(20, 0, -28.5), Vector3(32.5, 0, 21)),
+		_animal(&"pig", Vector3(8, 0, 12), Vector3(34.5, 0, 21)),
+		done,
+	]
+	var err6: Error = ResourceSaver.save(ch3, "res://content/chapters/chapter3_animals.tres")
+	print("chapter3_animals.tres: ", error_string(err6))
+	quit(0 if err == OK and err2 == OK and err3 == OK and err4 == OK and err5 == OK and err6 == OK else 1)
+
+
+func _animal(animal: StringName, spot: Vector3, home: Vector3) -> QuestStep:
+	var s: QuestStep = _collect(animal, [spot])
+	s.find_line = "ch3:find_animal"
+	s.found_line = "ch3:found_%s" % animal
+	s.hint_line = "ch3:find_animal"
+	s.homes = [home]
+	return s
 
 
 func _balloon(colour: StringName, spot: Vector3) -> QuestStep:
