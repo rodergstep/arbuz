@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="ChapterData" format=3]
+
+[ext_resource type="Script" path="res://game/core/chapter_data.gd" id="1_0m2wm"]
+[ext_resource type="Script" path="res://game/core/quest_step.gd" id="2_jth82"]
+
+[sub_resource type="Resource" id="Resource_ot0vl"]
+script = ExtResource("2_jth82")
+kind = 0
+hint_line = "hint:to_car"
+arrive_line = "line:here_car"
+
+[sub_resource type="Resource" id="Resource_0pcju"]
+script = ExtResource("2_jth82")
+kind = 1
+spots = Array[Vector3]([Vector3(24, 0, -14), Vector3(24, 0, 16), Vector3(-24, 0, 16)])
+start_line = "line:drive"
+hint_line = "hint:drive"
+
+[sub_resource type="Resource" id="Resource_ifn27"]
+script = ExtResource("2_jth82")
+spots = Array[Vector3]([Vector3(-6.6, 0, -2.9)])
+start_line = "line:to_door"
+hint_line = "hint:to_door"
+
+[sub_resource type="Resource" id="Resource_ckx1d"]
+script = ExtResource("2_jth82")
+kind = 3
+
+[sub_resource type="Resource" id="Resource_4h541"]
+script = ExtResource("2_jth82")
+kind = 4
+
+[resource]
+script = ExtResource("1_0m2wm")
+id = &"england_practice"
+steps = Array[ExtResource("2_jth82")]([SubResource("Resource_ot0vl"), SubResource("Resource_0pcju"), SubResource("Resource_ifn27"), SubResource("Resource_ckx1d"), SubResource("Resource_4h541")])
+loop = true
+loop_line = "line:again"

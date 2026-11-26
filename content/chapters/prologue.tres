@@ -37,5 +37,4 @@ kind = 6
 script = ExtResource("1_u8fho")
 id = &"prologue"
 steps = Array[ExtResource("2_0b6c7")]([SubResource("Resource_e83ep"), SubResource("Resource_0woad"), SubResource("Resource_bqb17"), SubResource("Resource_jr0ih"), SubResource("Resource_cmux1")])
-next_chapter = "res://content/chapters/greybox_loop.tres"
 done_key = "chapter:prologue"

@@ -366,6 +366,117 @@ def build_ferry():
     export("ferry")
 
 
+BRICK = (0.74, 0.36, 0.28, 1)
+SLATE = (0.42, 0.45, 0.52, 1)
+TRIM = (0.97, 0.96, 0.93, 1)
+
+
+def gable_roof(name, loc, width, depth, height, material, parent):
+    """A pitched roof along X: a triangular prism."""
+    bpy.ops.mesh.primitive_cone_add(vertices=3, radius1=1.0, radius2=1.0, depth=width, location=loc, rotation=(0, math.radians(90), 0))
+    roof = bpy.context.active_object
+    roof.scale = (height, depth / 1.6, 1.0)
+    roof.rotation_euler = (math.radians(90), math.radians(90), 0)
+    roof.rotation_euler = (0, math.radians(90), math.radians(90))
+    return finish(roof, name, material, parent, smooth=False, bevel=0.05)
+
+
+def english_windows(root, front_y, xs, zs):
+    for x in xs:
+        for z in zs:
+            box("Frame%+.0f%+.0f" % (x * 10, z * 10), (x, front_y, z), (0.8, 0.06, 0.95), mat("trim", TRIM), root, 0.02)
+            box("Pane%+.0f%+.0f" % (x * 10, z * 10), (x, front_y + 0.02, z), (0.62, 0.05, 0.76), mat("glass", GLASS), root, 0.01)
+
+
+def build_english_house():
+    """A red-brick English house: two storeys, slate roof, white window frames, a chimney. 5 x 4.5 m."""
+    reset()
+    root = empty("EnglishHouse", (0, 0, 0))
+    box("Walls", (0, 0, 2.1), (5.0, 4.4, 4.2), mat("brick", BRICK), root, 0.08)
+    bpy.ops.mesh.primitive_cube_add(location=(0, 0, 4.9))
+    roof = bpy.context.active_object
+    roof.scale = (2.75, 2.4, 0.01)
+    bpy.ops.object.transform_apply(scale=True)
+    finish(roof, "RoofBase", mat("slate", SLATE), root, smooth=False)
+    for sy in (-1, 1):
+        box("RoofSide%+d" % sy, (0, sy * 1.15, 5.05), (5.5, 2.6, 0.18), mat("slate", SLATE), root, 0.04, (math.radians(-35 * sy), 0, 0))
+    box("Chimney", (1.6, -0.6, 5.7), (0.6, 0.6, 1.4), mat("brick", BRICK), root, 0.04)
+    box("Door", (0, 2.22, 1.0), (0.95, 0.08, 2.0), mat("door_blue", (0.22, 0.36, 0.62, 1)), root, 0.04)
+    box("Step", (0, 2.45, 0.08), (1.4, 0.5, 0.16), mat("trim", TRIM), root, 0.02)
+    english_windows(root, 2.21, (-1.6, 1.6), (1.3,))
+    english_windows(root, 2.21, (-1.6, 0.0, 1.6), (3.2,))
+    export("english_house")
+
+
+def build_shop(name, awning):
+    """A small English shop: brick, a big window, a striped awning in the shop's colour."""
+    reset()
+    root = empty("Shop", (0, 0, 0))
+    box("Walls", (0, 0, 2.0), (6.0, 5.0, 4.0), mat("brick", BRICK), root, 0.08)
+    box("Roof", (0, 0, 4.15), (6.3, 5.3, 0.3), mat("slate", SLATE), root, 0.06)
+    box("ShopWindow", (-1.6, 2.51, 1.3), (2.2, 0.06, 1.6), mat("glass", GLASS), root, 0.03)
+    box("WindowFrame", (-1.6, 2.5, 1.3), (2.4, 0.04, 1.8), mat("trim", TRIM), root, 0.02)
+    box("Door", (1.4, 2.52, 1.05), (1.0, 0.08, 2.1), mat("trim", TRIM), root, 0.04)
+    box("Sign", (0, 2.55, 3.1), (4.0, 0.12, 0.7), mat("sign", awning), root, 0.06)
+    for i in range(6):
+        colour = awning if i % 2 == 0 else TRIM
+        box("Awning%d" % i, (-2.5 + i * 1.0, 3.0, 2.45), (1.0, 1.0, 0.08), mat("awning%d" % (i % 2), colour), root, 0.0, (math.radians(-25), 0, 0))
+    export(name)
+
+
+def build_clock_tower():
+    """The town's clock tower: tall stone tower, a big round clock face, a pointed roof. 11 m."""
+    reset()
+    root = empty("ClockTower", (0, 0, 0))
+    box("Tower", (0, 0, 4.5), (2.6, 2.6, 9.0), mat("stone", STONE), root, 0.1)
+    for y, rot in ((1.32, 0), (-1.32, 180)):
+        cylinder("Face%+d" % y, (0, y, 7.4), 0.85, 0.1, mat("clock_face", TRIM), root, (math.radians(90), 0, 0), 24)
+        box("HourHand%+d" % y, (0, y * 1.04, 7.6), (0.1, 0.05, 0.6), mat("hands", DARK), root, 0.0)
+        box("MinuteHand%+d" % y, (0.25, y * 1.04, 7.4), (0.7, 0.05, 0.08), mat("hands", DARK), root, 0.0)
+    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=2.1, radius2=0.05, depth=2.6, location=(0, 0, 10.3), rotation=(0, 0, math.radians(45)))
+    finish(bpy.context.active_object, "Spire", mat("slate", SLATE), root, bevel=0.05)
+    export("clock_tower")
+
+
+def build_bus_stop():
+    """A red bus-stop shelter with a round sign."""
+    reset()
+    root = empty("BusStop", (0, 0, 0))
+    red = mat("bus_red", (0.85, 0.20, 0.20, 1))
+    for x in (-1.3, 1.3):
+        box("Post%+.0f" % x, (x, -0.5, 1.2), (0.1, 0.1, 2.4), red, root, 0.02)
+    box("Roof", (0, -0.2, 2.45), (2.9, 1.4, 0.12), red, root, 0.04)
+    box("Back", (0, -0.85, 1.4), (2.6, 0.06, 1.8), mat("glass", GLASS), root, 0.02)
+    box("Bench", (0, -0.6, 0.5), (2.2, 0.4, 0.08), mat("wood", WOOD), root, 0.02)
+    cylinder("SignPole", (1.8, 0.3, 1.3), 0.05, 2.6, mat("rail", TRIM), root, verts=8)
+    cylinder("Sign", (1.8, 0.3, 2.6), 0.32, 0.06, red, root, (math.radians(90), 0, 0), 20)
+    export("bus_stop")
+
+
+def build_barn():
+    """A farm barn: red, white trim, a big double door."""
+    reset()
+    root = empty("Barn", (0, 0, 0))
+    red = mat("barn_red", (0.78, 0.24, 0.22, 1))
+    box("Walls", (0, 0, 2.2), (6.5, 6.0, 4.4), red, root, 0.08)
+    for sy in (-1, 1):
+        box("RoofSide%+d" % sy, (0, sy * 1.55, 5.0), (7.0, 3.5, 0.2), mat("slate", SLATE), root, 0.05, (math.radians(-38 * sy), 0, 0))
+    box("BigDoor", (0, 3.02, 1.6), (2.6, 0.08, 3.0), mat("trim", TRIM), root, 0.03)
+    box("DoorCross1", (0, 3.07, 1.6), (0.15, 0.04, 3.6), red, root, 0.0, (0, math.radians(40), 0))
+    box("DoorCross2", (0, 3.07, 1.6), (0.15, 0.04, 3.6), red, root, 0.0, (0, math.radians(-40), 0))
+    export("barn")
+
+
+def build_lamp():
+    """A black street lamp."""
+    reset()
+    root = empty("Lamp", (0, 0, 0))
+    cylinder("Pole", (0, 0, 1.6), 0.07, 3.2, mat("iron", DARK), root, verts=8)
+    box("Head", (0, 0, 3.35), (0.4, 0.4, 0.5), mat("lamp_glass", LIGHT), root, 0.05)
+    box("Cap", (0, 0, 3.65), (0.5, 0.5, 0.1), mat("iron", DARK), root, 0.03)
+    export("lamp")
+
+
 build_tygrytsa()
 build_hatchback()
 build_jeep()
@@ -377,3 +488,11 @@ build_fence()
 build_well()
 build_postman()
 build_ferry()
+build_english_house()
+build_shop("bakery", (0.96, 0.66, 0.30, 1))
+build_shop("cafe", (0.45, 0.68, 0.55, 1))
+build_shop("toy_shop", (0.55, 0.45, 0.82, 1))
+build_clock_tower()
+build_bus_stop()
+build_barn()
+build_lamp()

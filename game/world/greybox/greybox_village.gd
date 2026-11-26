@@ -9,6 +9,7 @@ const CHAPTER_PATH: String = "res://content/chapters/greybox_loop.tres"
 ## The story start, played once (until finished; then the practice loop).
 const PROLOGUE_PATH: String = "res://content/chapters/prologue.tres"
 const PROLOGUE_DONE: String = "chapter:prologue"
+const ENGLAND_SCENE: String = "res://game/world/england/england_town.tscn"
 const POSTMAN_POS: Vector3 = Vector3(-15, 0, 14.5)
 const FERRY_DOCK: Vector3 = Vector3(12, 0, 14)
 const FERRY_TRIP: Vector3 = Vector3(0, 0, -18)
@@ -17,22 +18,24 @@ const ENTER_DISTANCE: float = 3.5
 const IDLE_LOG_SECONDS: float = 5.0
 const WALK_OFFSET: Vector3 = Vector3(0, 11, 9)
 const DRIVE_OFFSET: Vector3 = Vector3(0, 15, 12.5)
-const DOOR_POS: Vector3 = Vector3(-14, 0, -28)
 const WELL_POS: Vector3 = Vector3(-19, 0, 5)
 const LEAF_COLOR: Color = Color(0.32, 0.60, 0.34)
 const PETAL_COLOR: Color = Color(1.0, 0.80, 0.18)
 ## The sunflower field west of the start, and the village edge for the wicker fence.
 const SUNFLOWER_FIELD: Rect2 = Rect2(-37, 8, 9, 12)
 const EDGE: float = 40.0
-const CAR_START: Vector3 = Vector3(-6, 0, 16)
-const HERO_START: Vector3 = Vector3(-14, 0, 8)
-## Places that teach a word when he walks or drives past: [word, position, radius, camera offset].
+const DOOR_OPTIONS: int = 3
+
+## Town layout (a town subclass sets these in _configure()).
+var door_pos: Vector3 = Vector3(-14, 0, -28)
+var car_start: Vector3 = Vector3(-6, 0, 16)
+var hero_start: Vector3 = Vector3(-14, 0, 8)
 ## Words the door may ask: all are things in this village, so each can be taught on the spot.
-const DOOR_WORDS: Array[StringName] = [
+var door_words: Array[StringName] = [
 	&"tree", &"flower", &"duck", &"dog", &"ball", &"house", &"bridge", &"car", &"river", &"road"
 ]
-const DOOR_OPTIONS: int = 3
-const LEARNING_SPOTS: Array[Array] = [
+## Places that teach a word when he walks or drives past: [word, position, radius, camera offset].
+var learning_spots: Array[Array] = [
 	[&"bridge", Vector3(12, 0, -22), 3.5, Vector3(7, 4, 6)],
 	[&"bridge", Vector3(12, 0, 22), 3.5, Vector3(7, 4, -6)],
 	[&"river", Vector3(9, 0, 5), 2.5, Vector3(-4, 5, 5)],
@@ -78,7 +81,19 @@ var _find_wrong: int = 0
 var _pending_find_word: StringName = &""
 
 
+## A town scene: the hero, car, Tygrytsa, learning moments, doors, find tasks and quests are
+## shared; a town subclass overrides _configure() and the _build_* layout methods.
+func _configure() -> void:
+	pass
+
+
+## The chapter this town starts with.
+func _first_chapter_path() -> String:
+	return CHAPTER_PATH if SaveSystem.has_encountered(PROLOGUE_DONE) else PROLOGUE_PATH
+
+
 func _ready() -> void:
+	_configure()
 	_build_environment()
 	_nav = NavigationRegion3D.new()
 	add_child(_nav)
@@ -104,17 +119,16 @@ func _ready() -> void:
 	add_child(pause_overlay)
 	_build_parent_area()
 	_last_input_ms = Time.get_ticks_msec()
-	EventLog.log_event(&"session_start", {"scene": "greybox_village"})
+	EventLog.log_event(&"session_start", {"scene": String(name)})
 	Speech.line("line:intro")
 	quest = QuestRunner.new()
 	add_child(quest)
-	var first: String = CHAPTER_PATH if SaveSystem.has_encountered(PROLOGUE_DONE) else PROLOGUE_PATH
-	quest.start(load(first), self)
+	quest.start(load(_first_chapter_path()), self)
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	# No gameplay keys during a cutscene or a character's talk (pause has its own handler).
-	if _cutscene or postman.is_talking():
+	if _cutscene or _talking():
 		return
 	if door.is_active():
 		if event.is_action_pressed(&"move_left"):
@@ -137,7 +151,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_ground_clicked(point: Vector3) -> void:
-	if _cutscene or postman.is_talking():
+	if _cutscene or _talking():
 		return
 	_pending_enter = false
 	if car.driving:
@@ -328,6 +342,11 @@ func say_when_free_word(key: String, word: WordEntry) -> void:
 	Speech.line(key, word)
 
 
+## True while a character is talking with him.
+func _talking() -> bool:
+	return postman != null and postman.is_talking()
+
+
 ## Prologue: the postman says hello, gives a letter from England, says bye (talks to the child).
 func start_talk() -> void:
 	hero.stop()
@@ -359,14 +378,19 @@ func play_ferry() -> void:
 	sail.tween_property(ferry, "global_position", FERRY_DOCK + FERRY_TRIP, 8.0).set_trans(Tween.TRANS_SINE)
 	await sail.finished
 	await _fade(true)
+	# The prologue's ferry goes to England: switch to the English town while the screen is dark.
+	if quest.chapter != null and quest.chapter.id == &"prologue":
+		quest.notify_ferry_done()
+		get_tree().change_scene_to_file(ENGLAND_SCENE)
+		return
 	car.reparent(self)
 	ferry.global_position = FERRY_DOCK
-	car.global_position = CAR_START
+	car.global_position = car_start
 	car.rotation.y = PI / 2.0
 	car.process_mode = Node.PROCESS_MODE_INHERIT
 	_exit_car()
-	hero.global_position = HERO_START
-	companion.global_position = HERO_START + Companion.FOLLOW_OFFSET
+	hero.global_position = hero_start
+	companion.global_position = hero_start + Companion.FOLLOW_OFFSET
 	companion.visible = true
 	_cutscene = false
 	await _fade(false)
@@ -474,8 +498,8 @@ func _build_learning() -> void:
 	learning = LearningDirector.new()
 	add_child(learning)
 	learning.is_busy = func() -> bool:
-		return door.is_active() or pause_overlay.visible or _cutscene or postman.is_talking()
-	for spot_data: Array in LEARNING_SPOTS:
+		return door.is_active() or pause_overlay.visible or _cutscene or _talking()
+	for spot_data: Array in learning_spots:
 		var spot: LearningSpot = LearningSpot.new()
 		spot.setup(spot_data[0], spot_data[2], spot_data[3])
 		add_child(spot)
@@ -506,14 +530,14 @@ func _picture_of(word_id: StringName) -> Array:
 
 func _on_door_wants_question() -> void:
 	var taught: Array[StringName] = learning.taught_words().filter(
-		func(w: StringName) -> bool: return DOOR_WORDS.has(w) and w != _last_door_word
+		func(w: StringName) -> bool: return door_words.has(w) and w != _last_door_word
 	)
 	if not taught.is_empty():
 		# Smart repetition: the word he most needs (lowest box, longest ago) comes first.
 		_ask_door(LearningTracker.most_needed(taught)[0])
 		return
 	# Nothing taught yet: teach a word right here, then ask it.
-	var fresh: Array[StringName] = DOOR_WORDS.filter(func(w: StringName) -> bool: return w != _last_door_word)
+	var fresh: Array[StringName] = door_words.filter(func(w: StringName) -> bool: return w != _last_door_word)
 	_pending_door_word = fresh.pick_random()
 	Speech.line("line:teach", null, true)
 	var place: Array = _picture_of(_pending_door_word)
@@ -539,7 +563,7 @@ func _ask_door(answer_id: StringName) -> void:
 		func(w: StringName) -> bool: return w != answer_id
 	)
 	pool.shuffle()
-	var rest: Array[StringName] = DOOR_WORDS.filter(
+	var rest: Array[StringName] = door_words.filter(
 		func(w: StringName) -> bool: return w != answer_id and not pool.has(w)
 	)
 	rest.shuffle()
@@ -674,7 +698,7 @@ func _grass_blocked(p: Vector2) -> bool:
 	var river: bool = absf(p.x - 12) < 2.6
 	if SUNFLOWER_FIELD.grow(0.5).has_point(p) or p.distance_to(Vector2(WELL_POS.x, WELL_POS.z)) < 1.4:
 		return true
-	var door_house: bool = absf(p.x - DOOR_POS.x) < 4.5 and p.y < DOOR_POS.z + 1.0 and p.y > DOOR_POS.z - 8.0
+	var door_house: bool = absf(p.x - door_pos.x) < 4.5 and p.y < door_pos.z + 1.0 and p.y > door_pos.z - 8.0
 	for h: Vector2 in [Vector2(2, -4), Vector2(4, 8), Vector2(-30, -8), Vector2(30, 6), Vector2(-4, 30)]:
 		if absf(p.x - h.x) < 3.3 and absf(p.y - h.y) < 3.0:
 			return true
@@ -712,23 +736,17 @@ func _build_houses() -> void:
 		add_child(Blocks.prop("hata", spot, 180.0))
 	# The house with the password door: a bigger hata; its own model door is left out, the
 	# PasswordDoor panel takes its place.
-	Blocks.hidden_solid(_nav, DOOR_POS + Vector3(0, 2.25, -3.5), Vector3(7, 4.5, 7))
+	Blocks.hidden_solid(_nav, door_pos + Vector3(0, 2.25, -3.5), Vector3(7, 4.5, 7))
 	var door_house: MeshInstance3D = MeshInstance3D.new()
 	door_house.mesh = ModelPainter.merged_mesh("hata", [], 0.0, ["Door"])
-	door_house.position = DOOR_POS + Vector3(0, 0, -3.5)
+	door_house.position = door_pos + Vector3(0, 0, -3.5)
 	door_house.rotation_degrees.y = 180.0
 	door_house.scale = Vector3(1.4, 1.3, 1.58)
 	add_child(door_house)
 	# A well by the path.
 	Blocks.hidden_solid(_nav, WELL_POS + Vector3(0, 0.6, 0), Vector3(1.5, 1.2, 1.5))
 	add_child(Blocks.prop("well", WELL_POS, 30.0))
-	door = PasswordDoor.new()
-	add_child(door)
-	door.position = DOOR_POS + Vector3(0, 0, 0.1)
-	door.cards_shown.connect(_on_cards_shown)
-	door.cards_hidden.connect(_on_cards_hidden)
-	door.opened.connect(_on_door_opened)
-	door.wants_question.connect(_on_door_wants_question)
+	_make_door()
 	# Tree trunks block the way; the clickable trees draw their own tree, the rest are props.
 	var clickable_trees: Array[Vector3] = [Vector3(-10, 0, 2), Vector3(16, 0, -6)]
 	for t: Vector3 in [
@@ -737,6 +755,17 @@ func _build_houses() -> void:
 		Blocks.hidden_solid(_nav, t + Vector3(0, 1, 0), Vector3(0.5, 2, 0.5))
 		if not clickable_trees.has(t):
 			add_child(Blocks.prop("tree", t, t.x * 37.0, Vector3.ONE, [LEAF_COLOR]))
+
+
+## The password door at door_pos (its house is built by the town).
+func _make_door() -> void:
+	door = PasswordDoor.new()
+	add_child(door)
+	door.position = door_pos + Vector3(0, 0, 0.1)
+	door.cards_shown.connect(_on_cards_shown)
+	door.cards_hidden.connect(_on_cards_hidden)
+	door.opened.connect(_on_door_opened)
+	door.wants_question.connect(_on_door_wants_question)
 
 
 func _bake_navigation() -> void:
@@ -752,19 +781,20 @@ func _bake_navigation() -> void:
 func _build_actors() -> void:
 	hero = Hero.new()
 	add_child(hero)
-	hero.global_position = HERO_START
+	hero.global_position = hero_start
 	car = Car.new()
 	add_child(car)
-	car.global_position = CAR_START
+	car.global_position = car_start
 	car.rotation.y = PI / 2.0
 	companion = Companion.new()
 	add_child(companion)
-	companion.global_position = HERO_START + Companion.FOLLOW_OFFSET
+	companion.global_position = hero_start + Companion.FOLLOW_OFFSET
 	companion.follow = hero
 
 
-func _build_clickables() -> void:
-	var things: Array[Dictionary] = [
+## Things he can click in this town: {id, uk, en, pos}.
+func _clickable_things() -> Array[Dictionary]:
+	return [
 		{"id": &"tree", "uk": "дерево", "en": "tree", "pos": Vector3(-10, 0, 2)},
 		{"id": &"tree", "uk": "дерево", "en": "tree", "pos": Vector3(16, 0, -6)},
 		{"id": &"flower", "uk": "квітка", "en": "flower", "pos": Vector3(-8, 0, 10)},
@@ -774,17 +804,24 @@ func _build_clickables() -> void:
 		{"id": &"dog", "uk": "собака", "en": "dog", "pos": Vector3(0, 0, 14)},
 		{"id": &"house", "uk": "будинок", "en": "house", "pos": Vector3(4, 0, 8)},
 	]
-	for thing: Dictionary in things:
+
+
+func _build_clickables() -> void:
+	for thing: Dictionary in _clickable_things():
 		var art: Node3D = _art_for(thing["id"])
 		var size: Vector3 = Vector3(2.0, 2.5, 2.0)
-		if thing["id"] == &"house":
-			art = Node3D.new()
-			size = Vector3(5.6, 4.5, 5.2)
+		if art.get_child_count() == 0:
+			# The thing's look is drawn by the town (a house); the clickable is only its area.
+			size = _pick_size_for(thing["id"])
 		var c: Clickable = Clickable.new()
 		c.name = String(thing["id"]).capitalize()
 		c.setup(thing["id"], thing["uk"], thing["en"], art, size)
 		add_child(c)
 		c.global_position = thing["pos"]
+
+
+func _pick_size_for(id: StringName) -> Vector3:
+	return Vector3(5.6, 4.5, 5.2) if id == &"house" else Vector3(2.0, 2.5, 2.0)
 
 
 func _art_for(id: StringName) -> Node3D:
