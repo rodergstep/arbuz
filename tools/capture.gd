@@ -68,4 +68,4 @@ func _process(_delta: float) -> bool:
 func _shot(shot_name: String) -> void:
 	var img: Image = root.get_viewport().get_texture().get_image()
 	img.save_png(ProjectSettings.globalize_path("%s/%s.png" % [SHOTS_DIR, shot_name]))
-	print("shot ", shot_name, " step=", _village.get("step"))
+	print("shot ", shot_name, " step=", _village.get("quest").get("index"))

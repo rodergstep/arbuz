@@ -30,7 +30,7 @@ Our son learns English words for the things around him, food, colours, animals a
 | 8 | Words come from the word database with locally generated voices, played by the audio manager | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | building |
 | 9 | Progress is autosaved per profile and survives closing the game at any moment | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | building |
 | 10 | Doors and tasks bring back the words he struggles with (learning tracker, box-based repetition) | `game-spec.md` §Learning design | M | building |
-| 11 | Chapters, tasks and door passwords run from data files; the greybox runs on them | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | idea |
+| 11 | Chapters, tasks and door passwords run from data files; the greybox runs on them | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | building |
 | 12 | Тигриця and townspeople speak through Dialogic, each line tied to its voice file | `development-plan.md` §Phase 2 — Core systems and content pipeline | M | idea |
 | 13 | Input switches seamlessly between mouse, keyboard and gamepad, with Xbox or Nintendo prompts and gentle rumble | `development-plan.md` §Phase 2 — Core systems and content pipeline | S | idea |
 | 14 | Parent area behind the parent lock: name, languages, volume, and the 15-minute session timer with Тигриця's goodbye | `game-spec.md` §Parent features and profiles | L | building |

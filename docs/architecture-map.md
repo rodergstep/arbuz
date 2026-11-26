@@ -77,7 +77,7 @@ their contracts are written by `/contracts` when they do.
 | InputRouter *(planned, Ph 1)* | `game/core/input_router.gd` | one place mapping mouse / keys / pad / touch to game intents | `intent(kind: StringName)` | — |
 | InteractionSystem *(planned, Ph 1–2)* | `game/core/interaction_system.gd` | every click and card pick is judged here, then sent to the tracker | `pick_resolved(word_id: StringName, correct: bool)` | — |
 | LearningTracker | `game/core/learning_tracker.gd` | per-word stats in the save, box-based repetition (`record_heard`, `record_answer`, `most_needed`) | `stats_changed(word_id: StringName)` | `docs/contracts/save-format.md` |
-| QuestSystem *(planned, Ph 2)* | `game/core/quest_system.gd` | chapters and tasks from data | `task_completed(task_id: StringName)` | — |
+| QuestRunner *(node, not autoload)* | `game/core/quest_runner.gd` | runs a `ChapterData` in a scene (steps as data) | `step_started`, `chapter_finished` | `docs/contracts/content-resources.md` |
 
 ## Module inventory (folders)
 

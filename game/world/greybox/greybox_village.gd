@@ -2,19 +2,16 @@ class_name GreyboxVillage
 extends Node3D
 ## Phase 1 greybox: a village blocked out in plain shapes (road loop, houses, river with a
 ## bridge, one house with a password door), the hero, the car, Тигриця and the follow camera.
-## The little quest loop (walk to the car → drive to the marker → walk to the door → open it)
-## is hard-coded here for the prototype; Phase 2 moves it into chapter data.
+## The quest (walk to the car → drive to the marker → walk to the door → open it) is data:
+## content/chapters/greybox_loop.tres, run by QuestRunner. This scene is its host.
 
-enum Step { TO_CAR, DRIVE, TO_DOOR, DOOR, FREE }
+const CHAPTER_PATH: String = "res://content/chapters/greybox_loop.tres"
 
 const ENTER_DISTANCE: float = 3.5
 const IDLE_LOG_SECONDS: float = 5.0
 const WALK_OFFSET: Vector3 = Vector3(0, 11, 9)
 const DRIVE_OFFSET: Vector3 = Vector3(0, 15, 12.5)
 const DOOR_POS: Vector3 = Vector3(-14, 0, -28)
-## Drive targets on the car's side of the river with a clear straight line from the previous
-## spot, so driving straight at the marker never hits the water, a house or a tree.
-const DRIVE_SPOTS: Array[Vector3] = [Vector3(-24, 0, -6), Vector3(0, 0, -22), Vector3(-30, 0, 20)]
 const CAR_START: Vector3 = Vector3(-6, 0, 16)
 const HERO_START: Vector3 = Vector3(-14, 0, 8)
 ## Places that teach a word when he walks or drives past: [word, position, radius, camera offset].
@@ -47,12 +44,11 @@ var pause_overlay: PauseOverlay
 var learning: LearningDirector
 var session: SessionTimer
 var parent_screen: ParentScreen
-var step: Step = Step.TO_CAR
+var quest: QuestRunner
 
 var _walk_cam: PhantomCamera3D
 var _drive_cam: PhantomCamera3D
 var _nav: NavigationRegion3D
-var _drive_spot: int = 0
 var _pending_enter: bool = false
 var _last_input_ms: int = 0
 var _taught_car: bool = false
@@ -87,7 +83,9 @@ func _ready() -> void:
 	_last_input_ms = Time.get_ticks_msec()
 	EventLog.log_event(&"session_start", {"scene": "greybox_village"})
 	Speech.line("line:intro")
-	_go_to_step(Step.TO_CAR)
+	quest = QuestRunner.new()
+	add_child(quest)
+	quest.start(load(CHAPTER_PATH), self)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -164,8 +162,7 @@ func _enter_car() -> void:
 	EventLog.log_event(&"car_enter")
 	if not _taught_car:
 		_taught_car = learning.offer(&"car", car.global_position, car.global_position + Vector3(4, 3, 5))
-	if step == Step.TO_CAR:
-		_go_to_step(Step.DRIVE)  # its instruction waits for the card
+	quest.notify_car_entered()  # the next instruction waits for the card
 
 
 func _exit_car() -> void:
@@ -187,75 +184,50 @@ func _physics_process(_delta: float) -> void:
 			_enter_car()
 
 
-# --- The little quest loop ------------------------------------------------------------
+# --- Quest host (called by QuestRunner) --------------------------------------------
 
 
-func _go_to_step(next: Step) -> void:
-	step = next
-	EventLog.log_event(&"step", {"step": Step.keys()[next]})
-	match next:
-		Step.TO_CAR:
-			_place_marker(car.global_position + Vector3(-2.2, 0, 0))
-			companion.set_goal(marker, "hint:to_car")
-		Step.DRIVE:
-			_say_when_free("line:drive")
-			_place_marker(DRIVE_SPOTS[_drive_spot])
-			_drive_spot = (_drive_spot + 1) % DRIVE_SPOTS.size()
-			companion.set_goal(marker, "hint:drive")
-		Step.TO_DOOR:
-			_say_when_free("line:to_door")
-			_place_marker(DOOR_POS + Vector3(0, 0, 6.5))
-			companion.set_goal(marker, "hint:to_door")
-		Step.DOOR:
-			_remove_marker()
-			companion.set_goal(null)
-		Step.FREE:
-			_remove_marker()
-			companion.set_goal(null)
-
-
-## Says an instruction, after any open learning card has finished.
-func _say_when_free(key: String) -> void:
-	if learning.is_open():
-		await learning.moment_closed
-	Speech.line(key)
-
-
-func _place_marker(pos: Vector3) -> void:
-	_remove_marker()
+func place_marker(pos: Vector3) -> void:
+	clear_marker()
 	marker = GoalMarker.new()
 	add_child(marker)
 	marker.global_position = Vector3(pos.x, 0.0, pos.z)
 	marker.reached.connect(_on_marker_reached)
 
 
-func _remove_marker() -> void:
+func clear_marker() -> void:
 	if marker != null:
 		marker.queue_free()
 		marker = null
 
 
+func set_hint(goal: Node3D, line_key: String) -> void:
+	companion.set_goal(goal, line_key)
+
+
+## Says an instruction, after any open learning card has finished.
+func say_when_free(key: String) -> void:
+	if learning.is_open():
+		await learning.moment_closed
+	Speech.line(key)
+
+
+func car_position() -> Vector3:
+	return car.global_position
+
+
+func exit_car() -> void:
+	_exit_car()
+
+
 func _on_marker_reached(body: Node3D) -> void:
-	EventLog.log_event(&"marker_reached", {"step": Step.keys()[step]})
-	match step:
-		Step.TO_CAR:
-			if body == hero:
-				Speech.line("line:here_car", null, true)
-		Step.DRIVE:
-			if body == car:
-				Sfx.play(&"chime")
-				_exit_car()
-				_go_to_step(Step.TO_DOOR)
-		Step.TO_DOOR:
-			if body == hero:
-				_go_to_step(Step.DOOR)
+	quest.notify_marker_reached(&"car" if body == car else &"hero")
 
 
 func _on_cards_shown() -> void:
 	hero.stop()
 	hero.keyboard_enabled = false
-	if step == Step.TO_DOOR:
-		_go_to_step(Step.DOOR)
+	quest.notify_door_question()
 
 
 func _on_cards_hidden() -> void:
@@ -263,15 +235,7 @@ func _on_cards_hidden() -> void:
 
 
 func _on_door_opened(_word: StringName, _wrong: int) -> void:
-	companion.set_goal(null)
-	var tween: Tween = create_tween()
-	tween.tween_interval(6.0)
-	tween.tween_callback(_restart_loop)
-
-
-func _restart_loop() -> void:
-	_say_when_free("line:again")
-	_go_to_step(Step.TO_CAR)
+	quest.notify_door_opened()
 
 
 # --- Building the world ---------------------------------------------------------------
