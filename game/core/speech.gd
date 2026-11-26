@@ -29,7 +29,7 @@ func _ready() -> void:
 
 
 ## Speaks a line. Lines queue unless interrupt is true.
-func say(text: String, lang: StringName = LANG_UK, interrupt: bool = false) -> void:
+func say(text: String, lang: StringName = LANG_EN, interrupt: bool = false) -> void:
 	EventLog.log_event(&"voice", {"text": text, "lang": String(lang)})
 	if not _enabled or not _voices.has(lang):
 		return

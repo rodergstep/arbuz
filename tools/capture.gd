@@ -33,13 +33,13 @@ func _process(_delta: float) -> bool:
 			_village.get("learning").get("card").call("close")
 		420:
 			_shot("03_in_car")
-			_village.get("car").call("drive_to", Vector3(22, 0, 18))
+			_village.get("car").call("drive_to", Vector3(-24, 0, -6))
 		700:
 			_shot("04_driving")
 		760:
 			_village.call("_exit_car")
 			var hero: Node3D = _village.get("hero")
-			hero.global_position = Vector3(-14, 0, -14)
+			hero.global_position = Vector3(-14, 0, -22)
 		900:
 			_shot("05_door_cards")
 			var door: Node = _village.get("door")

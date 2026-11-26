@@ -11,8 +11,10 @@ const ENTER_DISTANCE: float = 3.5
 const IDLE_LOG_SECONDS: float = 5.0
 const WALK_OFFSET: Vector3 = Vector3(0, 11, 9)
 const DRIVE_OFFSET: Vector3 = Vector3(0, 15, 12.5)
-const DOOR_POS: Vector3 = Vector3(-14, 0, -20)
-const DRIVE_SPOTS: Array[Vector3] = [Vector3(22, 0, -18), Vector3(22, 0, 18), Vector3(-22, 0, 18)]
+const DOOR_POS: Vector3 = Vector3(-14, 0, -28)
+## Drive targets on the car's side of the river with a clear straight line from the previous
+## spot, so driving straight at the marker never hits the water, a house or a tree.
+const DRIVE_SPOTS: Array[Vector3] = [Vector3(-24, 0, -6), Vector3(0, 0, -22), Vector3(-30, 0, 20)]
 const CAR_START: Vector3 = Vector3(-6, 0, 16)
 const HERO_START: Vector3 = Vector3(-14, 0, 8)
 ## Places that teach a word when he walks or drives past: [word, position, radius, camera offset].
@@ -81,15 +83,11 @@ func _ready() -> void:
 	add_child(pause_overlay)
 	_last_input_ms = Time.get_ticks_msec()
 	EventLog.log_event(&"session_start", {"scene": "greybox_village"})
-	Speech.say("Привіт! Я Тигриця. Поїхали в пригоду! Спершу ходімо до машини.", Speech.LANG_UK)
+	Speech.say("Hello! I am Tigrytsia. Let's go! Let's go to the car!", Speech.LANG_EN)
 	_go_to_step(Step.TO_CAR)
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"pause"):
-		pause_overlay.toggle()
-		get_viewport().set_input_as_handled()
-		return
 	if door.is_active():
 		if event.is_action_pressed(&"move_left"):
 			door.focus_step(-1)
@@ -195,16 +193,16 @@ func _go_to_step(next: Step) -> void:
 	match next:
 		Step.TO_CAR:
 			_place_marker(car.global_position + Vector3(-2.2, 0, 0))
-			companion.set_goal(marker, "Я тут! Ходи до машини — натисни на неї!")
+			companion.set_goal(marker, "I'm here! Go to the car! Click the car!")
 		Step.DRIVE:
-			_say_when_free("Поїхали! Їдь до вогника!")
+			_say_when_free("Let's go! Drive to the light!")
 			_place_marker(DRIVE_SPOTS[_drive_spot])
 			_drive_spot = (_drive_spot + 1) % DRIVE_SPOTS.size()
-			companion.set_goal(marker, "Їдь до вогника! Натисни туди, де світиться.")
+			companion.set_goal(marker, "Drive to the light! Click the light!")
 		Step.TO_DOOR:
-			_say_when_free("Приїхали! Виходимо з машини і йдемо до дверей.")
+			_say_when_free("We are here! Out of the car. Let's go to the door!")
 			_place_marker(DOOR_POS + Vector3(0, 0, 6.5))
-			companion.set_goal(marker, "Ходімо до дверей! Вони там, де вогник.")
+			companion.set_goal(marker, "Go to the door! The door is here!")
 		Step.DOOR:
 			_remove_marker()
 			companion.set_goal(null, "")
@@ -213,11 +211,11 @@ func _go_to_step(next: Step) -> void:
 			companion.set_goal(null, "")
 
 
-## Tells a Ukrainian instruction, after any open learning card has finished.
+## Says an instruction, after any open learning card has finished.
 func _say_when_free(text: String) -> void:
 	if learning.is_open():
 		await learning.moment_closed
-	Speech.say(text, Speech.LANG_UK)
+	Speech.say(text, Speech.LANG_EN)
 
 
 func _place_marker(pos: Vector3) -> void:
@@ -239,7 +237,7 @@ func _on_marker_reached(body: Node3D) -> void:
 	match step:
 		Step.TO_CAR:
 			if body == hero:
-				Speech.say("Ось наша машина! Натисни на неї, щоб сісти.", Speech.LANG_UK, true)
+				Speech.say("Here is our car! Click the car!", Speech.LANG_EN, true)
 		Step.DRIVE:
 			if body == car:
 				Sfx.play(&"chime")
@@ -269,7 +267,7 @@ func _on_door_opened(_word: StringName, _wrong: int) -> void:
 
 
 func _restart_loop() -> void:
-	_say_when_free("Ще раз? Ходімо до машини!")
+	_say_when_free("Again? Let's go to the car!")
 	_go_to_step(Step.TO_CAR)
 
 
@@ -319,7 +317,7 @@ func _on_door_wants_question() -> void:
 	# Nothing taught yet: teach a word right here, then ask it.
 	var fresh: Array[StringName] = DOOR_WORDS.filter(func(w: StringName) -> bool: return w != _last_door_word)
 	_pending_door_word = fresh.pick_random()
-	Speech.say("Спершу вивчимо слово!", Speech.LANG_UK, true)
+	Speech.say("Let's learn a new word!", Speech.LANG_EN, true)
 	var place: Array = _picture_of(_pending_door_word)
 	if not learning.request(_pending_door_word, place[0], place[1]):
 		_ask_door(_pending_door_word)
@@ -353,7 +351,8 @@ func _ask_door(answer_id: StringName) -> void:
 		var entry: WordEntry = WordDB.get_word(w)
 		if entry != null:
 			others.append(entry)
-	door.ask(answer, others)
+	var place: Array = _picture_of(answer_id)
+	door.ask(answer, others, place[0], place[1])
 
 
 func _on_learning_spot(spot: LearningSpot) -> void:
@@ -418,7 +417,7 @@ func _build_houses() -> void:
 	var walls: Array[Color] = [Color(0.95, 0.9, 0.8), Color(0.9, 0.85, 0.95), Color(1.0, 0.92, 0.75)]
 	var roofs: Array[Color] = [Color(0.75, 0.35, 0.3), Color(0.45, 0.4, 0.65), Color(0.85, 0.55, 0.25)]
 	var spots: Array[Vector3] = [
-		Vector3(-2, 0, -10), Vector3(4, 0, 8), Vector3(-30, 0, -8), Vector3(30, 0, 6), Vector3(-4, 0, 30)
+		Vector3(2, 0, -4), Vector3(4, 0, 8), Vector3(-30, 0, -8), Vector3(30, 0, 6), Vector3(-4, 0, 30)
 	]
 	for i: int in spots.size():
 		Blocks.house(_nav, spots[i], Vector3(5, 3.5, 4.5), walls[i % walls.size()], roofs[i % roofs.size()])
@@ -472,14 +471,14 @@ func _build_clickables() -> void:
 		{"id": &"tree", "uk": "дерево", "en": "tree", "pos": Vector3(-10, 0, 2)},
 		{"id": &"tree", "uk": "дерево", "en": "tree", "pos": Vector3(16, 0, -6)},
 		{"id": &"flower", "uk": "квітка", "en": "flower", "pos": Vector3(-8, 0, 10)},
-		{"id": &"flower", "uk": "соняшник", "en": "sunflower", "pos": Vector3(-17, 0, 12)},
+		{"id": &"sunflower", "uk": "соняшник", "en": "sunflower", "pos": Vector3(-17, 0, 12)},
 		{"id": &"ball", "uk": "м'яч", "en": "ball", "pos": Vector3(-12, 0, 13)},
 		{"id": &"duck", "uk": "качка", "en": "duck", "pos": Vector3(12, 0, 4)},
 		{"id": &"dog", "uk": "собака", "en": "dog", "pos": Vector3(0, 0, 14)},
 		{"id": &"house", "uk": "будинок", "en": "house", "pos": Vector3(4, 0, 8)},
 	]
 	for thing: Dictionary in things:
-		var art: Node3D = _art_for(thing["id"])
+		var art: Node3D = _art_for(&"flower" if thing["id"] == &"sunflower" else thing["id"])
 		var size: Vector3 = Vector3(2.0, 2.5, 2.0)
 		if thing["id"] == &"house":
 			art = Node3D.new()

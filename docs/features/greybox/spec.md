@@ -26,7 +26,8 @@ updated_at: "2026-11-26"
   its learning moment (AC-08); everything spoken there is English.
 - **AC-05 Password door (teach before test).** The door only asks a word he has already seen
   on a learning card this session (a different one each visit when possible); if none, it first
-  opens the learning card for a village word, then asks that word. Тигриця asks in Ukrainian;
+  opens the learning card for a village word, then asks that word. A live picture of the thing
+  appears over the door and Тигриця asks "What is this? Listen to the cards!" (all English);
   three blank cards rise and each says its word when pointed at or clicked (left/right + Space
   on the keyboard). A wrong pick wiggles, says its word and repeats the question, never a sad
   sound. After 2 wrong picks the right card glows and the door opens with praise. The loop
@@ -38,11 +39,14 @@ updated_at: "2026-11-26"
 - **AC-08 Learning moments (education first).** Passing the bridge, the river, the road or the
   fence (walking or driving), clicking any object, or getting into the car for the first time
   opens a card in English only: a live picture of that thing and the English word, spoken
-  twice ("bridge", "bridge"), then two short English sentences, each shown while spoken. The game waits behind it; one tap or Space skips. Passing moments open
+  ("This is a bridge.", "bridge", "bridge"), then two short English sentences, each shown while spoken. The game waits behind it; one tap or Space skips. Passing moments open
   at most every 20 s, each word at most twice a session; clicked moments always open.
 - **AC-09 Car drives smoothly.** Top speed 7 m/s (30% slower after the second playtest); it
   accelerates to full speed in about a second and only
   bounces when it hits something upright (a house, the fence, the river bank), never the ground.
+
+- **AC-10 English immersion.** Every spoken line is English (instructions, hints, praise,
+  the door); short phrases, repeated. No Ukrainian speech in the child's path.
 
 ## 8. Open questions
 

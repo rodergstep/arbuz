@@ -1,7 +1,9 @@
 class_name PasswordDoor
 extends Node3D
-## Greybox password door. When the hero walks up, Тигриця asks (in Ukrainian) how to say a word
-## in English. Three blank cards rise; each says its English word when pointed at or clicked.
+## Greybox password door, all in English. When the hero walks up, a picture of a thing he has
+## already learned appears over the door and Тигриця asks "What is this?". Three blank cards
+## rise; each says its English word when pointed at or clicked. The first wrong pick gives a
+## hint (the retry names the word: "Where is the car?").
 ## A wrong pick gets a gentle wiggle, the card says its word and the question repeats. After 2
 ## wrong picks the right card glows and the door opens with praise. No fail state.
 ## Re-arms with a new word after the hero walks away, so it can be played again.
@@ -28,6 +30,9 @@ var _active: bool = false
 var _open: bool = false
 var _panel: Node3D
 var _cards_root: Node3D
+var _picture_view: SubViewport
+var _picture_cam: Camera3D
+var _picture: Sprite3D
 
 
 func _ready() -> void:
@@ -40,6 +45,7 @@ func _ready() -> void:
 	knob.radius = 0.08
 	knob.height = 0.16
 	_panel.add_child(Blocks.mesh(knob, Color(1.0, 0.85, 0.3), Vector3(1.35, 1.1, 0.12)))
+	_build_picture()
 	_cards_root = Node3D.new()
 	_cards_root.position = Vector3(0, 0, 3.2)
 	_cards_root.visible = false
@@ -63,15 +69,16 @@ func is_active() -> bool:
 
 
 func question_line() -> String:
-	return "Як англійською буде «%s»? Послухай картки і вибери!" % _answer.uk
+	return "What is this? Listen to the cards!"
 
 
 func is_hero_inside() -> bool:
 	return _hero_inside
 
 
-## Shows the cards and asks. answer must be a word he has already been taught.
-func ask(answer: WordEntry, others: Array[WordEntry]) -> void:
+## Shows the picture and the cards and asks. answer must be a word he has already been taught;
+## focus and view_from frame the real thing in the world for the picture.
+func ask(answer: WordEntry, others: Array[WordEntry], focus: Vector3, view_from: Vector3) -> void:
 	if _open or _active or not _hero_inside:
 		return
 	_answer = answer
@@ -85,7 +92,8 @@ func ask(answer: WordEntry, others: Array[WordEntry]) -> void:
 	rise.tween_property(_cards_root, "position:y", 0.0, 0.5).set_trans(Tween.TRANS_BACK).set_ease(
 		Tween.EASE_OUT
 	)
-	Speech.say(question_line(), Speech.LANG_UK, true)
+	_show_picture(focus, view_from)
+	Speech.say(question_line(), Speech.LANG_EN, true)
 	EventLog.log_event(&"door_question", {"word": String(answer.id)})
 	cards_shown.emit()
 
@@ -119,8 +127,8 @@ func pick(card: PasswordCard) -> void:
 	if correct:
 		Sfx.play(&"chime")
 		card.celebrate()
-		Speech.say(card.word_en, Speech.LANG_EN, true)
-		Speech.say("Ура! Правильно! Двері відчиняються!", Speech.LANG_UK)
+		Speech.say("Yes! %s! Well done!" % _cap(card.word_en), Speech.LANG_EN, true)
+		Speech.say("The door is opening!", Speech.LANG_EN)
 		_open_door()
 		return
 	_wrong += 1
@@ -130,12 +138,11 @@ func pick(card: PasswordCard) -> void:
 	if _wrong >= MAX_WRONG:
 		var answer: PasswordCard = _answer_card()
 		answer.glow()
-		Speech.say("Дивись, ось ця картка світиться!", Speech.LANG_UK)
-		Speech.say(answer.word_en, Speech.LANG_EN)
-		Speech.say("Молодець! Двері відчиняються!", Speech.LANG_UK)
+		Speech.say("Look! This card is glowing! %s!" % _cap(answer.word_en), Speech.LANG_EN)
+		Speech.say("This is a %s. Well done! The door is opening!" % answer.word_en, Speech.LANG_EN)
 		_open_door()
 	else:
-		Speech.say("Спробуймо ще! Як буде «%s»?" % _answer.uk, Speech.LANG_UK)
+		Speech.say("Try again! Where is the %s?" % _answer.en, Speech.LANG_EN)
 
 
 func _on_hero_entered(_body: Node3D) -> void:
@@ -148,7 +155,7 @@ func _on_hero_exited(_body: Node3D) -> void:
 	_hero_inside = false
 	if _active:
 		_active = false
-		_cards_root.visible = false
+		_hide_question()
 		cards_hidden.emit()
 	elif _open:
 		_close_and_rearm()
@@ -164,7 +171,7 @@ func _open_door() -> void:
 		Tween.EASE_OUT
 	)
 	tween.tween_interval(1.5)
-	tween.tween_callback(func() -> void: _cards_root.visible = false)
+	tween.tween_callback(_hide_question)
 	opened.emit(_answer.id, _wrong)
 	cards_hidden.emit()
 
@@ -172,6 +179,44 @@ func _open_door() -> void:
 func _close_and_rearm() -> void:
 	_open = false
 	create_tween().tween_property(_panel, "rotation:y", 0.0, 0.8)
+
+
+func _build_picture() -> void:
+	_picture_view = SubViewport.new()
+	_picture_view.size = Vector2i(512, 384)
+	_picture_view.render_target_update_mode = SubViewport.UPDATE_DISABLED
+	add_child(_picture_view)
+	_picture_cam = Camera3D.new()
+	_picture_cam.fov = 45.0
+	_picture_view.add_child(_picture_cam)
+	var frame: MeshInstance3D = Blocks.box_mesh(
+		Vector3(2.9, 2.2, 0.1), UiTokens.BG_PAPER, Vector3(0, 0, -0.06)
+	)
+	_picture = Sprite3D.new()
+	_picture.pixel_size = 2.6 / 512.0
+	_picture.position = Vector3(0, 3.6, 3.9)
+	_picture.texture = _picture_view.get_texture()
+	_picture.add_child(frame)
+	_picture.visible = false
+	add_child(_picture)
+
+
+func _show_picture(focus: Vector3, view_from: Vector3) -> void:
+	_picture_view.world_3d = get_viewport().world_3d
+	_picture_view.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	_picture_cam.global_position = view_from
+	_picture_cam.look_at(focus + Vector3(0, 0.8, 0))
+	_picture.visible = true
+
+
+func _hide_question() -> void:
+	_cards_root.visible = false
+	_picture.visible = false
+	_picture_view.render_target_update_mode = SubViewport.UPDATE_DISABLED
+
+
+func _cap(word: String) -> String:
+	return word.substr(0, 1).to_upper() + word.substr(1)
 
 
 func _answer_card() -> PasswordCard:

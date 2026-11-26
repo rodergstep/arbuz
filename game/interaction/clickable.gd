@@ -52,12 +52,12 @@ func activate(show_word: bool = true) -> void:
 ## Says the word aloud (used when no learning moment can open).
 ## A good camera spot for picturing this thing, scaled to its size.
 func picture_view() -> Vector3:
-	var distance: float = clampf(_height * 2.0, 3.0, 10.0)
+	var distance: float = clampf(_height * 1.3, 2.5, 9.0)
 	return global_position + Vector3(0.55, 0.5, 0.67).normalized() * distance
 
 
 func say_name() -> void:
-	Speech.say(word_en, Speech.LANG_EN, true)
+	Speech.say("This is a %s. %s!" % [word_en, word_en], Speech.LANG_EN, true)
 
 
 func _show_label() -> void:

@@ -61,9 +61,9 @@ func offer(word_id: StringName, focus: Vector3, view_from: Vector3) -> bool:
 	return true
 
 
-## A moment he asked for (a click): opens unless a card is already open.
+## A moment he asked for (a click): opens unless a card or a door question is on screen.
 func request(word_id: StringName, focus: Vector3, view_from: Vector3) -> bool:
-	if card.is_open:
+	if card.is_open or is_busy.call():
 		return false
 	return _open(word_id, focus, view_from)
 

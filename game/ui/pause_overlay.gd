@@ -1,9 +1,13 @@
 class_name PauseOverlay
 extends CanvasLayer
-## Pause is always available (Esc / P / Start). A soft dim and one big play button; any click,
-## Space or the pause key resumes. No text.
+## Pause is always available (Esc / P / Start), also over a learning card. A soft dim and one
+## big play button; any click, Space or the pause key resumes. No text.
+
+## True while the pause screen is up; other always-processing UI (the learning card) waits.
+static var active: bool = false
 
 var _root: Control
+var _tree_was_paused: bool = false
 
 
 func _ready() -> void:
@@ -27,19 +31,28 @@ func _ready() -> void:
 
 
 func toggle() -> void:
-	set_paused(not get_tree().paused)
+	set_paused(not visible)
 
 
 func set_paused(paused: bool) -> void:
-	get_tree().paused = paused
-	visible = paused
+	if paused == visible:
+		return
 	if paused:
+		_tree_was_paused = get_tree().paused
+		get_tree().paused = true
 		Speech.stop()
+	else:
+		get_tree().paused = _tree_was_paused
+	visible = paused
+	active = paused
 	EventLog.log_event(&"pause" if paused else &"resume")
 
 
 func _input(event: InputEvent) -> void:
 	if not visible:
+		if event.is_action_pressed(&"pause"):
+			get_viewport().set_input_as_handled()
+			set_paused(true)
 		return
 	var resume: bool = event.is_action_pressed(&"use") or event.is_action_pressed(&"pause")
 	resume = resume or (event is InputEventMouseButton and event.pressed)

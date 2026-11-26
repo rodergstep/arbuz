@@ -120,7 +120,7 @@ func _give_hint(level: int) -> void:
 	if goal_marker != null:
 		goal_marker.set_brightness(level)
 	if not hint_line.is_empty():
-		Speech.say(hint_line, Speech.LANG_UK, true)
+		Speech.say(hint_line, Speech.LANG_EN, true)
 	EventLog.log_event(&"hint", {"level": level, "idle_s": snappedf(_idle, 0.1)})
 	hint_given.emit(level)
 	var tween: Tween = create_tween()
