@@ -54,7 +54,9 @@ updated_at: "2026-11-26"
 - **AC-11 Find the object (teach before test).** After the door, Tygrytsa asks "Find the duck!
   Where is the duck?" for a thing he has already learned (or teaches one first). A wrong click
   says that thing's name and repeats the ask; after 2 wrong clicks a marker glows under the
-  right thing. The answer goes to the learning tracker.
+  right thing. From the start the asked thing gets a soft, breathing warm glow and a faint ring
+  under it, with a small hop every few seconds (gentle, not a giveaway). The answer goes to the
+  learning tracker.
 
 - **AC-12 Say it back (microphone).** On every learning card Tygrytsa asks "Now you! Say: bridge!"
   and a pulsing circle with a microphone shows it's his turn. The card waits until he makes any
