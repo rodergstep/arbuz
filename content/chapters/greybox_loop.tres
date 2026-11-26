@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="ChapterData" format=3]
+
+[ext_resource type="Script" path="res://game/core/chapter_data.gd" id="1_umbh8"]
+[ext_resource type="Script" path="res://game/core/quest_step.gd" id="2_w0m8y"]
+
+[sub_resource type="Resource" id="Resource_7ik2a"]
+script = ExtResource("2_w0m8y")
+kind = 0
+hint_line = "hint:to_car"
+arrive_line = "line:here_car"
+
+[sub_resource type="Resource" id="Resource_xfikn"]
+script = ExtResource("2_w0m8y")
+kind = 1
+spots = Array[Vector3]([Vector3(-24, 0, -6), Vector3(0, 0, -22), Vector3(-30, 0, 20)])
+start_line = "line:drive"
+hint_line = "hint:drive"
+
+[sub_resource type="Resource" id="Resource_hmele"]
+script = ExtResource("2_w0m8y")
+spots = Array[Vector3]([Vector3(-14, 0, -21.5)])
+start_line = "line:to_door"
+hint_line = "hint:to_door"
+
+[sub_resource type="Resource" id="Resource_41m1f"]
+script = ExtResource("2_w0m8y")
+kind = 3
+
+[resource]
+script = ExtResource("1_umbh8")
+id = &"greybox_loop"
+steps = Array[ExtResource("2_w0m8y")]([SubResource("Resource_7ik2a"), SubResource("Resource_xfikn"), SubResource("Resource_hmele"), SubResource("Resource_41m1f")])
+loop = true
+loop_line = "line:again"
