@@ -18,6 +18,8 @@ var goal: Node3D
 var goal_marker: GoalMarker
 ## The hint's line key in content/voice/lines.csv ("" = no hint).
 var hint_line: String = ""
+## Fills {word} in the hint line (find tasks).
+var hint_word: WordEntry
 
 var _idle: float = 0.0
 var _best_distance: float = INF
@@ -61,10 +63,11 @@ func _ready() -> void:
 
 
 ## Sets the current goal; null clears it (free play: no hints).
-func set_goal(new_goal: Node3D, line: String = "") -> void:
+func set_goal(new_goal: Node3D, line: String = "", word: WordEntry = null) -> void:
 	goal = new_goal
 	goal_marker = new_goal as GoalMarker
 	hint_line = line
+	hint_word = word
 	reset_progress()
 
 
@@ -121,7 +124,7 @@ func _give_hint(level: int) -> void:
 	if goal_marker != null:
 		goal_marker.set_brightness(level)
 	if not hint_line.is_empty():
-		Speech.line(hint_line, null, true)
+		Speech.line(hint_line, hint_word, true)
 	EventLog.log_event(&"hint", {"level": level, "idle_s": snappedf(_idle, 0.1)})
 	hint_given.emit(level)
 	var tween: Tween = create_tween()

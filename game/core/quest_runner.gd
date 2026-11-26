@@ -3,7 +3,7 @@ extends Node
 ## Runs a ChapterData in a scene. The scene reports what happened (car entered, marker reached,
 ## door opened); the runner decides when a step is done and what comes next. It talks to the
 ## scene only through the QuestHost methods: place_marker, clear_marker, set_hint, say_when_free,
-## exit_car, car_position.
+## exit_car, car_position, start_find.
 
 signal step_started(index: int, step: QuestStep)
 signal chapter_finished(chapter_id: StringName)
@@ -62,6 +62,11 @@ func notify_door_opened() -> void:
 		_advance()
 
 
+func notify_found() -> void:
+	if _is(QuestStep.Kind.FIND_OBJECT):
+		_advance()
+
+
 func _is(kind: QuestStep.Kind) -> bool:
 	var step: QuestStep = current()
 	return step != null and step.kind == kind
@@ -110,5 +115,10 @@ func _go(next: int) -> void:
 				host.call("place_marker", step.spots[visit % step.spots.size()])
 		QuestStep.Kind.OPEN_DOOR:
 			host.call("clear_marker")
+		QuestStep.Kind.FIND_OBJECT:
+			host.call("clear_marker")
+			host.call("start_find")
+			step_started.emit(next, step)
+			return
 	host.call("set_hint", host.get("marker"), step.hint_line)
 	step_started.emit(next, step)
