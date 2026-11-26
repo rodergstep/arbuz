@@ -82,7 +82,7 @@ func set_highlight(on: bool) -> void:
 		disc.top_radius = _footprint + 0.6
 		disc.bottom_radius = _footprint + 0.6
 		disc.height = 0.02
-		_ring = Blocks.mesh(disc, Color(1.0, 0.85, 0.4), Vector3(0, 0.03, 0))
+		_ring = Blocks.flat_mesh(disc, Color(1.0, 0.85, 0.4), Vector3(0, 0.03, 0))
 		var ring_mat: StandardMaterial3D = _ring.mesh.material
 		ring_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		ring_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA

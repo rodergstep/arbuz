@@ -69,6 +69,7 @@ func _ready() -> void:
 	_build_river()
 	_build_houses()
 	_bake_navigation()
+	_build_grass()
 	_build_actors()
 	_build_clickables()
 	_build_camera()
@@ -447,23 +448,30 @@ func _on_learning_spot(spot: LearningSpot) -> void:
 func _build_environment() -> void:
 	var env: Environment = Environment.new()
 	env.background_mode = Environment.BG_SKY
+	# Painted sky with drifting clouds; its radiance isn't used for light, so it is computed
+	# rarely (ambient light comes from a colour), which keeps it cheap.
 	var sky: Sky = Sky.new()
-	var sky_mat: ProceduralSkyMaterial = ProceduralSkyMaterial.new()
-	sky_mat.sky_top_color = Color(0.45, 0.65, 0.9)
-	sky_mat.sky_horizon_color = Color(0.95, 0.85, 0.75)
-	sky_mat.ground_horizon_color = Color(0.85, 0.8, 0.7)
+	var sky_mat: ShaderMaterial = ShaderMaterial.new()
+	sky_mat.shader = preload("res://game/art/painted_sky.gdshader")
 	sky.sky_material = sky_mat
+	sky.process_mode = Sky.PROCESS_MODE_QUALITY
+	sky.radiance_size = Sky.RADIANCE_SIZE_32
 	env.sky = sky
+	# Golden morning (time-of-day preset): warm key light, cool blue-violet fill.
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.62, 0.66, 0.8)
-	env.ambient_light_energy = 0.55
-	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	env.ambient_light_color = Color(0.56, 0.62, 0.82)
+	env.ambient_light_energy = 0.42
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.tonemap_exposure = 0.92
+	env.adjustment_enabled = true
+	env.adjustment_saturation = 1.08
+	env.adjustment_contrast = 1.04
 	var world_env: WorldEnvironment = WorldEnvironment.new()
 	world_env.environment = env
 	add_child(world_env)
 	var sun: DirectionalLight3D = DirectionalLight3D.new()
-	sun.light_color = Color(1.0, 0.93, 0.8)
-	sun.light_energy = 0.85
+	sun.light_color = Color(1.0, 0.86, 0.66)
+	sun.light_energy = 0.95
 	sun.rotation_degrees = Vector3(-55, -35, 0)
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 60.0
@@ -471,12 +479,37 @@ func _build_environment() -> void:
 
 
 func _build_ground() -> void:
-	Blocks.solid_box(_nav, Vector3(0, -0.5, 0), Vector3(90, 1, 90), Color(0.55, 0.75, 0.4))
+	var ground: StaticBody3D = Blocks.solid_box(
+		_nav, Vector3(0, -0.5, 0), Vector3(90, 1, 90), Color(0.5, 0.72, 0.38)
+	)
+	# A soft painted colour wash across the meadow.
+	(ground.get_child(1) as MeshInstance3D).material_override = PaintedMaterials.make(
+		Color(0.5, 0.72, 0.38), 0.0, 0.35
+	)
 	# Low fences at the edge so nobody leaves the village.
 	for side: Vector3 in [Vector3(0, 0.4, -40), Vector3(0, 0.4, 40)]:
 		Blocks.solid_box(_nav, side, Vector3(80, 0.8, 0.4), Color(0.85, 0.75, 0.55))
 	for side: Vector3 in [Vector3(-40, 0.4, 0), Vector3(40, 0.4, 0)]:
 		Blocks.solid_box(_nav, side, Vector3(0.4, 0.8, 80), Color(0.85, 0.75, 0.55))
+
+
+func _build_grass() -> void:
+	var grass: WindGrass = WindGrass.new()
+	add_child(grass)
+	grass.scatter(Rect2(-38, -38, 76, 76), 2500, _grass_blocked)
+	add_child(PerfMonitor.new())
+
+
+## Where no grass grows: roads, the river and bridges, houses, the door house.
+func _grass_blocked(p: Vector2) -> bool:
+	var road: bool = (absf(p.y + 22) < 3.2 or absf(p.y - 22) < 3.2) and absf(p.x) < 27.0
+	road = road or ((absf(p.x + 24) < 3.2 or absf(p.x - 24) < 3.2) and absf(p.y) < 25.0)
+	var river: bool = absf(p.x - 12) < 2.6
+	var door_house: bool = absf(p.x - DOOR_POS.x) < 4.5 and p.y < DOOR_POS.z + 1.0 and p.y > DOOR_POS.z - 8.0
+	for h: Vector2 in [Vector2(2, -4), Vector2(4, 8), Vector2(-30, -8), Vector2(30, 6), Vector2(-4, 30)]:
+		if absf(p.x - h.x) < 3.3 and absf(p.y - h.y) < 3.0:
+			return true
+	return road or river or door_house
 
 
 func _build_road() -> void:
@@ -582,13 +615,13 @@ func _art_for(id: StringName) -> Node3D:
 			var crown: SphereMesh = SphereMesh.new()
 			crown.radius = 1.4
 			crown.height = 2.4
-			root.add_child(Blocks.mesh(crown, Color(0.3, 0.6, 0.35), Vector3(0, 2.8, 0)))
+			root.add_child(Blocks.mesh(crown, Color(0.3, 0.6, 0.35), Vector3(0, 2.8, 0), 0.05))
 		&"flower":
 			var head: SphereMesh = SphereMesh.new()
 			head.radius = 0.35
 			head.height = 0.3
 			root.add_child(Blocks.box_mesh(Vector3(0.1, 1.2, 0.1), Color(0.3, 0.6, 0.3), Vector3(0, 0.6, 0)))
-			root.add_child(Blocks.mesh(head, Color(1.0, 0.85, 0.2), Vector3(0, 1.3, 0)))
+			root.add_child(Blocks.mesh(head, Color(1.0, 0.85, 0.2), Vector3(0, 1.3, 0), 0.06))
 		&"ball":
 			var ball: SphereMesh = SphereMesh.new()
 			ball.radius = 0.4

@@ -34,7 +34,7 @@ Our son learns English words for the things around him, food, colours, animals a
 | 12 | Tygrytsa and townspeople speak through Dialogic, each line tied to its voice file | `development-plan.md` §Phase 2 — Core systems and content pipeline | M | idea |
 | 13 | Input switches seamlessly between mouse, keyboard and gamepad, with Xbox or Nintendo prompts and gentle rumble | `development-plan.md` §Phase 2 — Core systems and content pipeline | S | idea |
 | 14 | Parent area behind the parent lock: name, languages, volume, and the 15-minute session timer with Tygrytsa's goodbye | `game-spec.md` §Parent features and profiles | L | building |
-| 15 | The village gets its painted look: toon shader, painted sky, wind in the grass, warm grading, holding 30 fps | `development-plan.md` §Phase 3 — Prologue vertical slice | L | idea |
+| 15 | The village gets its painted look: toon shader, painted sky, wind in the grass, warm grading, holding 30 fps | `development-plan.md` §Phase 3 — Prologue vertical slice | L | building |
 | 16 | Hero, Tygrytsa and the three cars as real models; he picks his car | `development-plan.md` §Phase 3 — Prologue vertical slice | L | idea |
 | 17 | The prologue plays start to finish: meet Tygrytsa, tutorial, the postman's "hello" and "bye", the ferry | `game-spec.md` §Story | L | idea |
 | 18 | The English town is laid out in greybox with every landmark | `development-plan.md` §Phase 4 — Chapter 1: the bakery | M | idea |

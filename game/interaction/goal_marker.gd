@@ -21,7 +21,7 @@ func _ready() -> void:
 	cyl.top_radius = RADIUS
 	cyl.bottom_radius = RADIUS
 	cyl.height = 0.08
-	_ring = Blocks.mesh(cyl, Color(1.0, 0.85, 0.3), Vector3(0, 0.05, 0))
+	_ring = Blocks.flat_mesh(cyl, Color(1.0, 0.85, 0.3), Vector3(0, 0.05, 0))
 	_mat = _ring.mesh.material
 	_mat.emission_enabled = true
 	_mat.emission = Color(1.0, 0.8, 0.25)
@@ -32,7 +32,7 @@ func _ready() -> void:
 	beam.top_radius = 0.15
 	beam.bottom_radius = 0.5
 	beam.height = 4.0
-	var beam_inst: MeshInstance3D = Blocks.mesh(beam, Color(1.0, 0.9, 0.5), Vector3(0, 2.0, 0))
+	var beam_inst: MeshInstance3D = Blocks.flat_mesh(beam, Color(1.0, 0.9, 0.5), Vector3(0, 2.0, 0))
 	var beam_mat: StandardMaterial3D = beam_inst.mesh.material
 	beam_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	beam_mat.albedo_color.a = 0.25

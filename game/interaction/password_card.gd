@@ -24,10 +24,10 @@ func _ready() -> void:
 	box.size = SIZE + Vector3(0.3, 0.3, 0.3)
 	shape.shape = box
 	add_child(shape)
-	_ring = Blocks.box_mesh(SIZE + Vector3(0.36, 0.36, -0.04), Color(0.95, 0.55, 0.2))
+	_ring = Blocks.flat_box_mesh(SIZE + Vector3(0.36, 0.36, -0.04), Color(0.95, 0.55, 0.2))
 	_ring.position.z = -0.03
 	add_child(_ring)
-	_face = Blocks.box_mesh(SIZE, Color(0.98, 0.9, 0.75))
+	_face = Blocks.flat_box_mesh(SIZE, Color(0.98, 0.9, 0.75))
 	_face_mat = _face.mesh.material
 	add_child(_face)
 	var mark: Label3D = Label3D.new()
