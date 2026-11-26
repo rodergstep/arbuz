@@ -79,10 +79,13 @@ grading per time of day. Budget: ≥30 fps on the Intel MacBook. Judged at Gate 
 | Level | After *(start)* | What happens |
 |---|---|---|
 | 0 | — | instruction voiced on entry |
-| 1 | 8 s idle | instruction repeats |
-| 2 | +8 s | the target glows softly |
-| 3 | +8 s | `HintHand` points at the target |
-| auto-help | +10 s | the target moves toward him / the game does it with him |
+| 1 | ~15 s without progress (game spec) | Тигриця gives a voiced hint and points the way; the marker gets brighter |
+| 2 | +10 s | the target glows softly |
+| 3 | +10 s | `HintHand` points at the target |
+| auto-help | +10 s | the game does it with him, with praise |
+
+Choices (password doors, pick-the-picture): after 2 wrong picks the right card glows and the
+door opens with praise (game spec). He never gets stuck.
 
 Any input resets the ladder. Mashing (≥5 taps in 2 s on non-targets) *(start)* plays a calm
 "let's look together" line and shows level 2.

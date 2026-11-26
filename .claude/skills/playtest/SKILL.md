@@ -41,7 +41,7 @@ Questions follow [`../_shared/ask-style.md`](../_shared/ask-style.md) and stay s
 
 ## Rules
 
-- **Privacy first.** Never record, copy or commit the child's voice, photos, video or full name. The log holds game events only. Notes refer to "the child".
+- **Privacy first.** OBS recordings, photos and the child's name never go into git or into a prompt sent off the machine. The log holds game events only. Notes refer to "the child". Timestamps in the event log let the parent line it up with the OBS recording locally.
 - **The child's experience outranks the metrics.** If the parent says it went badly, it went badly, whatever the log says.
 - **No grading the child.** Findings are about the game ("the target was too small"), never about the child ("she couldn't do it").
 - **One session is an anecdote.** Prefer "watch next time" over a big spec change after a single session, unless the child was upset or something was unsafe.

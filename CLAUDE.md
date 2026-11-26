@@ -1,6 +1,6 @@
 # arbuz: Тигриця's Journey
 
-An offline educational game for a three-year-old, built in **Godot 4.7** with **GDScript** and tested with **GUT**. Developed on an Apple Silicon Mac; must run well on an **Intel MacBook** (the child's machine).
+An offline educational game for a three-year-old, built in **Godot 4.7** with **GDScript** and tested with **GUT**. Developed on a MacBook M4; must run well on an **Intel MacBook** with integrated graphics (the minimum play machine). Builds for macOS (universal) and Windows. The game's vision is [`docs/game-spec.md`](docs/game-spec.md); the phased plan is [`docs/development-plan.md`](docs/development-plan.md).
 
 ## Non-negotiable product rules
 
@@ -8,10 +8,10 @@ These come before any feature request. If a request conflicts with one, say so a
 
 - **No reading required.** Every instruction is voiced. Text is decoration for the parent, never the only cue.
 - **No fail states.** A wrong answer gets a soft response and another try. No lives, no timers that punish, no lost progress.
-- **Big targets, simple input.** Tap/click only by default; no drags, double taps or precise timing unless the spec says so.
-- **Hint ladder.** After 8 s idle: repeat the instruction. +8 s: glow the target. +8 s: HintHand. Then auto-help.
+- **Big targets, simple input.** Mouse (click to go, hold to follow), keyboard arrows, or a gamepad with one big action button; every task works with each. No double taps or precise timing.
+- **Never stuck.** After about 15 s without progress Тигриця gives a hint and the marker brightens, escalating to auto-help (exact ladder in `docs/design-system.md`). After 2 wrong picks the right card glows and the door opens.
 - **Colour is never the only cue.** Always pair it with a shape or pattern.
-- **Child safety and privacy.** No network, analytics, ads, links or purchases. Parent-only things sit behind the ParentGate. Never record or store the child's voice, photo or name unless a spec explicitly says so.
+- **Child safety and privacy.** No network, analytics, ads, links or purchases. Parent-only things sit behind the ParentGate. The child's name lives only in the local save; the hero reference photo and OBS playtest recordings never go into git.
 - **Gentle sessions.** 15-minute default session timer, pause always available, nothing loud or flashing.
 - **Performance budget.** ≥30 fps and load ≤10 s on the Intel MacBook.
 - **Saves are sacred.** The save format is versioned JSON with a migration chain; old saves must always load.

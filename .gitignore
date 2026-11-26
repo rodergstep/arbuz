@@ -14,3 +14,9 @@ build/
 *.swp
 .idea/
 .vscode/
+
+# Playtest recordings and reference photos stay local
+*.mkv
+*.mov
+*.mp4
+reference/
