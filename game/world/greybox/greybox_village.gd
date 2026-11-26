@@ -86,11 +86,7 @@ func _ready() -> void:
 	_build_parent_area()
 	_last_input_ms = Time.get_ticks_msec()
 	EventLog.log_event(&"session_start", {"scene": "greybox_village"})
-	Speech.say_first(
-		"line:intro",
-		"Привіт! Я Тигриця. Поїхали в пригоду! Ходімо до машини.",
-		"Hello! I am Tigrytsia. Let's go! Let's go to the car!"
-	)
+	Speech.line("line:intro")
 	_go_to_step(Step.TO_CAR)
 
 
@@ -200,32 +196,16 @@ func _go_to_step(next: Step) -> void:
 	match next:
 		Step.TO_CAR:
 			_place_marker(car.global_position + Vector3(-2.2, 0, 0))
-			companion.set_goal(
-				marker,
-				[
-					"hint:to_car",
-					"Я тут! Ходи до машини, натисни на неї!",
-					"I'm here! Go to the car! Click the car!"
-				]
-			)
+			companion.set_goal(marker, "hint:to_car")
 		Step.DRIVE:
-			_say_when_free("line:drive", "Поїхали! Їдь до вогника!", "Let's go! Drive to the light!")
+			_say_when_free("line:drive")
 			_place_marker(DRIVE_SPOTS[_drive_spot])
 			_drive_spot = (_drive_spot + 1) % DRIVE_SPOTS.size()
-			companion.set_goal(
-				marker,
-				["hint:drive", "Їдь до вогника! Натисни на вогник!", "Drive to the light! Click the light!"]
-			)
+			companion.set_goal(marker, "hint:drive")
 		Step.TO_DOOR:
-			_say_when_free(
-				"line:to_door",
-				"Приїхали! Ходімо до дверей.",
-				"We are here! Out of the car. Let's go to the door!"
-			)
+			_say_when_free("line:to_door")
 			_place_marker(DOOR_POS + Vector3(0, 0, 6.5))
-			companion.set_goal(
-				marker, ["hint:to_door", "Ходімо до дверей! Вони тут.", "Go to the door! The door is here!"]
-			)
+			companion.set_goal(marker, "hint:to_door")
 		Step.DOOR:
 			_remove_marker()
 			companion.set_goal(null)
@@ -235,10 +215,10 @@ func _go_to_step(next: Step) -> void:
 
 
 ## Says an instruction, after any open learning card has finished.
-func _say_when_free(key: String, uk: String, en: String) -> void:
+func _say_when_free(key: String) -> void:
 	if learning.is_open():
 		await learning.moment_closed
-	Speech.say_first(key, uk, en)
+	Speech.line(key)
 
 
 func _place_marker(pos: Vector3) -> void:
@@ -260,12 +240,7 @@ func _on_marker_reached(body: Node3D) -> void:
 	match step:
 		Step.TO_CAR:
 			if body == hero:
-				Speech.say_first(
-					"line:here_car",
-					"Ось наша машина! Натисни на неї.",
-					"Here is our car! Click the car!",
-					true
-				)
+				Speech.line("line:here_car", null, true)
 		Step.DRIVE:
 			if body == car:
 				Sfx.play(&"chime")
@@ -295,7 +270,7 @@ func _on_door_opened(_word: StringName, _wrong: int) -> void:
 
 
 func _restart_loop() -> void:
-	_say_when_free("line:again", "Ще раз? Ходімо до машини!", "Again? Let's go to the car!")
+	_say_when_free("line:again")
 	_go_to_step(Step.TO_CAR)
 
 
@@ -373,7 +348,7 @@ func _on_door_wants_question() -> void:
 	# Nothing taught yet: teach a word right here, then ask it.
 	var fresh: Array[StringName] = DOOR_WORDS.filter(func(w: StringName) -> bool: return w != _last_door_word)
 	_pending_door_word = fresh.pick_random()
-	Speech.say_first("line:teach", "Спершу вивчимо слово!", "Let's learn a new word!", true)
+	Speech.line("line:teach", null, true)
 	var place: Array = _picture_of(_pending_door_word)
 	if not learning.request(_pending_door_word, place[0], place[1]):
 		_ask_door(_pending_door_word)

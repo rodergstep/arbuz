@@ -68,12 +68,12 @@ their contracts are written by `/contracts` when they do.
 | EventLog | `game/core/event_log.gd` | append timestamped JSON lines for playtests (Phase 0 stub, Phase 1 full) | `event_logged(kind: StringName)` | `docs/contracts/autoloads.md#eventlog` |
 | GameState | `game/core/game_state.gd` | example autoload of the skeleton; later the in-memory session state | `state_changed(key: StringName)` | `docs/contracts/autoloads.md#gamestate` |
 | WordDB | `game/core/word_db.gd` | loads `content/words/words.csv` (`get_word(id)`) | — | `docs/contracts/word-db.md` |
-| Speech | `game/core/speech.gd` | Phase 1 placeholder voices via OS text-to-speech (`say`, `say_first(key, uk, en)`); replaced by AudioManager | — | — |
+| Speech | `game/core/speech.gd` | everything the game says: `line(key, word)` from `content/voice/lines.csv`, plays generated `audio/voice/<lang>/<hash>.ogg`, OS text-to-speech fallback; Ukrainian only the first time (`say_first`) | `queue_finished` | `docs/contracts/voice-lines.md` |
 | Sfx | `game/core/sfx.gd` | Phase 1 placeholder sound effects synthesized in code (`play(kind)`) | — | — |
 | PhantomCameraManager | `addons/phantom_camera/…/phantom_camera_manager.gd` | required by Phantom Camera | — | addon |
 | Settings *(planned, Ph 2)* | `game/core/settings.gd` | volume, session length, language, parent options | `setting_changed(key: StringName)` | — |
 | SaveSystem | `game/core/save_system.gd` | versioned JSON per profile; Phase 1 keeps first meetings (`has_encountered`, `mark_encountered`), Phase 2 adds progress | `saved()`, `loaded(profile_id: String)` | `docs/contracts/save-format.md` |
-| AudioManager *(planned, Ph 2)* | `game/core/audio_manager.gd` | voice by line id, music ducking, no overlap | `line_finished(line_id: StringName)` | — |
+| AudioManager *(planned; music ducking)* | `game/core/audio_manager.gd` | voice by line id, music ducking, no overlap | `line_finished(line_id: StringName)` | — |
 | InputRouter *(planned, Ph 1)* | `game/core/input_router.gd` | one place mapping mouse / keys / pad / touch to game intents | `intent(kind: StringName)` | — |
 | InteractionSystem *(planned, Ph 1–2)* | `game/core/interaction_system.gd` | every click and card pick is judged here, then sent to the tracker | `pick_resolved(word_id: StringName, correct: bool)` | — |
 | LearningTracker | `game/core/learning_tracker.gd` | per-word stats in the save, box-based repetition (`record_heard`, `record_answer`, `most_needed`) | `stats_changed(word_id: StringName)` | `docs/contracts/save-format.md` |

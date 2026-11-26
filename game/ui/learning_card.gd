@@ -149,8 +149,8 @@ func _input(event: InputEvent) -> void:
 func _play(run: int) -> void:
 	# The first time he meets a word: Ukrainian first (and the Ukrainian word on the card).
 	if _first_time:
-		await _line("Це %s!" % _entry.uk, Speech.LANG_UK, run)
-	await _line("This is %s." % _with_article(_entry.en), Speech.LANG_EN, run)
+		await _line(Speech.text("card:first", Speech.LANG_UK, _entry), Speech.LANG_UK, run)
+	await _line(Speech.text("card:this_is", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
 	await _line(_entry.en, Speech.LANG_EN, run)
 	await _line(_entry.en, Speech.LANG_EN, run)
 	var sentences: PackedStringArray = _entry.examples_en.duplicate()
@@ -183,10 +183,6 @@ func _line(text: String, lang: StringName, run: int) -> void:
 		await get_tree().create_timer(0.2, true).timeout
 	if run == _run:
 		await get_tree().create_timer(LINE_PAUSE, true).timeout
-
-
-func _with_article(word: String) -> String:
-	return ("an " if "aeiou".contains(word.substr(0, 1)) else "a ") + word
 
 
 func _label(font_size: int, color: Color) -> Label:

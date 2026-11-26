@@ -7,7 +7,7 @@ An offline educational game for a three-year-old, built in **Godot 4.7** with **
 These come before any feature request. If a request conflicts with one, say so and ask.
 
 - **Education first.** The game exists to teach; play is the vehicle. Every situation (passing a bridge, clicking a duck, getting into the car, opening a door) is a chance for a learning moment: a picture of the real thing, the word spoken in Ukrainian and English, and short English sentences using it. Moments are short, voiced, skippable with one tap, and paced (not more than about one every 20 s on their own). 
-- **English immersion, Ukrainian only the first time.** The game speaks English, including Тигриця's instructions ("Here is our car!", "This is a bridge.", "Look! This card is glowing!"). The intro and the **first time** he meets any line or thing (the first river card, the first door question) are said in Ukrainian, then English; from the second time on, English only. Use `Speech.say_first(key, uk, en)`; first meetings are kept in the save, so they survive restarts. Short, simple phrases, repeated a lot. Dev runs must use a separate save dir (`tools/capture.gd` does) so they never use up his first meetings.
+- **English immersion, Ukrainian only the first time.** The game speaks English, including Тигриця's instructions ("Here is our car!", "This is a bridge.", "Look! This card is glowing!"). The intro and the **first time** he meets any line or thing (the first river card, the first door question) are said in Ukrainian, then English; from the second time on, English only. Every spoken line is a row in `content/voice/lines.csv` said with `Speech.line(key, word)` (never an inline string), and has a generated voice file; first meetings are kept in the save, so they survive restarts. Short, simple phrases, repeated a lot. Dev runs must use a separate save dir (`tools/capture.gd` does) so they never use up his first meetings.
 - **Teach before test.** Never ask him for a word (a password door, a quiz) that the game has not taught him earlier. If nothing suitable has been taught yet, teach it right there, then ask.
 - **No reading required.** Every instruction is voiced (English; Ukrainian the first time). Text is decoration for the parent, never the only cue.
 - **No fail states.** A wrong answer gets a soft response and another try. No lives, no timers that punish, no lost progress.
@@ -67,6 +67,8 @@ gdlint game tests tools && gdformat -l 110 --check game tests tools
 # builds
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release "macOS" build/macos/arbuz.zip
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release "Windows" build/windows/arbuz.exe
+# voices: after changing words.csv or content/voice/lines.csv (setup: audio_gen/README.md)
+audio_gen/.venv/bin/python audio_gen/generate_voices.py
 # regenerate the input map in project.godot
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path . --script res://tools/setup_input_map.gd
 # validate the workflow files after editing .claude/

@@ -16,8 +16,8 @@ const FOLLOW_OFFSET: Vector3 = Vector3(1.4, 0.0, 1.0)
 var follow: Node3D
 var goal: Node3D
 var goal_marker: GoalMarker
-## The hint as [key, Ukrainian, English]: Ukrainian only the first time (Speech.say_first).
-var hint_line: PackedStringArray = PackedStringArray()
+## The hint's line key in content/voice/lines.csv ("" = no hint).
+var hint_line: String = ""
 
 var _idle: float = 0.0
 var _best_distance: float = INF
@@ -61,7 +61,7 @@ func _ready() -> void:
 
 
 ## Sets the current goal; null clears it (free play: no hints).
-func set_goal(new_goal: Node3D, line: PackedStringArray = PackedStringArray()) -> void:
+func set_goal(new_goal: Node3D, line: String = "") -> void:
 	goal = new_goal
 	goal_marker = new_goal as GoalMarker
 	hint_line = line
@@ -120,8 +120,8 @@ func _give_hint(level: int) -> void:
 	_level = level
 	if goal_marker != null:
 		goal_marker.set_brightness(level)
-	if hint_line.size() == 3:
-		Speech.say_first(hint_line[0], hint_line[1], hint_line[2], true)
+	if not hint_line.is_empty():
+		Speech.line(hint_line, null, true)
 	EventLog.log_event(&"hint", {"level": level, "idle_s": snappedf(_idle, 0.1)})
 	hint_given.emit(level)
 	var tween: Tween = create_tween()

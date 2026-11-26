@@ -68,10 +68,6 @@ func is_active() -> bool:
 	return _active
 
 
-func question_line() -> String:
-	return "What is this? Listen to the cards!"
-
-
 func is_hero_inside() -> bool:
 	return _hero_inside
 
@@ -93,7 +89,7 @@ func ask(answer: WordEntry, others: Array[WordEntry], focus: Vector3, view_from:
 		Tween.EASE_OUT
 	)
 	_show_picture(focus, view_from)
-	Speech.say_first("door:question", "Що це? Послухай картки!", question_line(), true)
+	Speech.line("door:question", _answer, true)
 	EventLog.log_event(&"door_question", {"word": String(answer.id)})
 	cards_shown.emit()
 
@@ -129,8 +125,8 @@ func pick(card: PasswordCard) -> void:
 			LearningTracker.record_answer(_answer.id, true)
 		Sfx.play(&"chime")
 		card.celebrate()
-		Speech.say("Yes! %s! Well done!" % _cap(card.word_en), Speech.LANG_EN, true)
-		Speech.say_first("door:opening", "Двері відчиняються!", "The door is opening!")
+		Speech.line("door:yes", _answer, true)
+		Speech.line("door:opening", _answer)
 		_open_door()
 		return
 	_wrong += 1
@@ -142,12 +138,12 @@ func pick(card: PasswordCard) -> void:
 	if _wrong >= MAX_WRONG:
 		var answer: PasswordCard = _answer_card()
 		answer.glow()
-		Speech.say_first("door:glow", "Дивись! Ця картка світиться!", "Look! This card is glowing!")
-		Speech.say("%s!" % _cap(answer.word_en), Speech.LANG_EN)
-		Speech.say("This is a %s. Well done! The door is opening!" % answer.word_en, Speech.LANG_EN)
+		Speech.line("door:glow", _answer)
+		Speech.line("door:glow_word", _answer)
+		Speech.line("door:glow_done", _answer)
 		_open_door()
 	else:
-		Speech.say_first("door:retry", "Спробуймо ще!", "Try again! Where is the %s?" % _answer.en)
+		Speech.line("door:retry", _answer)
 
 
 func _on_hero_entered(_body: Node3D) -> void:
@@ -218,10 +214,6 @@ func _hide_question() -> void:
 	_cards_root.visible = false
 	_picture.visible = false
 	_picture_view.render_target_update_mode = SubViewport.UPDATE_DISABLED
-
-
-func _cap(word: String) -> String:
-	return word.substr(0, 1).to_upper() + word.substr(1)
 
 
 func _answer_card() -> PasswordCard:

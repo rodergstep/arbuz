@@ -57,7 +57,7 @@ func picture_view() -> Vector3:
 
 
 func say_name() -> void:
-	Speech.say_first("word:%s" % word_id, "Це %s!" % word_uk, "This is a %s. %s!" % [word_en, word_en], true)
+	Speech.line("thing:click", WordDB.get_word(word_id), true, "word:%s" % word_id)
 
 
 func _show_label() -> void:

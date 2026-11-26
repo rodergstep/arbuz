@@ -22,3 +22,7 @@ build/
 *.mov
 *.mp4
 reference/
+
+# Voice generation: local venv and downloaded models (re-downloadable)
+audio_gen/.venv/
+audio_gen/models/

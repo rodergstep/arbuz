@@ -44,9 +44,7 @@ func _process(delta: float) -> void:
 	played += delta
 	if not _warned and played >= limit - WARN_BEFORE:
 		_warned = true
-		Speech.say_first(
-			"session:warn", "Ще дві хвилинки, і будемо відпочивати.", "Two more minutes, then we rest."
-		)
+		Speech.line("session:warn")
 		EventLog.log_event(&"session_warning")
 		warned.emit()
 	if played >= limit:
@@ -73,8 +71,6 @@ func _end() -> void:
 	_tree_was_paused = false
 	get_tree().paused = true
 	visible = true
-	Speech.say_first(
-		"session:bye", "Ох, я втомилася. Бувай! До завтра!", "I am tired. Bye bye! See you tomorrow!", true
-	)
+	Speech.line("session:bye", null, true)
 	EventLog.log_event(&"session_end", {"played_s": roundi(played)})
 	ended.emit()
