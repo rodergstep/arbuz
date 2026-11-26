@@ -3,7 +3,7 @@ extends Node
 ## Runs a ChapterData in a scene. The scene reports what happened (car entered, marker reached,
 ## door opened); the runner decides when a step is done and what comes next. It talks to the
 ## scene only through the QuestHost methods: place_marker, clear_marker, set_hint, say_when_free,
-## exit_car, car_position, start_find.
+## exit_car, car_position, start_find, start_talk, play_ferry.
 
 signal step_started(index: int, step: QuestStep)
 signal chapter_finished(chapter_id: StringName)
@@ -45,11 +45,17 @@ func notify_marker_reached(body_kind: StringName) -> void:
 		QuestStep.Kind.DRIVE_TO:
 			if body_kind == &"car":
 				Sfx.play(&"chime")
-				host.call("exit_car")
+				# Stay in the car when the ferry comes next.
+				if not _next_is(QuestStep.Kind.FERRY):
+					host.call("exit_car")
 				_advance()
 		QuestStep.Kind.WALK_TO:
 			if body_kind == &"hero":
 				_advance()
+		QuestStep.Kind.TALK_TO:
+			if body_kind == &"hero":
+				host.call("clear_marker")
+				host.call("start_talk")
 
 
 func notify_door_question() -> void:
@@ -59,6 +65,16 @@ func notify_door_question() -> void:
 
 func notify_door_opened() -> void:
 	if _is(QuestStep.Kind.OPEN_DOOR):
+		_advance()
+
+
+func notify_talk_done() -> void:
+	if _is(QuestStep.Kind.TALK_TO):
+		_advance()
+
+
+func notify_ferry_done() -> void:
+	if _is(QuestStep.Kind.FERRY):
 		_advance()
 
 
@@ -84,6 +100,13 @@ func _advance() -> void:
 	host.call("set_hint", null, "")
 	chapter_finished.emit(chapter.id)
 	EventLog.log_event(&"chapter_finished", {"chapter": String(chapter.id)})
+	if not chapter.done_key.is_empty():
+		SaveSystem.mark_encountered(chapter.done_key)
+	if not chapter.next_chapter.is_empty():
+		_visits.clear()
+		chapter = load(chapter.next_chapter)
+		_go(0)
+		return
 	if chapter.loop:
 		index = -1
 		var tween: Tween = create_tween()
@@ -108,7 +131,7 @@ func _go(next: int) -> void:
 	match step.kind:
 		QuestStep.Kind.GET_IN_CAR:
 			host.call("place_marker", host.call("car_position") + Vector3(-2.2, 0, 0))
-		QuestStep.Kind.DRIVE_TO, QuestStep.Kind.WALK_TO:
+		QuestStep.Kind.DRIVE_TO, QuestStep.Kind.WALK_TO, QuestStep.Kind.TALK_TO:
 			if step.spots.is_empty():
 				host.call("clear_marker")
 			else:
@@ -118,6 +141,12 @@ func _go(next: int) -> void:
 		QuestStep.Kind.FIND_OBJECT:
 			host.call("clear_marker")
 			host.call("start_find")
+			step_started.emit(next, step)
+			return
+		QuestStep.Kind.FERRY:
+			host.call("clear_marker")
+			host.call("set_hint", null, "")
+			host.call("play_ferry")
 			step_started.emit(next, step)
 			return
 	host.call("set_hint", host.get("marker"), step.hint_line)

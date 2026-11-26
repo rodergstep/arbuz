@@ -322,6 +322,50 @@ def build_well():
     export("well")
 
 
+def build_postman():
+    """A friendly English postman: blue uniform, red cap, big satchel. About 1.7 m."""
+    reset()
+    root = empty("Postman", (0, 0, 0))
+    blue, skin = mat("uniform", (0.25, 0.38, 0.66, 1)), mat("skin", (0.96, 0.80, 0.68, 1))
+    red, bag = mat("cap", (0.80, 0.18, 0.20, 1)), mat("bag", (0.58, 0.40, 0.24, 1))
+    limb("LegL", (-0.12, 0, 0.75), 0.68, 0.09, mat("trousers", (0.18, 0.24, 0.40, 1)), root, mat("shoe", DARK))
+    limb("LegR", (0.12, 0, 0.75), 0.68, 0.09, mat("trousers", (0.18, 0.24, 0.40, 1)), root, mat("shoe", DARK))
+    body = empty("Body", (0, 0, 0.75), root)
+    sphere("Torso", (0, 0, 1.05), (0.3, 0.22, 0.38), blue, body)
+    for i, z in enumerate((1.25, 1.1, 0.95)):
+        sphere("Button%d" % i, (0, 0.21, z), (0.025,) * 3, mat("gold", (0.95, 0.80, 0.30, 1)), body, 8)
+    # Satchel on a strap
+    box("Satchel", (0.3, 0.1, 0.85), (0.12, 0.34, 0.3), bag, body, 0.04)
+    box("Strap", (0.05, 0.12, 1.15), (0.05, 0.04, 0.7), bag, body, 0.01, (0, math.radians(-35), 0))
+    for side, x in (("L", -0.33), ("R", 0.33)):
+        limb("Arm" + side, (x, 0, 1.33), 0.5, 0.075, blue, root, skin)
+    head = empty("Head", (0, 0, 1.55), root)
+    sphere("Face", (0, 0, 1.6), (0.2, 0.19, 0.22), skin, head, 20)
+    sphere("NoseP", (0, 0.19, 1.6), (0.035, 0.03, 0.035), skin, head, 10)
+    for x in (-0.07, 0.07):
+        sphere("EyeP%+.0f" % (x * 100), (x, 0.17, 1.66), (0.025, 0.015, 0.03), mat("eye", DARK), head, 8)
+    sphere("Smile", (0, 0.17, 1.52), (0.06, 0.02, 0.015), mat("mouth", (0.75, 0.35, 0.35, 1)), head, 10)
+    cylinder("Cap", (0, 0, 1.8), 0.2, 0.12, red, head, verts=18)
+    box("Visor", (0, 0.17, 1.75), (0.28, 0.14, 0.03), mat("cap_dark", (0.20, 0.12, 0.12, 1)), head, 0.02)
+    export("postman")
+
+
+def build_ferry():
+    """A small river ferry: a flat deck that fits the car, railings, a little cabin, a funnel."""
+    reset()
+    root = empty("Ferry", (0, 0, 0))
+    box("Hull", (0, 0, 0.25), (3.2, 5.6, 0.6), mat("hull", (0.86, 0.32, 0.30, 1)), root, 0.2)
+    box("Deck", (0, 0, 0.57), (2.9, 5.3, 0.06), mat("deck", (0.72, 0.58, 0.40, 1)), root, 0.02)
+    for x in (-1.5, 1.5):
+        box("Rail%+.0f" % x, (x, 0, 0.85), (0.06, 5.2, 0.06), mat("rail", (0.97, 0.96, 0.92, 1)), root, 0.0)
+        for y in (-2.4, -1.2, 0.0, 1.2, 2.4):
+            cylinder("Post%+.0f%+.0f" % (x, y), (x, y, 0.72), 0.03, 0.3, mat("rail", (0.97, 0.96, 0.92, 1)), root, verts=6)
+    box("Cabin", (0, -2.25, 1.2), (1.4, 0.9, 1.2), mat("cabin", (0.97, 0.96, 0.92, 1)), root, 0.12)
+    box("CabinWindow", (0, -1.79, 1.35), (1.0, 0.05, 0.4), mat("glass", GLASS), root, 0.03)
+    cylinder("Funnel", (0, -2.4, 2.1), 0.2, 0.7, mat("funnel", (0.25, 0.38, 0.66, 1)), root, verts=14)
+    export("ferry")
+
+
 build_tygrytsa()
 build_hatchback()
 build_jeep()
@@ -331,3 +375,5 @@ build_tree()
 build_sunflower()
 build_fence()
 build_well()
+build_postman()
+build_ferry()

@@ -74,8 +74,10 @@ func _may_offer(word_id: StringName) -> bool:
 
 
 ## A moment he asked for (a click): opens unless a card or a door question is on screen.
-func request(word_id: StringName, focus: Vector3, view_from: Vector3) -> bool:
-	if card.is_open or is_busy.call():
+## `from_story`: a character's own scene asks for it (it owns the screen anyway), so the
+## busy check is skipped.
+func request(word_id: StringName, focus: Vector3, view_from: Vector3, from_story: bool = false) -> bool:
+	if card.is_open or (is_busy.call() and not from_story):
 		return false
 	return _open(word_id, focus, view_from)
 

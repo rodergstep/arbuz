@@ -15,3 +15,8 @@ door,places,двері,door,puerta,porte,,"Open the door, please.|The door is op
 lion,animals,лев,lion,león,lion,,"The lion says roar.|The lion is big."
 cat,animals,кіт,cat,gato,chat,,"The cat says meow.|The cat is soft."
 apple,food,яблуко,apple,manzana,pomme,,"The apple is red.|I eat an apple."
+hello,greetings,привіт,hello,hola,bonjour,,"Hello! How are you?|Say hello to the postman.|Hello, Tygrytsa!"
+bye,greetings,бувай,bye,adiós,au revoir,,"Bye bye!|Say bye to the village.|Bye! See you tomorrow!"
+letter,things,лист,letter,carta,lettre,,"Here is a letter for you.|The postman brings a letter.|A letter from England!"
+postman,people,листоноша,postman,cartero,facteur,,"The postman has a big bag.|The postman says hello."
+ferry,transport,пором,ferry,ferry,ferry,,"The car goes on the ferry.|The ferry goes to England."

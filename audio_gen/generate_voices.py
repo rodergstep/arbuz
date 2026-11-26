@@ -25,7 +25,9 @@ LINES = ROOT / "content/voice/lines.csv"
 OUT = ROOT / "audio/voice"
 MODELS = ROOT / "audio_gen/models"
 
-EN_VOICE = "bf_emma"  # British English, warm and clear
+EN_VOICE = "bf_emma"  # Tygrytsa: British English, warm and clear
+# Other speakers (the `speaker` column of lines.csv) and their English voices.
+SPEAKER_VOICES = {"postman": "bm_george"}
 EN_SPEED = 0.95  # natural pace; slowness comes from pauses, never from stretching (playtests)
 UK_SPEAKER = 0  # "lada"
 UK_LENGTH_SCALE = 1.0  # natural pace
@@ -56,7 +58,15 @@ def fill(template: str, word: dict) -> str:
 
 
 def voice_name(lang: str, text: str) -> str:
+    """text may be "speaker|line" for a speaker other than Tygrytsa (see Speech.voice_path)."""
     return hashlib.sha1(f"{lang}|{text}".encode("utf-8")).hexdigest()[:16] + ".ogg"
+
+
+def split_speaker(text: str):
+    head, sep, rest = text.partition("|")
+    if sep and head in SPEAKER_VOICES:
+        return head, rest
+    return "", text
 
 
 def collect() -> dict:
@@ -73,11 +83,14 @@ def collect() -> dict:
             template = row[lang]
             if not template:
                 continue
+            # Only the English of a speaker's line uses their voice; Ukrainian is Tygrytsa's.
+            speaker = (row.get("speaker") or "") if lang == "en" else ""
+            prefix = f"{speaker}|" if speaker else ""
             if "{" in template:
                 for w in words:
-                    texts[lang].add(fill(template, w))
+                    texts[lang].add(prefix + fill(template, w))
             else:
-                texts[lang].add(template)
+                texts[lang].add(prefix + template)
     return texts
 
 
@@ -102,10 +115,12 @@ def with_pauses(parts: list, rate: int):
 
 
 def render_en(kokoro, text: str):
+    speaker, text = split_speaker(text)
+    voice = SPEAKER_VOICES.get(speaker, EN_VOICE)
     parts = []
     rate = 24000
     for sentence in sentences(text):
-        samples, rate = kokoro.create(sentence, voice=EN_VOICE, speed=EN_SPEED, lang="en-gb")
+        samples, rate = kokoro.create(sentence, voice=voice, speed=EN_SPEED, lang="en-gb")
         parts.append(samples)
     return with_pauses(parts, rate)
 
@@ -163,9 +178,16 @@ def main() -> int:
                 if not args.dry_run:
                     stale.unlink()
                     stale.with_name(stale.name + ".import").unlink(missing_ok=True)
+        # Other speakers' voices have their own stamp: changing one re-renders their lines only.
+        speaker_stamp = OUT / lang / "speaker-voices.txt"
+        speakers_now = ",".join(f"{k}={v}" for k, v in sorted(SPEAKER_VOICES.items())) if lang == "en" else ""
+        rebuild_speakers = speaker_stamp.exists() is False or speaker_stamp.read_text().strip() != speakers_now
+        if rebuild_speakers and lang == "en" and not args.dry_run:
+            speaker_stamp.write_text(speakers_now + "\n")
         for t in sorted(items):
             # After a settings change every line is rendered again (also counted in --dry-run).
-            if rebuild or not (OUT / lang / voice_name(lang, t)).exists():
+            stale_speaker = rebuild_speakers and lang == "en" and split_speaker(t)[0] != ""
+            if rebuild or stale_speaker or not (OUT / lang / voice_name(lang, t)).exists():
                 todo.append((lang, t))
     print(f"{sum(len(v) for v in texts.values())} texts, {len(todo)} to render")
     if args.dry_run or not todo:

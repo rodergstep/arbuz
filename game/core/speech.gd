@@ -47,10 +47,16 @@ func _ready() -> void:
 func line(key: String, word: WordEntry = null, interrupt: bool = false, first_key: String = "") -> void:
 	var uk: String = text(key, LANG_UK, word)
 	var en: String = text(key, LANG_EN, word)
+	var speaker: String = speaker_of(key)
 	if uk.is_empty():
-		say(en, LANG_EN, interrupt)
+		say(en, LANG_EN, interrupt, speaker)
 		return
-	say_first(first_key if not first_key.is_empty() else key, uk, en, interrupt)
+	say_first(first_key if not first_key.is_empty() else key, uk, en, interrupt, speaker)
+
+
+## Who says a catalogue line ("" = Tygrytsa; e.g. "postman").
+func speaker_of(key: String) -> String:
+	return _lines[key][2] if _lines.has(key) and _lines[key].size() > 2 else ""
 
 
 ## The filled-in text of a catalogue line in one language ("" when the line has none).
@@ -71,25 +77,26 @@ func text(key: String, lang: StringName, word: WordEntry = null) -> String:
 
 
 ## Ukrainian + English the first time this key is met, English only after (kept in the save).
-func say_first(key: String, uk: String, en: String, interrupt: bool = false) -> bool:
+func say_first(key: String, uk: String, en: String, interrupt: bool = false, speaker: String = "") -> bool:
 	if SaveSystem.has_encountered(key):
-		say(en, LANG_EN, interrupt)
+		say(en, LANG_EN, interrupt, speaker)
 		return false
+	# The Ukrainian first-time line is always Tygrytsa's (she explains); then the speaker's English.
 	say(uk, LANG_UK, interrupt)
 	if not en.is_empty():
-		say(en, LANG_EN)
+		say(en, LANG_EN, false, speaker)
 	SaveSystem.mark_encountered(key)
 	return true
 
 
 ## Queues one text. interrupt clears whatever is playing or waiting.
-func say(spoken: String, lang: StringName = LANG_EN, interrupt: bool = false) -> void:
+func say(spoken: String, lang: StringName = LANG_EN, interrupt: bool = false, speaker: String = "") -> void:
 	if spoken.is_empty():
 		return
-	EventLog.log_event(&"voice", {"text": spoken, "lang": String(lang)})
+	EventLog.log_event(&"voice", {"text": spoken, "lang": String(lang), "speaker": speaker})
 	if interrupt:
 		stop()
-	_queue.append(PackedStringArray([spoken, String(lang)]))
+	_queue.append(PackedStringArray([spoken, String(lang), speaker]))
 
 
 func stop() -> void:
@@ -118,8 +125,10 @@ func apply_volume() -> void:
 
 
 ## The generated voice file for a text; the generator uses the same naming.
-static func voice_path(spoken: String, lang: StringName) -> String:
-	return "%s/%s/%s.ogg" % [VOICE_DIR, lang, ("%s|%s" % [lang, spoken]).sha1_text().substr(0, 16)]
+## A speaker other than Tygrytsa has its own voice, so its name is part of the hash.
+static func voice_path(spoken: String, lang: StringName, speaker: String = "") -> String:
+	var key: String = "%s|%s" % [lang, spoken] if speaker.is_empty() else "%s|%s|%s" % [lang, speaker, spoken]
+	return "%s/%s/%s.ogg" % [VOICE_DIR, lang, key.sha1_text().substr(0, 16)]
 
 
 static func with_article(word: String) -> String:
@@ -144,7 +153,7 @@ func _process(delta: float) -> void:
 		return
 	var item: PackedStringArray = _queue.pop_front()
 	var lang: StringName = StringName(item[1])
-	var path: String = voice_path(item[0], lang)
+	var path: String = voice_path(item[0], lang, item[2] if item.size() > 2 else "")
 	if ResourceLoader.exists(path):
 		_player.stream = load(path)
 		_player.play()
@@ -165,4 +174,5 @@ func _load_lines() -> void:
 	while not file.eof_reached():
 		var row: PackedStringArray = file.get_csv_line()
 		if row.size() >= 3 and not row[0].is_empty():
-			_lines[row[0]] = PackedStringArray([row[1], row[2]])
+			var speaker: String = row[3] if row.size() > 3 else ""
+			_lines[row[0]] = PackedStringArray([row[1], row[2], speaker])

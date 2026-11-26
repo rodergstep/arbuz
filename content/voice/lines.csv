@@ -1,4 +1,4 @@
-key,uk,en
+key,uk,en,speaker
 line:intro,"Привіт! Я Тигриця. Поїхали в пригоду! Ходімо до машини.","Hello! I am Tygrytsa. Let's go! Let's go to the car!"
 line:here_car,"Ось наша машина! Натисни на неї.","Here is our car! Click the car!"
 line:drive,"Поїхали! Їдь до вогника!","Let's go! Drive to the light!"
@@ -30,3 +30,16 @@ card:say_it,,"Now you! Say: {word}!"
 card:great,,"Great job! {Word}!"
 card:great_heard,,"Yes! {Word}! You said it! Great job!"
 card:your_turn,,"Your turn! Say: {word}!"
+line:walk_tutorial,"Натискай на землю, щоб іти. Іди до вогника!","Click the ground to walk. Walk to the light!"
+hint:walk,"Натисни на вогник, і ти підеш туди!","Click the light, and you walk there!"
+line:to_postman,"Дивись, листоноша! Ходімо до нього.","Look, a postman! Let's go to him!"
+hint:to_postman,"Іди до листоноші!","Go to the postman!"
+talk:hello,,"Hello! Hello!",postman
+talk:say_hello,"Він каже «hello», це «привіт». Скажи і ти!","He says hello! Now you! Say: hello!"
+talk:letter,,"Here is a letter for you! A letter from England!",postman
+talk:bye,,"Bye! Bye bye! See you in England!",postman
+talk:say_bye,"Він каже «bye», це «бувай». Скажи і ти!","He says bye! Now you! Say: bye!"
+line:to_ferry,"Нас запросили до Англії! Їдьмо до порому!","We are going to England! Drive to the ferry!"
+hint:to_ferry,"Їдь до порому, до вогника біля річки!","Drive to the ferry! Drive to the light by the river!"
+ferry:board,,"Onto the ferry! Here we go!"
+ferry:bye,"Бувай, село! Привіт, Англіє!","Bye bye, village! Hello, England!"

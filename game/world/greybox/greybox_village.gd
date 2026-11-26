@@ -6,6 +6,12 @@ extends Node3D
 ## content/chapters/greybox_loop.tres, run by QuestRunner. This scene is its host.
 
 const CHAPTER_PATH: String = "res://content/chapters/greybox_loop.tres"
+## The story start, played once (until finished; then the practice loop).
+const PROLOGUE_PATH: String = "res://content/chapters/prologue.tres"
+const PROLOGUE_DONE: String = "chapter:prologue"
+const POSTMAN_POS: Vector3 = Vector3(-15, 0, 14.5)
+const FERRY_DOCK: Vector3 = Vector3(12, 0, 14)
+const FERRY_TRIP: Vector3 = Vector3(0, 0, -18)
 
 const ENTER_DISTANCE: float = 3.5
 const IDLE_LOG_SECONDS: float = 5.0
@@ -51,6 +57,12 @@ var learning: LearningDirector
 var session: SessionTimer
 var parent_screen: ParentScreen
 var quest: QuestRunner
+var postman: PostmanNpc
+var ferry: Node3D
+var say_hud: CanvasLayer
+var _say_mic: MicBubble
+var _cutscene: bool = false
+var _fade_layer: CanvasLayer
 
 var _walk_cam: PhantomCamera3D
 var _drive_cam: PhantomCamera3D
@@ -78,6 +90,7 @@ func _ready() -> void:
 	_build_grass()
 	_build_actors()
 	_build_clickables()
+	_build_story_cast()
 	_build_camera()
 	_build_learning()
 	pointer = PointerInput.new()
@@ -95,10 +108,14 @@ func _ready() -> void:
 	Speech.line("line:intro")
 	quest = QuestRunner.new()
 	add_child(quest)
-	quest.start(load(CHAPTER_PATH), self)
+	var first: String = CHAPTER_PATH if SaveSystem.has_encountered(PROLOGUE_DONE) else PROLOGUE_PATH
+	quest.start(load(first), self)
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# No gameplay keys during a cutscene or a character's talk (pause has its own handler).
+	if _cutscene or postman.is_talking():
+		return
 	if door.is_active():
 		if event.is_action_pressed(&"move_left"):
 			door.focus_step(-1)
@@ -120,6 +137,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_ground_clicked(point: Vector3) -> void:
+	if _cutscene or postman.is_talking():
+		return
 	_pending_enter = false
 	if car.driving:
 		car.drive_to(point)
@@ -132,6 +151,9 @@ func _on_ground_held(point: Vector3) -> void:
 
 
 func _on_pickable_clicked(area: Area3D) -> void:
+	# Story sequences own the input (the postman's talk, the ferry).
+	if _cutscene or postman.is_talking():
+		return
 	if area is PasswordCard:
 		door.pick(area)
 	elif area is Clickable and _find_target != null:
@@ -309,6 +331,72 @@ func say_when_free_word(key: String, word: WordEntry) -> void:
 	Speech.line(key, word)
 
 
+## Prologue: the postman says hello, gives a letter from England, says bye (talks to the child).
+func start_talk() -> void:
+	hero.stop()
+	hero.keyboard_enabled = false
+	set_hint(null, "")
+	await postman.talk(learning, _say_mic, hero.global_position)
+	hero.keyboard_enabled = true
+	quest.notify_talk_done()
+
+
+## Prologue end: the car rolls onto the ferry, which sails away up the river ("Bye bye, village!
+## Hello, England!"); a soft fade, and the village is ready to play again.
+func play_ferry() -> void:
+	_cutscene = true
+	car.driving = true
+	car.stop()
+	car.process_mode = Node.PROCESS_MODE_DISABLED
+	companion.visible = false
+	Speech.line("ferry:board", null, true)
+	var deck: Vector3 = ferry.global_position + Vector3(0, 0.6, 0.4)
+	var board: Tween = create_tween()
+	board.tween_property(car, "global_position", deck, 2.2).set_trans(Tween.TRANS_SINE)
+	board.parallel().tween_property(car, "rotation:y", 0.0, 1.0)
+	await board.finished
+	car.reparent(ferry)
+	Speech.line("ferry:bye")
+	Sfx.play(&"horn")
+	var sail: Tween = create_tween()
+	sail.tween_property(ferry, "global_position", FERRY_DOCK + FERRY_TRIP, 8.0).set_trans(Tween.TRANS_SINE)
+	await sail.finished
+	await _fade(true)
+	car.reparent(self)
+	ferry.global_position = FERRY_DOCK
+	car.global_position = CAR_START
+	car.rotation.y = PI / 2.0
+	car.process_mode = Node.PROCESS_MODE_INHERIT
+	_exit_car()
+	hero.global_position = HERO_START
+	companion.global_position = HERO_START + Companion.FOLLOW_OFFSET
+	companion.visible = true
+	_cutscene = false
+	await _fade(false)
+	quest.notify_ferry_done()
+
+
+func _fade(to_dark: bool) -> void:
+	var layer: CanvasLayer = CanvasLayer.new()
+	layer.layer = 8
+	var rect: ColorRect = ColorRect.new()
+	rect.color = Color(UiTokens.BG_SKY, 0.0 if to_dark else 1.0)
+	rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(rect)
+	add_child(layer)
+	var tween: Tween = create_tween()
+	tween.tween_property(rect, "color:a", 1.0 if to_dark else 0.0, 1.2)
+	await tween.finished
+	if to_dark:
+		_fade_layer = layer
+	else:
+		if _fade_layer != null:
+			_fade_layer.queue_free()
+			_fade_layer = null
+		layer.queue_free()
+
+
 func _on_marker_reached(body: Node3D) -> void:
 	if _find_target != null:
 		return
@@ -363,10 +451,33 @@ func _build_parent_area() -> void:
 	)
 
 
+func _build_story_cast() -> void:
+	postman = PostmanNpc.new()
+	add_child(postman)
+	postman.global_position = POSTMAN_POS
+	Blocks.hidden_solid(_nav, POSTMAN_POS + Vector3(0, 0.9, 0), Vector3(0.6, 1.8, 0.6))
+	ferry = Node3D.new()
+	ferry.add_child(Blocks.prop("ferry", Vector3.ZERO))
+	add_child(ferry)
+	ferry.global_position = FERRY_DOCK
+	# His turn to speak during a talk: the microphone sign at the bottom of the screen.
+	say_hud = CanvasLayer.new()
+	say_hud.layer = 4
+	var center: CenterContainer = CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	center.position.y -= 160
+	say_hud.add_child(center)
+	_say_mic = MicBubble.new()
+	_say_mic.visible = false
+	center.add_child(_say_mic)
+	add_child(say_hud)
+
+
 func _build_learning() -> void:
 	learning = LearningDirector.new()
 	add_child(learning)
-	learning.is_busy = func() -> bool: return door.is_active() or pause_overlay.visible
+	learning.is_busy = func() -> bool:
+		return door.is_active() or pause_overlay.visible or _cutscene or postman.is_talking()
 	for spot_data: Array in LEARNING_SPOTS:
 		var spot: LearningSpot = LearningSpot.new()
 		spot.setup(spot_data[0], spot_data[2], spot_data[3])

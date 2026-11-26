@@ -12,8 +12,6 @@ const CARD_SIZE: Vector2 = Vector2(1040, 540)
 const MAX_SENTENCES: int = 2
 const LINE_PAUSE: float = 0.5
 const SILENT_LINE_SECONDS: float = 2.2
-## How long to wait for him to say the word back before praising anyway.
-const SAY_IT_LISTEN: float = 5.0
 
 var is_open: bool = false
 
@@ -158,7 +156,7 @@ func _play(run: int) -> void:
 	# Say it back: the card waits until he says the word (any sound counts, never judged),
 	# asking again gently. Without a microphone it praises after one wait so nobody gets stuck.
 	await _line(Speech.text("card:say_it", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
-	var heard: bool = await _wait_for_his_turn(run)
+	var heard: bool = await SayItBack.wait_for_word(self, _entry, _mic, func() -> bool: return run == _run)
 	if run != _run:
 		return
 	if heard:
@@ -178,24 +176,6 @@ func _play(run: int) -> void:
 		await get_tree().create_timer(1.2, true).timeout
 	if run == _run:
 		close()
-
-
-## Listens until he makes a sound, re-asking after each quiet try (every third try the word is
-## said again first). Returns false only when there is no microphone or it seems blocked.
-func _wait_for_his_turn(run: int) -> bool:
-	var tries: int = 0
-	while run == _run:
-		_mic.visible = true
-		var heard: bool = await VoiceListener.listen(SAY_IT_LISTEN)
-		_mic.visible = false
-		if heard or not VoiceListener.available() or VoiceListener.seems_blocked():
-			return heard
-		tries += 1
-		EventLog.log_event(&"say_it_reprompt", {"word_id": String(_entry.id), "tries": tries})
-		if tries % 3 == 0:
-			await _line(_entry.en, Speech.LANG_EN, run)
-		await _line(Speech.text("card:your_turn", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
-	return false
 
 
 ## Speaks one line and waits until it is done (or for a fixed time when there is no voice).

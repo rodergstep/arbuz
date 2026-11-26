@@ -19,12 +19,14 @@ inspector.
 | `loop` | bool | start again after the last step (practice loop) |
 | `loop_line` | String | line key said when it starts again |
 | `loop_delay` | float | seconds before it starts again |
+| `next_chapter` | String | `res://` path played after this one (prologue → practice loop) |
+| `done_key` | String | remembered in the save when finished (e.g. `chapter:prologue`) |
 
 ## QuestStep
 
 | Field | Type | Meaning |
 |---|---|---|
-| `kind` | `GET_IN_CAR` · `DRIVE_TO` · `WALK_TO` · `OPEN_DOOR` · `FIND_OBJECT` | what finishes the step: entering the car; the car reaching the marker (he gets out); the hero reaching the marker or the door question starting; the door opening; clicking the asked thing. New kinds are appended (the `.tres` stores the number) |
+| `kind` | `GET_IN_CAR` · `DRIVE_TO` · `WALK_TO` · `OPEN_DOOR` · `FIND_OBJECT` · `TALK_TO` · `FERRY` | what finishes the step: entering the car; the car reaching the marker (he gets out); the hero reaching the marker or the door question starting; the door opening; clicking the asked thing; the talk with the character at the marker ending; the ferry cutscene ending. New kinds are appended (the `.tres` stores the number) |
 | `spots` | Array[Vector3] | marker positions; each loop visit uses the next |
 | `start_line` | String | line key said when the step starts (after any learning card) |
 | `hint_line` | String | Tygrytsa's idle-hint line key |
@@ -35,6 +37,6 @@ Line keys refer to `content/voice/lines.csv` (`docs/contracts/voice-lines.md`).
 ## Host API (the scene running a chapter)
 
 `place_marker(pos: Vector3)`, `clear_marker()`, `set_hint(goal: Node3D, line_key: String)`,
-`say_when_free(line_key: String)`, `car_position() -> Vector3`, `exit_car()`, `start_find()`, and a `marker`
+`say_when_free(line_key: String)`, `car_position() -> Vector3`, `exit_car()`, `start_find()`, `start_talk()`, `play_ferry()`, and a `marker`
 property. The scene reports `notify_car_entered()`, `notify_marker_reached(&"hero"|&"car")`,
-`notify_door_question()`, `notify_door_opened()`, `notify_found()`.
+`notify_door_question()`, `notify_door_opened()`, `notify_found()`, `notify_talk_done()`, `notify_ferry_done()`.
