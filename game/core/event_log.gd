@@ -1,6 +1,7 @@
 extends Node
 ## Playtest event log: one JSON object per line, {"t": msec since start, "wall": ISO time,
-## "kind": ..., "data": {...}}, written to user://logs/<session start>.jsonl.
+## "kind": ..., "data": {...}}, written to user://logs/<start>-<msec>-<pid>.jsonl, one file
+## per launch.
 ## Reviewed next to the OBS recording. Never stores anything outside the local machine.
 
 signal event_logged(kind: StringName)
@@ -50,14 +51,13 @@ func _ensure_open() -> bool:
 	if err != OK:
 		push_warning("EventLog: cannot create %s (error %d)" % [log_dir, err])
 		return false
+	# Date, time, milliseconds and the process id: two launches never share a file.
 	var stamp: String = Time.get_datetime_string_from_system(false, false).replace(":", "-")
-	_path = "%s/%s.jsonl" % [log_dir, stamp]
-	_file = FileAccess.open(
-		_path, FileAccess.WRITE_READ if FileAccess.file_exists(_path) else FileAccess.WRITE
-	)
+	var msec: int = int(fmod(Time.get_unix_time_from_system(), 1.0) * 1000.0)
+	_path = "%s/%s-%03d-%d.jsonl" % [log_dir, stamp, msec, OS.get_process_id()]
+	_file = FileAccess.open(_path, FileAccess.WRITE)
 	if _file == null:
 		push_warning("EventLog: cannot open %s (error %d)" % [_path, FileAccess.get_open_error()])
 		_path = ""
 		return false
-	_file.seek_end()
 	return true

@@ -20,7 +20,8 @@ var current_info: Dictionary
 var version_indicator: Button
 
 func _ready() -> void:
-	request_update_check()
+	# arbuz patch: no automatic network access (child-safety rule). Updates are manual.
+	# request_update_check()
 
 	setup_version_indicator()
 

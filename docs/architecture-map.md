@@ -206,7 +206,7 @@ func test_set_value_emits_state_changed_once() -> void:
 | `content/words/words.csv` | CSV `id,topic,uk,en,es,fr,model` | — | `docs/contracts/word-db.md` (Phase 2) |
 | `content/chapters/*.tres` | Godot `Resource` | — | `docs/contracts/content-resources.md` (Phase 2) |
 | `content/dialogue/*.dtl` | Dialogic timelines | — | — |
-| `user://logs/<date>-<time>.jsonl` | JSON lines `{t, kind, data}` | — | `docs/contracts/autoloads.md#eventlog` |
+| `user://logs/<date>T<time>-<msec>-<pid>.jsonl` | JSON lines `{t, kind, data}` | — | `docs/contracts/autoloads.md#eventlog` |
 
 ## UI foundation
 
@@ -228,6 +228,7 @@ Not built yet. `/design-system` writes `docs/design-system.md`; the code lands i
 
 ## Constraints & known debt
 
+- **Vendored addon patches (re-apply after any addon upgrade):** automatic update checks are disabled so the editor makes no network calls: `addons/dialogic/Editor/Common/update_manager.gd` (`_ready` no longer calls `request_update_check`), `addons/gut/gut_plugin.gd` (no auto fetch on load), and Phantom Camera via `phantom_camera/updater/updater_mode=0` in `project.godot`. Each code patch is marked `arbuz patch`.
 - Dialogic 2 is still alpha; alpha 20 broke subsystem save state versus 19. Pin it and keep Dialogic state out of our save format (our save stores only our own data).
 - GUT 9.7: doubles return typed defaults, not `null` (Godot 4.7 return-type checks).
 - macOS gamepad over Bluetooth may differ from USB and the 2.4G dongle; Gate 0 tests all three with the Machenike G5 Pro, USB is the guaranteed fallback.

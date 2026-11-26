@@ -112,6 +112,10 @@ dialogic_default_action={
 ])
 }
 
+[phantom_camera]
+
+updater/updater_mode=0
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
