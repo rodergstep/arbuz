@@ -21,3 +21,5 @@ sun, cloud, moon, dog, cat, lion, hen, bird, balloon_<colour>, a number word.
 end); `say Text…` (hops, speech bubble); `wave`; `grow`; `count n` (n copies pop in one by one);
 `fly` (rises); `spin`; `float height`; `eat` (gets smaller bite by bite); `glow` (a lamp's light);
 `open` (a door's `Leaf` swings); `tick` (a clock's `Hand` moves).
+
+**Import:** `scenes.csv` (like `words.csv` and `lines.csv`) must use the `keep` importer. Godot imports a `.csv` as a translation by default, and then the raw file is left out of exported builds, so no scene plays there (playtest bug, 2026-11-26).
