@@ -47,7 +47,8 @@ func _process(_delta: float) -> bool:
 	_frame += 1
 	if _frame == 30:
 		var path: String = ProjectSettings.globalize_path("res://build/shots/models.png")
-		root.get_viewport().get_texture().get_image().save_png(path)
-		print("saved ", path)
+		DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+		var err: Error = root.get_viewport().get_texture().get_image().save_png(path)
+		print("saved " if err == OK else "could not save ", path, " ", error_string(err))
 		return true
 	return false
