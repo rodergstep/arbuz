@@ -178,9 +178,16 @@ def main() -> int:
                 if not args.dry_run:
                     stale.unlink()
                     stale.with_name(stale.name + ".import").unlink(missing_ok=True)
+        # Other speakers' voices have their own stamp: changing one re-renders their lines only.
+        speaker_stamp = OUT / lang / "speaker-voices.txt"
+        speakers_now = ",".join(f"{k}={v}" for k, v in sorted(SPEAKER_VOICES.items())) if lang == "en" else ""
+        rebuild_speakers = speaker_stamp.exists() is False or speaker_stamp.read_text().strip() != speakers_now
+        if rebuild_speakers and lang == "en" and not args.dry_run:
+            speaker_stamp.write_text(speakers_now + "\n")
         for t in sorted(items):
             # After a settings change every line is rendered again (also counted in --dry-run).
-            if rebuild or not (OUT / lang / voice_name(lang, t)).exists():
+            stale_speaker = rebuild_speakers and lang == "en" and split_speaker(t)[0] != ""
+            if rebuild or stale_speaker or not (OUT / lang / voice_name(lang, t)).exists():
                 todo.append((lang, t))
     print(f"{sum(len(v) for v in texts.values())} texts, {len(todo)} to render")
     if args.dry_run or not todo:

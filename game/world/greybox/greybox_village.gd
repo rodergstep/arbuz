@@ -113,6 +113,9 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	# No gameplay keys during a cutscene or a character's talk (pause has its own handler).
+	if _cutscene or postman.is_talking():
+		return
 	if door.is_active():
 		if event.is_action_pressed(&"move_left"):
 			door.focus_step(-1)
