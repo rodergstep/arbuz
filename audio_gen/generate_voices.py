@@ -144,7 +144,8 @@ def main() -> int:
     for lang, items in texts.items():
         (OUT / lang).mkdir(parents=True, exist_ok=True)
         stamp = OUT / lang / "voice-settings.txt"
-        if not stamp.exists() or stamp.read_text().strip() != STAMPS[lang]:
+        rebuild = not stamp.exists() or stamp.read_text().strip() != STAMPS[lang]
+        if rebuild:
             print(f"{lang}: voice settings changed -> render all again")
             if not args.dry_run:
                 for old in (OUT / lang).glob("*.ogg"):
@@ -163,7 +164,8 @@ def main() -> int:
                     stale.unlink()
                     stale.with_name(stale.name + ".import").unlink(missing_ok=True)
         for t in sorted(items):
-            if not (OUT / lang / voice_name(lang, t)).exists():
+            # After a settings change every line is rendered again (also counted in --dry-run).
+            if rebuild or not (OUT / lang / voice_name(lang, t)).exists():
                 todo.append((lang, t))
     print(f"{sum(len(v) for v in texts.values())} texts, {len(todo)} to render")
     if args.dry_run or not todo:
