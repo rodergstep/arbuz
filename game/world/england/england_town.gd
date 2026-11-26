@@ -17,6 +17,18 @@ const FARMER_POS: Vector3 = Vector3(24, 0, 25)
 const CHAPTER4_PATH: String = "res://content/chapters/chapter4_clock.tres"
 const CHAPTER4_DONE: String = "chapter:clock"
 const CLOCK_MAKER_POS: Vector3 = Vector3(3, 0, 7)
+const CHAPTER5_PATH: String = "res://content/chapters/chapter5_festival.tres"
+const CHAPTER5_DONE: String = "chapter:festival"
+const FESTIVAL_ID: StringName = &"chapter5_festival"
+## Where every friend stands at the festival, round the square in front of the clock tower.
+const FESTIVAL_SPOTS: Dictionary[String, Vector3] = {
+	"postman": Vector3(-6, 0, 9.5),
+	"baker": Vector3(-4, 0, 7.6),
+	"toy_maker": Vector3(-1.8, 0, 6.8),
+	"clock_maker": Vector3(1.8, 0, 6.8),
+	"farmer": Vector3(4, 0, 7.6),
+}
+const FESTIVAL_HERO: Vector3 = Vector3(0, 0, 12)
 const BAKER_POS: Vector3 = Vector3(-5.5, 0, -8.5)
 const SEA_Z: float = -31.0
 const BAKERY_POS: Vector3 = Vector3(-8, 0, -12)
@@ -63,6 +75,24 @@ const TALKS: Dictionary = {
 		"card": &"clock",
 		"after": ["ch4:clock_works"]
 	},
+	# The finale: each friend he helped says thank you in turn ([who, line] parts).
+	&"festival":
+	{
+		"who": "clock_maker",
+		"lines":
+		[
+			["postman", "ch5:postman"],
+			["baker", "ch5:baker"],
+			["toy_maker", "ch5:toy"],
+			["farmer", "ch5:farmer"],
+			["clock_maker", "ch5:clock"],
+		],
+		"say_back": &"hello",
+		"say_line": "ch5:say_hello",
+		"card": &"party",
+		"after": ["ch5:hooray"],
+		"cheer": true
+	},
 }
 const HOUSES: Array[Vector3] = [
 	Vector3(-14, 0, 30),
@@ -88,6 +118,9 @@ var baker: StoryNpc
 var toy_maker: StoryNpc
 var farmer: StoryNpc
 var clock_maker: StoryNpc
+## The postman at the festival (the prologue's PostmanNpc stays in the village).
+var festival_postman: StoryNpc
+var festival: FestivalDecor
 var _collect_items: Array[CollectItem] = []
 var _collect_word: WordEntry
 var _collect_count: int = 0
@@ -137,11 +170,13 @@ func _first_chapter_path() -> String:
 		return CHAPTER3_PATH
 	if not SaveSystem.has_encountered(CHAPTER4_DONE):
 		return CHAPTER4_PATH
+	if not SaveSystem.has_encountered(CHAPTER5_DONE):
+		return CHAPTER5_PATH
 	return PRACTICE_PATH
 
 
 func _talking() -> bool:
-	for npc: StoryNpc in [baker, toy_maker, farmer, clock_maker]:
+	for npc: StoryNpc in [baker, toy_maker, farmer, clock_maker, festival_postman]:
 		if npc != null and npc.is_talking():
 			return true
 	return false
@@ -156,9 +191,7 @@ func start_talk(talk_id: StringName = &"") -> void:
 	if talk.is_empty():
 		quest.notify_talk_done()
 		return
-	var npcs: Dictionary[String, StoryNpc] = {
-		"baker": baker, "toy_maker": toy_maker, "farmer": farmer, "clock_maker": clock_maker
-	}
+	var npcs: Dictionary[String, StoryNpc] = _npcs()
 	var npc: StoryNpc = npcs[talk["who"]]
 	hero.stop()
 	hero.keyboard_enabled = false
@@ -168,12 +201,18 @@ func start_talk(talk_id: StringName = &"") -> void:
 	npc.face(hero.global_position)
 	npc.wave(2.5)
 	Speech.stop()
-	for key: String in talk["lines"]:
+	for part: Variant in talk["lines"]:
+		# A plain key is the main speaker's line; [who, key] lets another friend speak.
+		var key: String = part if part is String else part[1]
+		if part is Array:
+			var speaker: StoryNpc = npcs[part[0]]
+			speaker.face(hero.global_position)
+			speaker.wave(2.5)
 		Speech.line(key)
 		await SayItBack.wait_until_quiet(self, alive)
 	if talk.has("say_back"):
 		var word: WordEntry = WordDB.get_word(talk["say_back"])
-		Speech.line("talk:say_hello", word)
+		Speech.line(talk.get("say_line", "talk:say_hello"), word)
 		await SayItBack.wait_until_quiet(self, alive)
 		var heard: bool = await SayItBack.wait_for_word(self, word, _say_mic, alive)
 		await SayItBack.praise(self, word, heard, alive)
@@ -183,7 +222,12 @@ func start_talk(talk_id: StringName = &"") -> void:
 			await learning.moment_closed
 	if talk.has("after"):
 		npc.wave(3.0)
-		Sfx.play(&"door")
+		if talk.get("cheer", false) and festival != null:
+			for friend: StoryNpc in npcs.values():
+				friend.wave(4.0)
+			festival.cheer()
+		else:
+			Sfx.play(&"door")
 		for key: String in talk["after"]:
 			Speech.line(key)
 			await SayItBack.wait_until_quiet(self, alive)
@@ -257,11 +301,51 @@ func _point_companion_at_next() -> void:
 	companion.set_goal(nearest, _hint_line, _collect_word)
 
 
+func _npcs() -> Dictionary[String, StoryNpc]:
+	return {
+		"baker": baker,
+		"toy_maker": toy_maker,
+		"farmer": farmer,
+		"clock_maker": clock_maker,
+		"postman": festival_postman,
+	}
+
+
 func _ready() -> void:
 	super._ready()
 	Speech.stop()
 	Speech.line("england:arrive")
 	_fade_in()
+	# After the finale the town stays in festival dress, with every friend on the square.
+	if festival == null and SaveSystem.has_encountered(CHAPTER5_DONE):
+		_start_festival(false)
+
+
+func _on_step_started(index: int, step: QuestStep) -> void:
+	super._on_step_started(index, step)
+	if festival == null and quest.chapter != null and quest.chapter.id == FESTIVAL_ID:
+		_start_festival(true)
+
+
+## Dresses the square for the festival and gathers every friend there (walking in, or
+## already standing there when walk is false).
+func _start_festival(walk: bool) -> void:
+	festival = FestivalDecor.new()
+	add_child(festival)
+	festival_postman = _add_npc("postman", FESTIVAL_SPOTS["postman"] + Vector3(-8, 0, 4))
+	var npcs: Dictionary[String, StoryNpc] = _npcs()
+	for who: String in FESTIVAL_SPOTS:
+		var npc: StoryNpc = npcs[who]
+		var spot: Vector3 = FESTIVAL_SPOTS[who]
+		if not walk:
+			npc.global_position = spot
+			npc.face(FESTIVAL_HERO)
+			continue
+		# Each friend walks in from just off the square (or from close by, like the clock maker).
+		var from: Vector3 = spot + (spot - Vector3(0, 0, 4)).normalized() * 7.0
+		if npc.global_position.distance_to(spot) > 8.0:
+			npc.global_position = from
+		npc.walk_to(spot, 3.0, FESTIVAL_HERO)
 
 
 func _fade_in() -> void:

@@ -39,6 +39,18 @@ inspector.
 
 Line keys refer to `content/voice/lines.csv` (`docs/contracts/voice-lines.md`).
 
+England chapters chain by `next_chapter`: `chapter1_bakery` → `chapter2_balloons` →
+`chapter3_animals` → `chapter4_clock` → `chapter5_festival` (the finale) → `england_practice`;
+their `done_key`s are `chapter:bakery`, `chapter:balloons`, `chapter:animals`, `chapter:clock`,
+`chapter:festival`.
+
+### Talk scripts (`EnglandTown.TALKS`, keyed by `talk_id`)
+
+`who` (main speaker), `lines` (line keys; an entry `[who, key]` lets another friend speak and
+wave), optional `say_back` (word he says back, microphone, never judged) with `say_line` (the
+prompt; default `talk:say_hello`), `card` (learning card word), `after` (cheer lines) and
+`cheer` (the festival's confetti and tune).
+
 ## Host API (the scene running a chapter)
 
 `place_marker(pos: Vector3)`, `clear_marker()`, `set_hint(goal: Node3D, line_key: String)`,

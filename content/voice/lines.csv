@@ -94,3 +94,12 @@ ch4:back_to_clock_maker,"Несемо цифри годинникареві!","L
 ch4:clock_thanks,,"Thank you! One, two, three, four, five! Now let's count to ten together!",clockmaker
 ch4:count_ten,,"One! Two! Three! Four! Five! Six! Seven! Eight! Nine! Ten!",clockmaker
 ch4:clock_works,"Годинник знову йде! Тік-так!","The clock works again! Tick tock! Ding dong!"
+ch5:to_party,"Слухай! Годинник дзвонить! Починається свято! Ходімо на площу!","Listen! Ding dong! The party is starting! Let's go to the square!"
+hint:to_party,"Свято на площі! Ходімо туди!","The party is on the square! Let's go!"
+ch5:postman,,"Hello again! I brought you the letter, remember? Welcome to the party!",postman
+ch5:baker,,"Thank you for the cake! Yummy!",baker
+ch5:toy,,"Thank you for the balloons! Red, blue, yellow and green!",toymaker
+ch5:farmer,,"Thank you for my animals! Moo! Baa! Quack! Oink!",farmer
+ch5:clock,,"Thank you for the clock! Tick tock! Now the party can start!",clockmaker
+ch5:say_hello,"Усі друзі кажуть тобі «hello»! Скажи і ти!","Everybody says hello! Now you! Say: hello!"
+ch5:hooray,"Ура! Свято! Дякуємо, друзі!","Hooray! It's a party! Thank you, friends!"
