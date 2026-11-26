@@ -1,0 +1,22 @@
+# Workflow settings (per machine, created by the pipeline)
+.claude/*.local.md
+
+# Godot
+.godot/
+*.import.tmp
+export_credentials.cfg
+
+# Builds, playtest logs, PR drafts
+build/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Playtest recordings and reference photos stay local
+*.mkv
+*.mov
+*.mp4
+reference/
