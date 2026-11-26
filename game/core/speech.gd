@@ -13,7 +13,9 @@ const LANG_EN: StringName = &"en"
 const LINES_PATH: String = "res://content/voice/lines.csv"
 const VOICE_DIR: String = "res://audio/voice"
 const TTS_VOLUME: int = 85
-const TTS_RATE: float = 0.75
+const TTS_RATE: float = 0.9
+## Silence between two queued lines: a calm pace without slowing the voice itself.
+const LINE_GAP: float = 0.5
 
 var _voices: Dictionary[StringName, String] = {}
 var _tts: bool = false
@@ -23,6 +25,7 @@ var _queue: Array[PackedStringArray] = []
 var _player: AudioStreamPlayer
 var _tts_busy: bool = false
 var _tts_wait: float = 0.0
+var _gap: float = 0.0
 
 
 func _ready() -> void:
@@ -91,6 +94,7 @@ func say(spoken: String, lang: StringName = LANG_EN, interrupt: bool = false) ->
 
 func stop() -> void:
 	_queue.clear()
+	_gap = 0.0
 	_player.stop()
 	if _tts and _tts_busy:
 		DisplayServer.tts_stop()
@@ -128,8 +132,15 @@ func _process(delta: float) -> void:
 		# The system voice reports speaking a moment after the request.
 		if _tts_wait > 0.3 and not DisplayServer.tts_is_speaking():
 			_tts_busy = false
+			_gap = LINE_GAP
 		return
-	if _player.playing or _queue.is_empty():
+	if _player.playing:
+		_gap = LINE_GAP
+		return
+	if _queue.is_empty():
+		return
+	if _gap > 0.0:
+		_gap -= delta
 		return
 	var item: PackedStringArray = _queue.pop_front()
 	var lang: StringName = StringName(item[1])

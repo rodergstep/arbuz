@@ -26,11 +26,15 @@ OUT = ROOT / "audio/voice"
 MODELS = ROOT / "audio_gen/models"
 
 EN_VOICE = "bf_emma"  # British English, warm and clear
-EN_SPEED = 0.75  # slower for a three-year-old (playtests: 0.85 too fast, 0.65 a bit too slow)
+EN_SPEED = 0.95  # natural pace; slowness comes from pauses, never from stretching (playtests)
 UK_SPEAKER = 0  # "lada"
-UK_LENGTH_SCALE = 1.12  # >1 = slower
+UK_LENGTH_SCALE = 1.0  # natural pace
 # When a voice setting changes, every file of that language is rendered again.
-STAMPS = {"en": f"kokoro:{EN_VOICE}:{EN_SPEED}", "uk": f"piper:{UK_SPEAKER}:{UK_LENGTH_SCALE}"}
+SENTENCE_PAUSE = 0.45  # seconds of silence between sentences of one line
+STAMPS = {
+    "en": f"kokoro:{EN_VOICE}:{EN_SPEED}:pause{SENTENCE_PAUSE}",
+    "uk": f"piper:{UK_SPEAKER}:{UK_LENGTH_SCALE}:pause{SENTENCE_PAUSE}",
+}
 
 
 def article(word: str) -> str:
@@ -77,12 +81,45 @@ def collect() -> dict:
     return texts
 
 
+def sentences(text: str) -> list:
+    """Splits a line into sentences, keeping their punctuation."""
+    import re
+
+    return [s for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s]
+
+
+def with_pauses(parts: list, rate: int):
+    """Joins rendered sentences with a short silence: a calmer pace with a natural voice."""
+    import numpy as np
+
+    gap = np.zeros(int(SENTENCE_PAUSE * rate), dtype="float32")
+    out = []
+    for i, part in enumerate(parts):
+        if i:
+            out.append(gap)
+        out.append(np.asarray(part, dtype="float32"))
+    return np.concatenate(out), rate
+
+
 def render_en(kokoro, text: str):
-    samples, rate = kokoro.create(text, voice=EN_VOICE, speed=EN_SPEED, lang="en-gb")
-    return samples, rate
+    parts = []
+    rate = 24000
+    for sentence in sentences(text):
+        samples, rate = kokoro.create(sentence, voice=EN_VOICE, speed=EN_SPEED, lang="en-gb")
+        parts.append(samples)
+    return with_pauses(parts, rate)
 
 
 def render_uk(piper_voice, text: str):
+    parts = []
+    rate = 22050
+    for sentence in sentences(text):
+        samples, rate = render_uk_one(piper_voice, sentence)
+        parts.append(samples)
+    return with_pauses(parts, rate)
+
+
+def render_uk_one(piper_voice, text: str):
     import numpy as np
     from piper import SynthesisConfig
 

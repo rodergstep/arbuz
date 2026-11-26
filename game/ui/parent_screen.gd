@@ -91,6 +91,8 @@ func _change_volume(step: float) -> void:
 func _set_microphone(on: bool) -> void:
 	SaveSystem.settings["microphone"] = on
 	SaveSystem.save_now()
+	if not on:
+		VoiceListener.cancel()
 	_refresh()
 
 

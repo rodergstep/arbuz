@@ -57,11 +57,14 @@ updated_at: "2026-11-26"
   right thing. The answer goes to the learning tracker.
 
 - **AC-12 Say it back (microphone).** On every learning card Tygrytsa asks "Now you! Say: bridge!"
-  and a pulsing mouth shows it's his turn. For up to 4 s the game listens for any sound he makes
-  (loudness only; nothing is recorded, stored or sent; pronunciation is never judged). If he makes
-  a sound: chime and "Yes! Bridge! You said it! Great job!"; otherwise "Great job! Bridge!" after
-  the wait. Parents can turn the microphone off on the parent screen.
-- **AC-13 Slow, clear English.** English voice lines are generated at 0.75 speed (Kokoro; 0.85 was too fast, 0.65 too slow).
+  and a pulsing circle with a microphone shows it's his turn. The card waits until he makes any
+  sound (loudness only; nothing is recorded, stored or sent; pronunciation never judged), asking
+  again every 5 s ("Your turn! Say: bridge!", every third time saying the word first). Then a chime
+  and "Yes! Bridge! You said it! Great job!", and the sentences. He cannot skip a card; a parent
+  can close it with the parent gate (Ctrl + Shift + P held). With the microphone off or blocked,
+  the card praises after one wait so he never gets stuck.
+- **AC-13 Natural voice, calm pace.** Voices are rendered at natural speed (Kokoro 0.95); the calm
+  pace comes from 0.45 s pauses between sentences and 0.5 s between lines, never from stretching.
 
 ## 8. Open questions
 

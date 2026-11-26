@@ -3,8 +3,10 @@
 Generates every line the game says as Ogg Vorbis files in `audio/voice/<lang>/`, from
 `content/words/words.csv` (words and example sentences) and `content/voice/lines.csv` (Tygrytsa's
 lines, templates with `{word}`, `{Word}`, `{a_word}`, `{uk_word}`). Runs locally and offline after
-the one-time setup. Free, open models only: Kokoro (English, voice `bf_emma`, speed 0.75: slower and clear for a
-toddler) and Piper (Ukrainian, `uk_UA-ukrainian_tts`, speaker "lada", length scale 1.12).
+the one-time setup. Free, open models only: Kokoro (English, voice `bf_emma`, natural speed 0.95) and Piper (Ukrainian,
+`uk_UA-ukrainian_tts`, speaker "lada"). The calm pace for a toddler comes from silence between
+sentences (0.45 s, rendered into the file) and between lines (0.5 s, in the game), never from
+slowing or stretching the voice, which sounds unnatural (playtest).
 Changing a voice setting re-renders that language (`voice-settings.txt` stamp per folder).
 
 ## One-time setup (M4)

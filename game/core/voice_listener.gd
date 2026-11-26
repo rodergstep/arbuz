@@ -17,6 +17,10 @@ var _heard_for: float = 0.0
 var _heard: bool = false
 ## Each listen() gets a new id; cancel() or a newer listen() ends the older one.
 var _session: int = 0
+## True once a listen got only exact digital silence: the microphone is blocked (for example
+## macOS permission denied). Then cards stop waiting for him, so he can never get stuck.
+var _blocked: bool = false
+var _any_signal: bool = false
 
 
 func _ready() -> void:
@@ -35,7 +39,8 @@ func _ready() -> void:
 
 func available() -> bool:
 	return (
-		bool(SaveSystem.settings.get("microphone", true))
+		not _blocked
+		and bool(SaveSystem.settings.get("microphone", true))
 		and bool(ProjectSettings.get_setting("audio/driver/enable_input", false))
 		and DisplayServer.get_name() != "headless"
 	)
@@ -51,6 +56,7 @@ func listen(seconds: float) -> bool:
 	var session: int = _session
 	_heard = false
 	_heard_for = 0.0
+	_any_signal = false
 	_capture.clear_buffer()
 	_player.stream = AudioStreamMicrophone.new()
 	_player.play()
@@ -62,6 +68,9 @@ func listen(seconds: float) -> bool:
 	if session != _session:
 		return false
 	var heard: bool = _heard
+	if not _any_signal:
+		_blocked = true
+		push_warning("VoiceListener: the microphone gives no signal (permission?); not waiting for speech")
 	_stop_mic()
 	EventLog.log_event(&"say_it_listen", {"heard": heard, "after_s": snappedf(waited, 0.1)})
 	return heard
@@ -91,6 +100,8 @@ func _process(delta: float) -> void:
 	var sum: float = 0.0
 	for f: Vector2 in buffer:
 		sum += f.x * f.x
+		if f.x != 0.0:
+			_any_signal = true
 	var rms: float = sqrt(sum / buffer.size())
 	level_changed.emit(rms)
 	if rms >= VOICE_LEVEL:

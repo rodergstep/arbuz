@@ -333,6 +333,10 @@ func _build_parent_area() -> void:
 	var was_paused: Array[bool] = [false]
 	gate.unlocked.connect(
 		func() -> void:
+			# Over a learning card the parent gate is the parent's override: close the card only.
+			if learning.is_open():
+				learning.card.parent_close()
+				return
 			was_paused[0] = get_tree().paused
 			get_tree().paused = true
 			parent_screen.open()

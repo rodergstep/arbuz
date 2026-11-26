@@ -12,9 +12,8 @@ const CARD_SIZE: Vector2 = Vector2(1040, 540)
 const MAX_SENTENCES: int = 2
 const LINE_PAUSE: float = 0.5
 const SILENT_LINE_SECONDS: float = 2.2
-const MIN_OPEN_SECONDS: float = 1.0
 ## How long to wait for him to say the word back before praising anyway.
-const SAY_IT_LISTEN: float = 4.0
+const SAY_IT_LISTEN: float = 5.0
 
 var is_open: bool = false
 
@@ -27,7 +26,6 @@ var _first_time: bool = false
 var _mic: MicBubble
 var _sentence: Label
 var _entry: WordEntry
-var _opened_ms: int = 0
 var _skipped: bool = false
 var _run: int = 0
 
@@ -100,7 +98,6 @@ func open(entry: WordEntry, focus: Vector3, view_from: Vector3) -> void:
 	_run += 1
 	is_open = true
 	_skipped = false
-	_opened_ms = Time.get_ticks_msec()
 	_viewport.world_3d = get_viewport().world_3d
 	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	_camera.global_position = view_from
@@ -143,14 +140,12 @@ func close() -> void:
 	closed.emit(_entry.id, _skipped)
 
 
-func _input(event: InputEvent) -> void:
-	if not is_open or PauseOverlay.active:
-		return
-	var skip: bool = event.is_action_pressed(&"use")
-	skip = skip or (event is InputEventMouseButton and event.pressed)
-	if skip and Time.get_ticks_msec() - _opened_ms > MIN_OPEN_SECONDS * 1000.0:
-		get_viewport().set_input_as_handled()
+## No skip for the child: the card finishes when he has said the word and heard the sentences.
+## A parent can close it with the parent gate (Ctrl + Shift + P held), see ParentGate.
+func parent_close() -> void:
+	if is_open:
 		_skipped = true
+		EventLog.log_event(&"learning_moment_parent_closed", {"word_id": String(_entry.id)})
 		close()
 
 
@@ -160,15 +155,13 @@ func _play(run: int) -> void:
 		await _line(Speech.text("card:first", Speech.LANG_UK, _entry), Speech.LANG_UK, run)
 	await _line(Speech.text("card:this_is", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
 	await _line(_entry.en, Speech.LANG_EN, run)
-	# Say it back: he is asked to repeat the word; any sound he makes counts (never judged).
-	# Praise comes either way, a bit warmer when he joined in.
+	# Say it back: the card waits until he says the word (any sound counts, never judged),
+	# asking again gently. Without a microphone it praises after one wait so nobody gets stuck.
 	await _line(Speech.text("card:say_it", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
-	var heard: bool = false
-	if run == _run:
-		_mic.visible = true
-		heard = await VoiceListener.listen(SAY_IT_LISTEN)
-		_mic.visible = false
-	if heard and run == _run:
+	var heard: bool = await _wait_for_his_turn(run)
+	if run != _run:
+		return
+	if heard:
 		Sfx.play(&"chime")
 		_celebrate()
 	var praise: String = "card:great_heard" if heard else "card:great"
@@ -185,6 +178,24 @@ func _play(run: int) -> void:
 		await get_tree().create_timer(1.2, true).timeout
 	if run == _run:
 		close()
+
+
+## Listens until he makes a sound, re-asking after each quiet try (every third try the word is
+## said again first). Returns false only when there is no microphone.
+func _wait_for_his_turn(run: int) -> bool:
+	var tries: int = 0
+	while run == _run:
+		_mic.visible = true
+		var heard: bool = await VoiceListener.listen(SAY_IT_LISTEN)
+		_mic.visible = false
+		if heard or not VoiceListener.available():
+			return heard
+		tries += 1
+		EventLog.log_event(&"say_it_reprompt", {"word_id": String(_entry.id), "tries": tries})
+		if tries % 3 == 0:
+			await _line(_entry.en, Speech.LANG_EN, run)
+		await _line(Speech.text("card:your_turn", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
+	return false
 
 
 ## Speaks one line and waits until it is done (or for a fixed time when there is no voice).
