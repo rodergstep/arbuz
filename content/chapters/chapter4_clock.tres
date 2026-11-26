@@ -68,5 +68,5 @@ talk_id = &"clock_thanks"
 script = ExtResource("1_4guhl")
 id = &"chapter4_clock"
 steps = Array[ExtResource("2_ahhwv")]([SubResource("Resource_khrxm"), SubResource("Resource_gtsoe"), SubResource("Resource_atc7v"), SubResource("Resource_xjlws"), SubResource("Resource_h4c0m"), SubResource("Resource_857ea"), SubResource("Resource_box58")])
-next_chapter = "res://content/chapters/england_practice.tres"
+next_chapter = "res://content/chapters/chapter5_festival.tres"
 done_key = "chapter:clock"

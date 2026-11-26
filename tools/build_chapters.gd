@@ -132,7 +132,7 @@ func _initialize() -> void:
 	var ch4: ChapterData = ChapterData.new()
 	ch4.id = &"chapter4_clock"
 	ch4.done_key = "chapter:clock"
-	ch4.next_chapter = "res://content/chapters/england_practice.tres"
+	ch4.next_chapter = "res://content/chapters/chapter5_festival.tres"
 	var clock_spot: Array[Vector3] = [Vector3(3, 0, 9.5)]
 	var start: QuestStep = _step(
 		QuestStep.Kind.TALK_TO, clock_spot, "ch4:to_clock_maker", "hint:to_clock_maker"
@@ -153,7 +153,19 @@ func _initialize() -> void:
 	]
 	var err7: Error = ResourceSaver.save(ch4, "res://content/chapters/chapter4_clock.tres")
 	print("chapter4_clock.tres: ", error_string(err7))
-	var all_ok: bool = [err, err2, err3, err4, err5, err6, err7].all(func(e: Error) -> bool: return e == OK)
+	# The finale: the festival on the square; every friend he helped says thank you.
+	var ch5: ChapterData = ChapterData.new()
+	ch5.id = &"chapter5_festival"
+	ch5.done_key = "chapter:festival"
+	ch5.next_chapter = "res://content/chapters/england_practice.tres"
+	var party: QuestStep = _step(QuestStep.Kind.TALK_TO, [Vector3(0, 0, 12)], "ch5:to_party", "hint:to_party")
+	party.talk_id = &"festival"
+	ch5.steps = [party]
+	var err8: Error = ResourceSaver.save(ch5, "res://content/chapters/chapter5_festival.tres")
+	print("chapter5_festival.tres: ", error_string(err8))
+	var all_ok: bool = [err, err2, err3, err4, err5, err6, err7, err8].all(
+		func(e: Error) -> bool: return e == OK
+	)
 	quit(0 if all_ok else 1)
 
 

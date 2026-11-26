@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ChapterData" format=3]
+
+[ext_resource type="Script" path="res://game/core/chapter_data.gd" id="1_mc3n3"]
+[ext_resource type="Script" path="res://game/core/quest_step.gd" id="2_urwra"]
+
+[sub_resource type="Resource" id="Resource_txh72"]
+script = ExtResource("2_urwra")
+kind = 5
+spots = Array[Vector3]([Vector3(0, 0, 12)])
+start_line = "ch5:to_party"
+hint_line = "hint:to_party"
+talk_id = &"festival"
+
+[resource]
+script = ExtResource("1_mc3n3")
+id = &"chapter5_festival"
+steps = Array[ExtResource("2_urwra")]([SubResource("Resource_txh72")])
+next_chapter = "res://content/chapters/england_practice.tres"
+done_key = "chapter:festival"

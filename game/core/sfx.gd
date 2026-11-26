@@ -24,6 +24,8 @@ func _ready() -> void:
 	_streams[&"soft"] = _tones([494.0, 523.0], 0.09, 0.25)
 	_streams[&"door"] = _tones([392.0, 523.0, 659.0, 784.0, 1047.0, 1319.0], 0.09, 0.4)
 	_streams[&"pop"] = _sweep(500.0, 900.0, 0.09)
+	# A short, bright party tune for the festival (an original little arpeggio).
+	_streams[&"tune"] = _tones([523.0, 659.0, 784.0, 659.0, 698.0, 880.0, 784.0, 1047.0], 0.16, 0.3)
 
 
 func play(kind: StringName) -> void:
