@@ -63,6 +63,10 @@ Each town is a small open world he explores freely on foot or by car. All contro
 
 ## Learning design
 
+**Education first** (decided after the first greybox playtest, 2026-11-26): the main idea is not play but learning something new, and every situation is used for it. Passing a landmark (a bridge, the river, the road), clicking anything, or getting into the car opens a short **learning moment**: a picture of the real thing, the word in Ukrainian and English, and the English word used in two short sentences from different situations ("The car goes over the bridge." / "The duck swims under the bridge."). Moments are voiced in English only, skippable with one tap, and paced so play still flows.
+
+**English immersion** (decided after the second greybox playtest, 2026-11-26): all speech is English, Тигриця's too ("Here is our car!", "This is a bridge.", "Look! This card is glowing!"). He sees what things are, so nothing is translated, with one exception: the introduction and the **first time** he meets any line or thing (the first click on the river, the first card, the first door question) are said in Ukrainian first, then English. From the second time on it is English only. First meetings are kept in the save. Phrases are short and repeated often. This replaces the earlier Ukrainian-narration approach below. **Teach before test:** a password door or quiz only asks words he has already met in a learning moment; if none fits, the moment teaches the word first and the door asks right after.
+
 Everything works without reading or speaking. He learns by listening and clicking, in Ukrainian first and then the target language.
 
 - **Language approach:** Тигриця and the narrator speak Ukrainian. Local characters say the new words in English, Spanish or French.
@@ -76,6 +80,8 @@ Everything works without reading or speaking. He learns by listening and clickin
 * **Word labels:** when a word is spoken, its written form appears briefly on the object, for early exposure to letters. No other text in the child's view.
 
 ### Password doors
+
+The door's word is always one he has already been taught (see Learning design). In the greybox the door shows a picture of the thing and Тигриця asks "What is this?" in English; the retry names the word ("Where is the car?").
 
 Buildings are locked. When he walks up to a door, Тигриця asks in Ukrainian, for example, how to say "lion" in English. Three blank cards appear, and each one says its word aloud when he points at it or clicks it ("dog", "ox", "lion"). He picks the right card and the door opens.
 
