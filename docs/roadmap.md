@@ -13,26 +13,27 @@ updated_at: "2026-11-26"
 
 ## Destination
 
-Our son plays the whole England arc, from the Ukrainian prologue to the festival, on the family Macs and a Windows PC, without reading, without getting stuck, and comes away recognizing English words for food, colours, animals and numbers.
+Our son learns English words for the things around him, food, colours, animals and numbers, by playing the whole England arc, from the Ukrainian prologue to the festival, on the family Macs and a Windows PC, without reading and without getting stuck, with every situation in the game turned into a short learning moment.
 
 ## Steps
 
 | # | Step | Source | Size | Status |
 |---|---|---|:---:|---|
 | 1 | Project skeleton: Godot project boots, tests run, builds export, gamepad check scene | `development-plan.md` §Phase 0 — Setup | M | building |
-| 2 | He walks the greybox village: click to go, hold to follow, arrows, stick, with the follow camera | `development-plan.md` §Phase 1 — Greybox prototype | M | idea |
-| 3 | He drives a box car: get in and out, forgiving driving, soft bounce, horn, camera blend | `development-plan.md` §Phase 1 — Greybox prototype | M | idea |
-| 4 | Тигриця placeholder follows him and points the way; glowing marker; idle nudge after ~15 s | `development-plan.md` §Phase 1 — Greybox prototype | M | idea |
-| 5 | Clicking an object says its name (OS text-to-speech) and shows the word briefly | `development-plan.md` §Phase 1 — Greybox prototype | S | idea |
-| 6 | Greybox password door: three speaking cards, gentle wrong-pick response, opens after 2 wrong picks | `game-spec.md` §Password doors | M | idea |
-| 7 | Playtest event log records every click, idle pause and card pick, ready to review next to OBS | `development-plan.md` §Phase 1 — Greybox prototype | S | idea |
-| 8 | Words come from the word database with locally generated voices, played by the audio manager | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | idea |
-| 9 | Progress is autosaved per profile and survives closing the game at any moment | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | idea |
-| 10 | Doors and tasks bring back the words he struggles with (learning tracker, box-based repetition) | `game-spec.md` §Learning design | M | idea |
+| 2 | He walks the greybox village: click to go, hold to follow, arrows, stick, with the follow camera | `development-plan.md` §Phase 1 — Greybox prototype | M | building |
+| 3 | He drives a box car: get in and out, forgiving driving, soft bounce, horn, camera blend | `development-plan.md` §Phase 1 — Greybox prototype | M | building |
+| 4 | Тигриця placeholder follows him and points the way; glowing marker; idle nudge after ~15 s | `development-plan.md` §Phase 1 — Greybox prototype | M | building |
+| 5 | Clicking an object says its name (OS text-to-speech) and shows the word briefly | `development-plan.md` §Phase 1 — Greybox prototype | S | building |
+| 6 | Greybox password door: three speaking cards, gentle wrong-pick response, opens after 2 wrong picks | `game-spec.md` §Password doors | M | building |
+| 7 | Playtest event log records every click, idle pause and card pick, ready to review next to OBS | `development-plan.md` §Phase 1 — Greybox prototype | S | building |
+| 30 | Learning moments: passing or clicking something shows its picture, says the word in Ukrainian and English, and uses it in short English sentences | `game-spec.md` §Learning design | M | building |
+| 8 | Words come from the word database with locally generated voices, played by the audio manager | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | building |
+| 9 | Progress is autosaved per profile and survives closing the game at any moment | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | building |
+| 10 | Doors and tasks bring back the words he struggles with (learning tracker, box-based repetition) | `game-spec.md` §Learning design | M | building |
 | 11 | Chapters, tasks and door passwords run from data files; the greybox runs on them | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | idea |
 | 12 | Тигриця and townspeople speak through Dialogic, each line tied to its voice file | `development-plan.md` §Phase 2 — Core systems and content pipeline | M | idea |
 | 13 | Input switches seamlessly between mouse, keyboard and gamepad, with Xbox or Nintendo prompts and gentle rumble | `development-plan.md` §Phase 2 — Core systems and content pipeline | S | idea |
-| 14 | Parent area behind the parent lock: name, languages, volume, and the 15-minute session timer with Тигриця's goodbye | `game-spec.md` §Parent features and profiles | L | idea |
+| 14 | Parent area behind the parent lock: name, languages, volume, and the 15-minute session timer with Тигриця's goodbye | `game-spec.md` §Parent features and profiles | L | building |
 | 15 | The village gets its painted look: toon shader, painted sky, wind in the grass, warm grading, holding 30 fps | `development-plan.md` §Phase 3 — Prologue vertical slice | L | idea |
 | 16 | Hero, Тигриця and the three cars as real models; he picks his car | `development-plan.md` §Phase 3 — Prologue vertical slice | L | idea |
 | 17 | The prologue plays start to finish: meet Тигриця, tutorial, the postman's "hello" and "bye", the ferry | `game-spec.md` §Story | L | idea |
@@ -84,6 +85,7 @@ Our son plays the whole England arc, from the Ukrainian prologue to the festival
 - Saves are versioned JSON per profile with migrations → [`docs/adr/0003-versioned-json-saves-with-migration-chain.md`](adr/0003-versioned-json-saves-with-migration-chain.md)
 - Content is data: CSV word DB, Resource chapters → [`docs/adr/0004-content-as-data-resources-and-word-db.md`](adr/0004-content-as-data-resources-and-word-db.md)
 - Greybox first, systems second, real art third; first playable target is Gate 1 → [`docs/development-plan.md`](development-plan.md)
+- Education first: every situation is a learning moment (picture, word, English sentences) → [`docs/game-spec.md`](game-spec.md) §Learning design
 - 15-minute default session, co-play optional → [`docs/development-plan.md`](development-plan.md)
 - Toddler UI canon, hint ladder and components → [`docs/design-system.md`](design-system.md)
 
@@ -126,6 +128,8 @@ flowchart LR
   s20 -->|earned items| s27["27 · customization"]
   s8 -->|word voices| s28["28 · exploration words"]
   s25 -->|complete arc to measure| s29["29 · release"]
+  s5 -->|clickable things to teach| s30["30 · learning moments"]
+  s30 -->|every chapter adds its moments| s19
 ```
 
 ## Build order
@@ -144,6 +148,7 @@ flowchart LR
 4. Clicking an object says its name (#5)
 5. Greybox password door (#6)
 6. Playtest event log (#7)
+7. Learning moments (#30)
 
 **Exit gate:** our son plays about 10 minutes, recorded; he drives to the marker and opens the door with little or no help; we also try a touchscreen and settle D5.
 

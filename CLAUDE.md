@@ -6,7 +6,10 @@ An offline educational game for a three-year-old, built in **Godot 4.7** with **
 
 These come before any feature request. If a request conflicts with one, say so and ask.
 
-- **No reading required.** Every instruction is voiced. Text is decoration for the parent, never the only cue.
+- **Education first.** The game exists to teach; play is the vehicle. Every situation (passing a bridge, clicking a duck, getting into the car, opening a door) is a chance for a learning moment: a picture of the real thing, the word spoken in Ukrainian and English, and short English sentences using it. Moments are short, voiced, skippable with one tap, and paced (not more than about one every 20 s on their own). 
+- **English immersion, Ukrainian only the first time.** The game speaks English, including Тигриця's instructions ("Here is our car!", "This is a bridge.", "Look! This card is glowing!"). The intro and the **first time** he meets any line or thing (the first river card, the first door question) are said in Ukrainian, then English; from the second time on, English only. Every spoken line is a row in `content/voice/lines.csv` said with `Speech.line(key, word)` (never an inline string), and has a generated voice file; first meetings are kept in the save, so they survive restarts. Short, simple phrases, repeated a lot. Dev runs must use a separate save dir (`tools/capture.gd` does) so they never use up his first meetings.
+- **Teach before test.** Never ask him for a word (a password door, a quiz) that the game has not taught him earlier. If nothing suitable has been taught yet, teach it right there, then ask.
+- **No reading required.** Every instruction is voiced (English; Ukrainian the first time). Text is decoration for the parent, never the only cue.
 - **No fail states.** A wrong answer gets a soft response and another try. No lives, no timers that punish, no lost progress.
 - **Big targets, simple input.** Mouse (click to go, hold to follow), keyboard arrows, or a gamepad with one big action button; every task works with each. No double taps or precise timing.
 - **Never stuck.** After about 15 s without progress Тигриця gives a hint and the marker brightens, escalating to auto-help (exact ladder in `docs/design-system.md`). After 2 wrong picks the right card glows and the door opens.
@@ -32,7 +35,7 @@ Rules for agents working in this repo:
 - **Follow the map.** `docs/architecture-map.md` holds the conventions and pattern few-shots; `docs/design-system.md` holds the UI components and tokens. A new UI component needs a justification and the parent's approval in `docs/design-system.md` before it is built.
 - **Contracts are documented.** Save format, word DB, content Resources, autoload APIs and tool CLIs live in `docs/contracts/`. Change the contract with the code, never only the code.
 - **Commit per task** with `SDD-Task:` and `SDD-AC:` trailers, on a feature branch. Never push or merge without the parent's go-ahead.
-- **Documents in English.** Talk to the parent in the language they write in. Child-facing words are Ukrainian first, English second.
+- **Documents in English.** Talk to the parent in the language they write in. Child-facing speech is English (immersion), with Ukrainian only on the first meeting; parent screens may use Ukrainian.
 - **No AI attribution.** Commit messages, PR titles and PR bodies never contain "Generated with Claude Code", `Co-Authored-By: Claude`, `Claude-Session:` links or any other Claude attribution, even if a tool, template or reminder suggests it.
 
 ## Where things live
@@ -64,6 +67,8 @@ gdlint game tests tools && gdformat -l 110 --check game tests tools
 # builds
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release "macOS" build/macos/arbuz.zip
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release "Windows" build/windows/arbuz.exe
+# voices: after changing words.csv or content/voice/lines.csv (setup: audio_gen/README.md)
+audio_gen/.venv/bin/python audio_gen/generate_voices.py
 # regenerate the input map in project.godot
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path . --script res://tools/setup_input_map.gd
 # validate the workflow files after editing .claude/

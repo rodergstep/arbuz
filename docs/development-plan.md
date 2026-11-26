@@ -6,6 +6,8 @@ Nov 25, 2026 · roderg
 
 ## Summary
 
+> **Education first** (2026-11-26, after the first greybox playtest): every phase now includes learning moments. Whenever he passes or clicks something, the game shows its picture, says the word in Ukrainian and English, and uses it in short English sentences. Each new place or object comes with its word-database rows and example sentences.
+
 We build the game in seven phases. Each phase ends with a gate: something playable that our son or we test before the next phase starts. The first gate is a greybox prototype that proves driving, walking and the password door are fun before any real art is made. The last gate is the complete England arc, built for Mac and Windows.
 
 - **What we build:** the game described in [game-spec.md](game-spec.md). Godot 4.7, GDScript, Compatibility renderer, free tools only.
@@ -59,6 +61,7 @@ The goal is to prove the core feel with plain shapes and placeholder voices, bef
 - [ ] One password door with three cards that speak when he points at or clicks them, and the fallback after 2 wrong picks
 - [ ] Clickable objects that say their name, with the written word appearing briefly
 - [ ] Placeholder voices from the operating system's built-in text-to-speech, which Godot can call directly
+- [x] Learning moments (education first): passing the bridge, river, road or fence, clicking an object, or getting into the car opens a card with a live picture, the word in Ukrainian and English, and two English example sentences; skippable, paced
 - [ ] Playtest event log: every click, idle pause and card pick written with a timestamp, to review next to the OBS recording
 - [ ] Fail-free feedback: a wrong pick never plays a failure sound or loses progress; Тигриця cheerfully shows the right answer and he tries again
 
