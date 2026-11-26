@@ -1,0 +1,63 @@
+[gd_resource type="Resource" script_class="ChapterData" format=3]
+
+[ext_resource type="Script" path="res://game/core/chapter_data.gd" id="1_0njkq"]
+[ext_resource type="Script" path="res://game/core/quest_step.gd" id="2_ar411"]
+
+[sub_resource type="Resource" id="Resource_m5cck"]
+script = ExtResource("2_ar411")
+kind = 5
+spots = Array[Vector3]([Vector3(-30, 0, 13.5)])
+start_line = "ch2:to_toy_maker"
+hint_line = "hint:to_toy_maker"
+talk_id = &"toy_intro"
+
+[sub_resource type="Resource" id="Resource_qw6lh"]
+script = ExtResource("2_ar411")
+kind = 7
+spots = Array[Vector3]([Vector3(-32, 0, 22)])
+hint_line = "ch2:find_balloon"
+word = &"red"
+find_line = "ch2:find_balloon"
+found_line = "ch2:found_balloon"
+
+[sub_resource type="Resource" id="Resource_jfskv"]
+script = ExtResource("2_ar411")
+kind = 7
+spots = Array[Vector3]([Vector3(14, 0, -28)])
+hint_line = "ch2:find_balloon"
+word = &"blue"
+find_line = "ch2:find_balloon"
+found_line = "ch2:found_balloon"
+
+[sub_resource type="Resource" id="Resource_lhk6r"]
+script = ExtResource("2_ar411")
+kind = 7
+spots = Array[Vector3]([Vector3(6, 0, 9)])
+hint_line = "ch2:find_balloon"
+word = &"yellow"
+find_line = "ch2:find_balloon"
+found_line = "ch2:found_balloon"
+
+[sub_resource type="Resource" id="Resource_pssrf"]
+script = ExtResource("2_ar411")
+kind = 7
+spots = Array[Vector3]([Vector3(-14, 0, 22)])
+hint_line = "ch2:find_balloon"
+word = &"green"
+find_line = "ch2:find_balloon"
+found_line = "ch2:found_balloon"
+
+[sub_resource type="Resource" id="Resource_s3ked"]
+script = ExtResource("2_ar411")
+kind = 5
+spots = Array[Vector3]([Vector3(-30, 0, 13.5)])
+start_line = "ch2:back_to_toy_maker"
+hint_line = "hint:to_toy_maker"
+talk_id = &"toy_thanks"
+
+[resource]
+script = ExtResource("1_0njkq")
+id = &"chapter2_balloons"
+steps = Array[ExtResource("2_ar411")]([SubResource("Resource_m5cck"), SubResource("Resource_qw6lh"), SubResource("Resource_jfskv"), SubResource("Resource_lhk6r"), SubResource("Resource_pssrf"), SubResource("Resource_s3ked")])
+next_chapter = "res://content/chapters/england_practice.tres"
+done_key = "chapter:balloons"

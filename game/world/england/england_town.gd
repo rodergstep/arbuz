@@ -8,6 +8,9 @@ extends GreyboxVillage
 const PRACTICE_PATH: String = "res://content/chapters/england_practice.tres"
 const CHAPTER1_PATH: String = "res://content/chapters/chapter1_bakery.tres"
 const CHAPTER1_DONE: String = "chapter:bakery"
+const CHAPTER2_PATH: String = "res://content/chapters/chapter2_balloons.tres"
+const CHAPTER2_DONE: String = "chapter:balloons"
+const TOY_MAKER_POS: Vector3 = Vector3(-30, 0, 11)
 const BAKER_POS: Vector3 = Vector3(-5.5, 0, -8.5)
 const SEA_Z: float = -31.0
 const BAKERY_POS: Vector3 = Vector3(-8, 0, -12)
@@ -37,11 +40,14 @@ const LAMPS: Array[Vector3] = [
 	Vector3(-4, 0, 1), Vector3(4, 0, 1), Vector3(-20.5, 0, -18), Vector3(20.5, 0, -18)
 ]
 
-var baker: BakerNpc
+var baker: StoryNpc
+var toy_maker: StoryNpc
 var _collect_items: Array[CollectItem] = []
 var _collect_word: WordEntry
 var _collect_count: int = 0
 var _collect_total: int = 0
+var _found_line: String = ""
+var _hint_line: String = ""
 
 
 func _configure() -> void:
@@ -77,23 +83,81 @@ func _configure() -> void:
 
 
 func _first_chapter_path() -> String:
-	return PRACTICE_PATH if SaveSystem.has_encountered(CHAPTER1_DONE) else CHAPTER1_PATH
+	if not SaveSystem.has_encountered(CHAPTER1_DONE):
+		return CHAPTER1_PATH
+	if not SaveSystem.has_encountered(CHAPTER2_DONE):
+		return CHAPTER2_PATH
+	return PRACTICE_PATH
 
 
 func _talking() -> bool:
-	return baker != null and baker.is_talking()
+	return (baker != null and baker.is_talking()) or (toy_maker != null and toy_maker.is_talking())
 
 
-## Chapter 1 conversations with the baker.
+## Chapter conversations by talk id: who speaks, their lines (catalogue keys), whether he says a
+## word back (microphone, never judged), an optional learning card and a cheer.
+func _talk_script(talk_id: StringName) -> Dictionary:
+	match talk_id:
+		&"baker_intro":
+			return {
+				"who": "baker",
+				"lines": ["ch1:baker_hello", "ch1:baker_help", "ch1:help_baker"],
+				"say_back": &"hello"
+			}
+		&"baker_thanks":
+			return {
+				"who": "baker",
+				"lines": ["ch1:baker_thanks", "ch1:baker_cake"],
+				"card": &"cake",
+				"after": ["ch1:hooray"]
+			}
+		&"toy_intro":
+			return {
+				"who": "toy_maker",
+				"lines": ["ch2:toy_hello", "ch2:toy_help", "ch2:help_toy"],
+				"say_back": &"hello"
+			}
+		&"toy_thanks":
+			return {
+				"who": "toy_maker", "lines": ["ch2:toy_thanks"], "card": &"balloon", "after": ["ch2:hooray"]
+			}
+	return {}
+
+
 func start_talk(talk_id: StringName = &"") -> void:
+	var talk: Dictionary = _talk_script(talk_id)
+	if talk.is_empty():
+		quest.notify_talk_done()
+		return
+	var npc: StoryNpc = baker if talk["who"] == "baker" else toy_maker
 	hero.stop()
 	hero.keyboard_enabled = false
 	set_hint(null, "")
-	match talk_id:
-		&"baker_intro":
-			await baker.intro(_say_mic, hero.global_position)
-		&"baker_thanks":
-			await baker.thanks(learning, hero.global_position)
+	npc.talking = true
+	var alive: Callable = func() -> bool: return is_inside_tree()
+	npc.face(hero.global_position)
+	npc.wave(2.5)
+	Speech.stop()
+	for key: String in talk["lines"]:
+		Speech.line(key)
+		await SayItBack.wait_until_quiet(self, alive)
+	if talk.has("say_back"):
+		var word: WordEntry = WordDB.get_word(talk["say_back"])
+		Speech.line("talk:say_hello", word)
+		await SayItBack.wait_until_quiet(self, alive)
+		var heard: bool = await SayItBack.wait_for_word(self, word, _say_mic, alive)
+		await SayItBack.praise(self, word, heard, alive)
+	if talk.has("card"):
+		var pos: Vector3 = npc.global_position
+		if learning.request(talk["card"], pos, pos + Vector3(2.5, 2.2, 3.0), true):
+			await learning.moment_closed
+	if talk.has("after"):
+		npc.wave(3.0)
+		Sfx.play(&"door")
+		for key: String in talk["after"]:
+			Speech.line(key)
+			await SayItBack.wait_until_quiet(self, alive)
+	npc.talking = false
 	hero.keyboard_enabled = true
 	quest.notify_talk_done()
 
@@ -113,7 +177,10 @@ func start_collect(step: QuestStep) -> void:
 		item.global_position = spot
 		_collect_items.append(item)
 	_remember_place(step.word, step.spots[0], step.spots[0] + Vector3(2.0, 1.8, 2.6))
-	say_when_free_word("ch1:find_items" if _collect_total > 1 else "ch1:find_one", _collect_word)
+	var default_find: String = "ch1:find_items" if _collect_total > 1 else "ch1:find_one"
+	_found_line = step.found_line if not step.found_line.is_empty() else "count:found"
+	_hint_line = step.hint_line if not step.hint_line.is_empty() else "ch1:find_one"
+	say_when_free_word(step.find_line if not step.find_line.is_empty() else default_find, _collect_word)
 	_point_companion_at_next()
 
 
@@ -130,7 +197,7 @@ func _on_collect_click(item: CollectItem) -> void:
 		)
 	# A single thing is found, not counted: "Here is the milk!" (never "One milk!").
 	var keys: Array[String] = ["count:one", "count:two", "count:three"]
-	var key: String = "count:found" if _collect_total == 1 else keys[mini(_collect_count, 3) - 1]
+	var key: String = _found_line if _collect_total == 1 else keys[mini(_collect_count, 3) - 1]
 	say_when_free_word(key, _collect_word)
 	LearningTracker.record_heard(item.word_id)
 	if _collect_count >= _collect_total:
@@ -152,7 +219,7 @@ func _point_companion_at_next() -> void:
 			< nearest.global_position.distance_to(hero.global_position)
 		):
 			nearest = item
-	companion.set_goal(nearest, "ch1:find_one", _collect_word)
+	companion.set_goal(nearest, _hint_line, _collect_word)
 
 
 func _ready() -> void:
@@ -258,11 +325,18 @@ func _clickable_things() -> Array[Dictionary]:
 
 ## No postman here; the ferry is moored in the harbour; the baker waits by her bakery.
 func _build_story_cast() -> void:
-	baker = BakerNpc.new()
-	add_child(baker)
-	baker.global_position = BAKER_POS
-	baker.rotation.y = PI
-	Blocks.hidden_solid(_nav, BAKER_POS + Vector3(0, 0.9, 0), Vector3(0.6, 1.8, 0.6))
+	baker = _add_npc("baker", BAKER_POS)
+	toy_maker = _add_npc("toy_maker", TOY_MAKER_POS)
+
+
+func _add_npc(model_name: String, pos: Vector3) -> StoryNpc:
+	var npc: StoryNpc = StoryNpc.new()
+	npc.setup(model_name)
+	add_child(npc)
+	npc.global_position = pos
+	npc.rotation.y = PI
+	Blocks.hidden_solid(_nav, pos + Vector3(0, 0.9, 0), Vector3(0.6, 1.8, 0.6))
+	return npc
 	say_hud = CanvasLayer.new()
 	say_hud.layer = 4
 	var center: CenterContainer = CenterContainer.new()

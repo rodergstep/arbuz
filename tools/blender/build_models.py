@@ -501,6 +501,32 @@ def build_baker():
     export("baker")
 
 
+def build_toy_maker():
+    """The toy maker: a purple coat with big yellow buttons, round glasses, a bright cap. 1.65 m."""
+    reset()
+    root = empty("ToyMaker", (0, 0, 0))
+    coat, skin = mat("coat", (0.55, 0.42, 0.80, 1)), mat("skin", (0.92, 0.74, 0.62, 1))
+    button, cap = mat("buttons", (0.98, 0.82, 0.25, 1)), mat("cap", (0.30, 0.70, 0.55, 1))
+    limb("LegL", (-0.11, 0, 0.6), 0.55, 0.08, mat("trousers", (0.25, 0.25, 0.32, 1)), root, mat("shoe", DARK))
+    limb("LegR", (0.11, 0, 0.6), 0.55, 0.08, mat("trousers", (0.25, 0.25, 0.32, 1)), root, mat("shoe", DARK))
+    body = empty("Body", (0, 0, 0.6), root)
+    sphere("Coat", (0, 0, 0.98), (0.33, 0.27, 0.42), coat, body)
+    for i, z in enumerate((1.15, 0.98, 0.81)):
+        sphere("Button%d" % i, (0, 0.27, z), (0.04,) * 3, button, body, 10)
+    for side, x in (("L", -0.32), ("R", 0.32)):
+        limb("Arm" + side, (x, 0, 1.22), 0.45, 0.075, coat, root, skin)
+    head = empty("Head", (0, 0, 1.45), root)
+    sphere("Face", (0, 0, 1.5), (0.2, 0.19, 0.21), skin, head, 20)
+    for x in (-0.075, 0.075):
+        bpy.ops.mesh.primitive_torus_add(location=(x, 0.18, 1.55), major_radius=0.05, minor_radius=0.01, rotation=(math.radians(90), 0, 0))
+        finish(bpy.context.active_object, "Glasses%+.0f" % (x * 100), mat("glasses", DARK), head)
+        sphere("EyeT%+.0f" % (x * 100), (x, 0.17, 1.55), (0.02, 0.012, 0.025), mat("eye", DARK), head, 8)
+    sphere("SmileT", (0, 0.17, 1.42), (0.06, 0.02, 0.015), mat("mouth", (0.75, 0.35, 0.35, 1)), head, 10)
+    sphere("Cap", (0, 0, 1.66), (0.21, 0.21, 0.09), cap, head, 18)
+    sphere("CapBobble", (0, 0, 1.76), (0.05,) * 3, button, head, 10)
+    export("toy_maker")
+
+
 build_tygrytsa()
 build_hatchback()
 build_jeep()
@@ -521,3 +547,4 @@ build_bus_stop()
 build_barn()
 build_lamp()
 build_baker()
+build_toy_maker()

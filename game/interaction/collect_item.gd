@@ -5,6 +5,15 @@ extends Area3D
 
 signal collected(item: CollectItem)
 
+## A balloon in a colour word's colour, always with its own pattern too, so colour is never
+## the only cue: red has dots, blue has stripes, yellow has plus signs, green has upright rings.
+const BALLOON_COLORS: Dictionary[StringName, Color] = {
+	&"red": Color(0.88, 0.22, 0.24),
+	&"blue": Color(0.25, 0.48, 0.88),
+	&"yellow": Color(0.98, 0.82, 0.20),
+	&"green": Color(0.30, 0.70, 0.36),
+}
+
 var word_id: StringName
 var _art: Node3D
 var _collected: bool = false
@@ -59,6 +68,53 @@ func _process(delta: float) -> void:
 	_art.rotation.y += delta * 0.8
 
 
+func _make_balloon(root: Node3D, id: StringName) -> void:
+	var c: Vector3 = Vector3(0, 1.9, 0)
+	var balloon: SphereMesh = SphereMesh.new()
+	balloon.radius = 0.45
+	balloon.height = 1.1
+	root.add_child(Blocks.mesh(balloon, BALLOON_COLORS[id], c))
+	root.add_child(Blocks.box_mesh(Vector3(0.02, 1.4, 0.02), Color(0.95, 0.95, 0.95), Vector3(0, 0.75, 0)))
+	var white: Color = Color(0.98, 0.98, 0.96)
+	match id:
+		&"red":
+			for p: Vector3 in [
+				Vector3(0.0, 0.2, 0.42),
+				Vector3(0.25, -0.1, 0.36),
+				Vector3(-0.25, -0.1, 0.36),
+				Vector3(0, -0.3, 0.38)
+			]:
+				var dot: SphereMesh = SphereMesh.new()
+				dot.radius = 0.07
+				dot.height = 0.14
+				root.add_child(Blocks.mesh(dot, white, c + p))
+		&"blue":
+			for y: float in [-0.18, 0.15]:
+				var ring: TorusMesh = TorusMesh.new()
+				ring.inner_radius = 0.4
+				ring.outer_radius = 0.46
+				root.add_child(Blocks.mesh(ring, white, c + Vector3(0, y, 0)))
+		&"yellow":
+			# A white plus on four sides, so it shows whichever way the balloon turns.
+			for yaw: float in [0.0, PI / 2.0, PI, PI * 1.5]:
+				var side: Node3D = Node3D.new()
+				side.position = c
+				side.rotation.y = yaw
+				side.add_child(Blocks.box_mesh(Vector3(0.3, 0.09, 0.09), white, Vector3(0, 0, 0.42)))
+				side.add_child(Blocks.box_mesh(Vector3(0.09, 0.3, 0.09), white, Vector3(0, 0, 0.42)))
+				root.add_child(side)
+		&"green":
+			# Two upright rings, like the seams of a beach ball.
+			for yaw: float in [0.0, PI / 2.0]:
+				var ring: TorusMesh = TorusMesh.new()
+				ring.inner_radius = 0.43
+				ring.outer_radius = 0.48
+				var band: MeshInstance3D = Blocks.mesh(ring, white, c)
+				band.rotation = Vector3(0, yaw, PI / 2.0)
+				band.scale = Vector3(1.2, 1.0, 1.0)
+				root.add_child(band)
+
+
 func _make_art(id: StringName) -> Node3D:
 	var root: Node3D = Node3D.new()
 	match id:
@@ -96,6 +152,8 @@ func _make_art(id: StringName) -> Node3D:
 			root.add_child(
 				Blocks.box_mesh(Vector3(0.18, 0.12, 0.18), Color(0.7, 0.55, 0.35), Vector3(0, 0.8, 0))
 			)
+		&"red", &"blue", &"yellow", &"green":
+			_make_balloon(root, id)
 		_:
 			var ball: SphereMesh = SphereMesh.new()
 			ball.radius = 0.3
