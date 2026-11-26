@@ -1,16 +1,21 @@
 extends Node
 ## The player's save: one versioned JSON file per profile in user://saves (ADR-0003, contract:
 ## docs/contracts/save-format.md). Written to a temp file and renamed, so a crash never leaves a
-## half-written save. Phase 1 stores only first encounters; Phase 2 adds progress and word stats.
+## half-written save. v1: first encounters. v2: + per-word learning stats and parent settings.
 
 signal saved
 
-const VERSION: int = 1
+const VERSION: int = 2
 const DEFAULT_DIR: String = "user://saves"
 const DEFAULT_PROFILE: String = "default"
 
 var save_dir: String = DEFAULT_DIR
 var profile_id: String = DEFAULT_PROFILE
+
+## Per-word learning stats, owned by LearningTracker: word id -> {heard, right, wrong, box, last_seen}.
+var words: Dictionary[String, Dictionary] = {}
+## Parent settings (v2): session_minutes, volume (0..1).
+var settings: Dictionary = {}
 
 var _encountered: Dictionary[String, bool] = {}
 
@@ -26,6 +31,8 @@ func path() -> String:
 ## Loads the profile; a missing, unreadable or corrupt file starts fresh with a warning.
 func load_profile() -> void:
 	_encountered.clear()
+	words.clear()
+	settings = default_settings()
 	if not FileAccess.file_exists(path()):
 		return
 	var json: JSON = JSON.new()
@@ -39,6 +46,14 @@ func load_profile() -> void:
 	if seen is Array:
 		for key: Variant in seen:
 			_encountered[str(key)] = true
+	var stored_settings: Variant = data.get("settings", {})
+	if stored_settings is Dictionary:
+		settings.merge(stored_settings, true)
+	var stats: Variant = data.get("words", {})
+	if stats is Dictionary:
+		for id: Variant in stats:
+			if stats[id] is Dictionary:
+				words[str(id)] = stats[id]
 
 
 ## Brings an older save up to VERSION, one step at a time. Never edit a shipped step.
@@ -46,8 +61,20 @@ func migrate(data: Dictionary) -> Dictionary:
 	var version: int = int(data.get("version", 1))
 	if version > VERSION:
 		push_warning("SaveSystem: save version %d is newer than this game (%d)" % [version, VERSION])
-	# v1 is the first version: no steps yet. Add `if version == 1: data = _v1_to_v2(data)` here.
+	if version == 1:
+		data = _v1_to_v2(data)
+		version = 2
+	# Next format change: `if version == 2: data = _v2_to_v3(data)`.
 	return data
+
+
+## v2 adds per-word learning stats; nothing he learned in v1 is lost.
+func _v1_to_v2(data: Dictionary) -> Dictionary:
+	var out: Dictionary = data.duplicate(true)
+	out["words"] = {}
+	out["settings"] = default_settings()
+	out["version"] = 2
+	return out
 
 
 func save_now() -> bool:
@@ -59,6 +86,8 @@ func save_now() -> bool:
 		"version": VERSION,
 		"profile_id": profile_id,
 		"encountered": _encountered.keys(),
+		"words": words,
+		"settings": settings,
 	}
 	var tmp: String = path() + ".tmp"
 	var file: FileAccess = FileAccess.open(tmp, FileAccess.WRITE)
@@ -73,6 +102,10 @@ func save_now() -> bool:
 		return false
 	saved.emit()
 	return true
+
+
+static func default_settings() -> Dictionary:
+	return {"session_minutes": 15, "volume": 0.85}
 
 
 func has_encountered(key: String) -> bool:

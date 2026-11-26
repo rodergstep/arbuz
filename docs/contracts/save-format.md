@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 last_changed: greybox
 ---
 
@@ -7,6 +7,26 @@ last_changed: greybox
 
 **File:** `user://saves/<profile_id>.json` (default profile: `default`). Written by `SaveSystem`
 (`game/core/save_system.gd`) to `<file>.tmp`, then renamed over the old file. ADR-0003.
+
+## Version 2 (current)
+
+```json
+{
+  "version": 2,
+  "profile_id": "default",
+  "encountered": ["line:intro", "word:bridge"],
+  "words": {"bridge": {"heard": 3, "right": 1, "wrong": 1, "box": 2, "last_seen": 1795000000.0}},
+  "settings": {"session_minutes": 15, "volume": 0.85}
+}
+```
+
+| Field | Type | Meaning |
+|---|---|---|
+| `words` | object | per word id: `heard` (times on a learning card), `right`/`wrong` (answers when asked), `box` 1–5 (repetition box; right → +1, wrong → 1), `last_seen` (unix seconds) |
+| `settings` | object | parent settings: `session_minutes` (int), `volume` (0..1) |
+
+Migration v1 → v2 (`_v1_to_v2`): adds empty `words` and default `settings`; keeps `encountered`.
+Fixtures: `tests/fixtures/saves/v1.json`, `v2.json`.
 
 ## Version 1
 

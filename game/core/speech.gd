@@ -11,9 +11,11 @@ const RATE: float = 0.85
 
 var _voices: Dictionary[StringName, String] = {}
 var _enabled: bool = false
+var _volume: int = VOLUME
 
 
 func _ready() -> void:
+	apply_volume()
 	_enabled = DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH)
 	if not _enabled:
 		return
@@ -33,7 +35,7 @@ func say(text: String, lang: StringName = LANG_EN, interrupt: bool = false) -> v
 	EventLog.log_event(&"voice", {"text": text, "lang": String(lang)})
 	if not _enabled or not _voices.has(lang):
 		return
-	DisplayServer.tts_speak(text, _voices[lang], VOLUME, 1.0, RATE, 0, interrupt)
+	DisplayServer.tts_speak(text, _voices[lang], _volume, 1.0, RATE, 0, interrupt)
 
 
 ## English immersion with a Ukrainian first meeting: the first time he hears a line (key), it is
@@ -46,6 +48,13 @@ func say_first(key: String, uk: String, en: String, interrupt: bool = false) -> 
 	say(en, LANG_EN)
 	SaveSystem.mark_encountered(key)
 	return true
+
+
+## Applies the parent's volume to the voice and the master bus.
+func apply_volume() -> void:
+	var v: float = clampf(float(SaveSystem.settings.get("volume", 0.85)), 0.0, 1.0)
+	_volume = roundi(v * 100.0)
+	AudioServer.set_bus_volume_db(0, linear_to_db(maxf(v, 0.001)))
 
 
 func can_speak(lang: StringName) -> bool:

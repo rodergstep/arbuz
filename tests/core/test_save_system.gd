@@ -27,6 +27,25 @@ func test_v1_fixture_loads_every_encounter() -> void:
 	assert_false(_save.has_encountered("word:river"))
 
 
+func test_v1_fixture_migrates_to_v2_with_empty_word_stats() -> void:
+	DirAccess.make_dir_recursive_absolute(TEST_DIR)
+	DirAccess.copy_absolute("res://tests/fixtures/saves/v1.json", _save.path())
+	_save.load_profile()
+	assert_eq(_save.words.size(), 0)
+	assert_true(_save.save_now())
+	var written: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(_save.path()))
+	assert_eq(int(written["version"]), 2)
+
+
+func test_v2_fixture_loads_word_stats() -> void:
+	DirAccess.make_dir_recursive_absolute(TEST_DIR)
+	DirAccess.copy_absolute("res://tests/fixtures/saves/v2.json", _save.path())
+	_save.load_profile()
+	assert_eq(int(_save.words["bridge"]["box"]), 2)
+	assert_eq(int(_save.words["duck"]["wrong"]), 1)
+	assert_true(_save.has_encountered("word:bridge"))
+
+
 func test_encounters_survive_a_restart() -> void:
 	_save.mark_encountered("word:car")
 	var again: Node = SaveSystemScript.new()

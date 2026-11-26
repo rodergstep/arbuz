@@ -11,7 +11,7 @@ test_cmd: "/Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s a
 lint_cmd: "gdlint game tests tools && gdformat -l 110 --check game tests tools"
 vet_cmd: "/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --import --quit"
 export_cmd: "/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release \"macOS\" build/macos/arbuz.zip"
-save_format_version: "1"
+save_format_version: "2"
 ---
 
 # Architecture map — Тигриця's Journey
@@ -76,7 +76,7 @@ their contracts are written by `/contracts` when they do.
 | AudioManager *(planned, Ph 2)* | `game/core/audio_manager.gd` | voice by line id, music ducking, no overlap | `line_finished(line_id: StringName)` | — |
 | InputRouter *(planned, Ph 1)* | `game/core/input_router.gd` | one place mapping mouse / keys / pad / touch to game intents | `intent(kind: StringName)` | — |
 | InteractionSystem *(planned, Ph 1–2)* | `game/core/interaction_system.gd` | every click and card pick is judged here, then sent to the tracker | `pick_resolved(word_id: StringName, correct: bool)` | — |
-| LearningTracker *(planned, Ph 2)* | `game/core/learning_tracker.gd` | per-word stats, box-based repetition | `word_due(word_id: StringName)` | — |
+| LearningTracker | `game/core/learning_tracker.gd` | per-word stats in the save, box-based repetition (`record_heard`, `record_answer`, `most_needed`) | `stats_changed(word_id: StringName)` | `docs/contracts/save-format.md` |
 | QuestSystem *(planned, Ph 2)* | `game/core/quest_system.gd` | chapters and tasks from data | `task_completed(task_id: StringName)` | — |
 
 ## Module inventory (folders)

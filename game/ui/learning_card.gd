@@ -119,6 +119,7 @@ func open(entry: WordEntry, focus: Vector3, view_from: Vector3) -> void:
 	)
 	Sfx.play(&"chime")
 	EventLog.log_event(&"learning_moment", {"word_id": String(entry.id)})
+	LearningTracker.record_heard(entry.id)
 	_play(_run)
 
 

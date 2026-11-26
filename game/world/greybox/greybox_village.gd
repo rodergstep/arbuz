@@ -45,6 +45,8 @@ var marker: GoalMarker
 var pointer: PointerInput
 var pause_overlay: PauseOverlay
 var learning: LearningDirector
+var session: SessionTimer
+var parent_screen: ParentScreen
 var step: Step = Step.TO_CAR
 
 var _walk_cam: PhantomCamera3D
@@ -81,6 +83,7 @@ func _ready() -> void:
 	pointer.any_input.connect(_on_any_input)
 	pause_overlay = PauseOverlay.new()
 	add_child(pause_overlay)
+	_build_parent_area()
 	_last_input_ms = Time.get_ticks_msec()
 	EventLog.log_event(&"session_start", {"scene": "greybox_village"})
 	Speech.say_first(
@@ -299,6 +302,33 @@ func _restart_loop() -> void:
 # --- Building the world ---------------------------------------------------------------
 
 
+func _build_parent_area() -> void:
+	session = SessionTimer.new()
+	add_child(session)
+	parent_screen = ParentScreen.new()
+	add_child(parent_screen)
+	var gate: ParentGate = ParentGate.new()
+	add_child(gate)
+	var was_paused: Array[bool] = [false]
+	gate.unlocked.connect(
+		func() -> void:
+			was_paused[0] = get_tree().paused
+			get_tree().paused = true
+			parent_screen.open()
+	)
+	parent_screen.closed.connect(
+		func() -> void:
+			session.refresh_limit()
+			get_tree().paused = was_paused[0] or session.visible
+	)
+	parent_screen.extend_requested.connect(
+		func() -> void:
+			was_paused[0] = false
+			session.extend()
+			parent_screen.close()
+	)
+
+
 func _build_learning() -> void:
 	learning = LearningDirector.new()
 	add_child(learning)
@@ -337,7 +367,8 @@ func _on_door_wants_question() -> void:
 		func(w: StringName) -> bool: return DOOR_WORDS.has(w) and w != _last_door_word
 	)
 	if not taught.is_empty():
-		_ask_door(taught.pick_random())
+		# Smart repetition: the word he most needs (lowest box, longest ago) comes first.
+		_ask_door(LearningTracker.most_needed(taught)[0])
 		return
 	# Nothing taught yet: teach a word right here, then ask it.
 	var fresh: Array[StringName] = DOOR_WORDS.filter(func(w: StringName) -> bool: return w != _last_door_word)

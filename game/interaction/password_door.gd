@@ -125,6 +125,8 @@ func pick(card: PasswordCard) -> void:
 	var correct: bool = card.is_answer
 	EventLog.log_event(&"card_pick", {"word": card.word_en, "correct": correct, "wrong_before": _wrong})
 	if correct:
+		if _wrong == 0:
+			LearningTracker.record_answer(_answer.id, true)
 		Sfx.play(&"chime")
 		card.celebrate()
 		Speech.say("Yes! %s! Well done!" % _cap(card.word_en), Speech.LANG_EN, true)
@@ -132,6 +134,8 @@ func pick(card: PasswordCard) -> void:
 		_open_door()
 		return
 	_wrong += 1
+	if _wrong == 1:
+		LearningTracker.record_answer(_answer.id, false)
 	Sfx.play(&"soft")
 	card.wiggle()
 	Speech.say(card.word_en, Speech.LANG_EN, true)
