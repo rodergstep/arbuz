@@ -94,14 +94,27 @@ const TALKS: Dictionary = {
 		"cheer": true
 	},
 }
-const HOUSES: Array[Vector3] = [
-	Vector3(-14, 0, 30),
-	Vector3(-4, 0, 30),
-	Vector3(8, 0, 31),
-	Vector3(-31, 0, -14),
-	Vector3(31, 0, -14),
-	Vector3(16, 0, 10)
-]
+const HOUSES: Array[Vector3] = [Vector3(-31, 0, -14), Vector3(31, 0, -14), Vector3(16, 0, 10)]
+## Rows of three joined terrace houses along the south edge.
+const TERRACES: Array[Vector3] = [Vector3(-9, 0, 31), Vector3(6.5, 0, 31)]
+## England: soft, cooler light under a cloudier sky, deep green lawns, grey streets with
+## pavements, green patchwork fields with hedgerows beyond the town.
+const ENGLAND_LOOK: Dictionary = {
+	"sky_top": Color(0.46, 0.62, 0.84),
+	"sky_horizon": Color(0.88, 0.90, 0.92),
+	"cloud_cover": 0.66,
+	"sun": Color(1.0, 0.95, 0.88),
+	"sun_energy": 0.88,
+	"ambient": Color(0.62, 0.68, 0.84),
+	"saturation": 1.0,
+	"ground": Color(0.36, 0.62, 0.34),
+	"grass": Color(0.34, 0.60, 0.30),
+	"road": Color(0.42, 0.43, 0.46),
+	"hills": [Color(0.32, 0.56, 0.30), Color(0.40, 0.62, 0.34), Color(0.28, 0.50, 0.30)],
+	"fields":
+	[Color(0.38, 0.62, 0.32), Color(0.48, 0.68, 0.36), Color(0.90, 0.84, 0.30), Color(0.34, 0.56, 0.30)],
+}
+const PAVEMENT: Color = Color(0.74, 0.72, 0.68)
 const TREES: Array[Vector3] = [
 	Vector3(-18, 0, 12),
 	Vector3(-34, 0, 18),
@@ -130,6 +143,7 @@ var _hint_line: String = ""
 
 
 func _configure() -> void:
+	look = ENGLAND_LOOK
 	door_pos = BAKERY_POS + Vector3(-1.4, 0, 2.6)
 	hero_start = Vector3(-4, 0, -27)
 	car_start = Vector3(-8, 0, -26)
@@ -392,7 +406,10 @@ func _build_houses() -> void:
 		add_child(Blocks.prop("lamp", lamp))
 	for t: Vector3 in TREES:
 		Blocks.hidden_solid(_nav, t + Vector3(0, 1, 0), Vector3(0.5, 2, 0.5))
-		add_child(Blocks.prop("tree", t, t.x * 37.0, Vector3.ONE, [LEAF_COLOR]))
+		add_child(Blocks.prop("oak", t, t.x * 37.0, Vector3.ONE * 0.75, [Color(0.24, 0.48, 0.26)]))
+	for spot: Vector3 in TERRACES:
+		Blocks.hidden_solid(_nav, spot + Vector3(0, 2.5, 0), Vector3(12.4, 5, 4.6))
+		add_child(Blocks.prop("terrace", spot, 180.0))
 	_make_door()
 
 
@@ -418,11 +435,81 @@ func _build_hedge_ring() -> void:
 			(child.get_child(1) as MeshInstance3D).visible = false
 
 
+## Grey streets with pale pavements on both sides.
+func _build_road() -> void:
+	super._build_road()
+	for z: float in [-22.0, 22.0]:
+		for side: float in [-1.0, 1.0]:
+			add_child(Blocks.box_mesh(Vector3(52, 0.1, 0.8), PAVEMENT, Vector3(0, 0.05, z + side * 2.9)))
+	for x: float in [-24.0, 24.0]:
+		for side: float in [-1.0, 1.0]:
+			add_child(Blocks.box_mesh(Vector3(0.8, 0.1, 44), PAVEMENT, Vector3(x + side * 2.9, 0.05, 0)))
+
+
+## The town's own things: a red phone box and post box, park benches, a pond with ducks, a red
+## double-decker by the harbour, hedges and iron railings, and green fields beyond.
+func _build_scenery() -> void:
+	Scenery.backdrop(self, look["hills"], look["fields"], 5)
+	Scenery.solid(_nav, self, "phone_box", Vector3(12.5, 0, -7.5), 180.0, Vector3(1.1, 2.6, 1.1))
+	Scenery.solid(_nav, self, "post_box", Vector3(-12.5, 0, -8), 180.0, Vector3(0.7, 1.4, 0.7))
+	for spot: Vector3 in [Vector3(-12, 0, 9), Vector3(11, 0, 14.5)]:
+		Scenery.solid(_nav, self, "bench", spot, 180.0, Vector3(1.8, 0.8, 0.6))
+	Scenery.solid(_nav, self, "double_decker", Vector3(-22, 0, -26.4), 90.0, Vector3(7.8, 4, 2.6))
+	_build_pond(Vector3(12, 0, -2))
+	var hedges: Array[Transform3D] = []
+	var x: float = -21.0
+	while x <= 21.0:
+		if absf(x + 9.0) > 2.0 and absf(x - 6.5) > 2.0:
+			hedges.append(Scenery.at(Vector3(x, 0, 26.2)))
+			Blocks.hidden_solid(_nav, Vector3(x, 0.55, 26.2), Vector3(2.0, 1.1, 0.8))
+		x += 2.0
+	add_child(Scenery.scatter("hedge", hedges))
+	var rails: Array[Transform3D] = []
+	x = -15.0
+	while x <= 12.5:
+		rails.append(Scenery.at(Vector3(x, 0, 34.2)))
+		x += 2.0
+	add_child(Scenery.scatter("iron_fence", rails))
+	# Tidy flower beds in front of the houses and shops, and round bushes in the park.
+	var beds: Array[Transform3D] = []
+	for spot: Vector3 in HOUSES:
+		beds.append(Scenery.at(spot + Vector3(-1.6, 0, 3.0)))
+		beds.append(Scenery.at(spot + Vector3(1.6, 0, 3.0)))
+	for spot: Vector3 in [BAKERY_POS, CAFE_POS]:
+		beds.append(Scenery.at(spot + Vector3(-2.2, 0, 3.4)))
+	for bx: float in [-11.0, -3.0, 4.0, 10.0]:
+		beds.append(Scenery.at(Vector3(bx, 0, 35.8)))
+	add_child(Scenery.scatter("flower_bed", beds, [], 0.0))
+	add_child(Scenery.scatter("bush", Scenery.loose(Rect2(-37, -29, 74, 66), 34, _clear_of_things, 51)))
+
+
+## A round pond with a stone edge and two ducks.
+func _build_pond(center: Vector3) -> void:
+	var water: CylinderMesh = CylinderMesh.new()
+	water.top_radius = 2.4
+	water.bottom_radius = 2.4
+	water.height = 0.1
+	add_child(Blocks.mesh(water, Color(0.30, 0.55, 0.80), center + Vector3(0, 0.05, 0)))
+	var rim: TorusMesh = TorusMesh.new()
+	rim.inner_radius = 2.3
+	rim.outer_radius = 2.75
+	add_child(Blocks.mesh(rim, Color(0.70, 0.68, 0.64), center + Vector3(0, 0.05, 0)))
+	Blocks.hidden_solid(_nav, center + Vector3(0, 0.3, 0), Vector3(4.2, 0.6, 4.2))
+	for d: Vector3 in [Vector3(-0.8, 0.05, 0.4), Vector3(0.9, 0.05, -0.5)]:
+		var duck: Node3D = ModelPainter.load_model("duck")
+		duck.position = center + d
+		duck.rotation.y = d.x * 2.0
+		add_child(duck)
+
+
 func _grass_blocked(p: Vector2) -> bool:
 	if p.y < SEA_Z + 1.5:
 		return true
 	var road: bool = (absf(p.y + 22) < 3.2 or absf(p.y - 22) < 3.2) and absf(p.x) < 27.0
 	road = road or ((absf(p.x + 24) < 3.2 or absf(p.x - 24) < 3.2) and absf(p.y) < 25.0)
+	for spot: Vector3 in TERRACES:
+		if absf(p.x - spot.x) < 6.4 and absf(p.y - spot.z) < 3.0:
+			return true
 	var buildings: Array[Vector3] = HOUSES.duplicate()
 	buildings.append_array([BAKERY_POS, CAFE_POS, TOY_SHOP_POS, BARN_POS, CLOCK_POS])
 	for spot: Vector3 in buildings:
@@ -436,7 +523,7 @@ func _clickable_things() -> Array[Dictionary]:
 		{"id": &"tree", "uk": "дерево", "en": "tree", "pos": Vector3(-20, 0, 2)},
 		{"id": &"ball", "uk": "м'яч", "en": "ball", "pos": Vector3(14, 0, 18)},
 		{"id": &"dog", "uk": "собака", "en": "dog", "pos": Vector3(10, 0, 16)},
-		{"id": &"house", "uk": "будинок", "en": "house", "pos": HOUSES[5]},
+		{"id": &"house", "uk": "будинок", "en": "house", "pos": HOUSES[2]},
 		{"id": &"flower", "uk": "квітка", "en": "flower", "pos": Vector3(-6, 0, 18)},
 	]
 

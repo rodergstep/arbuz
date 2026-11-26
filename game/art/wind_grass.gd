@@ -5,6 +5,9 @@ extends MultiMeshInstance3D
 
 const TUFT_HEIGHT: float = 0.45
 
+## The grass colour of this country (set before scatter()).
+var color: Color = Color(0.45, 0.72, 0.36)
+
 
 ## Scatters `count` tufts inside `area` (x/z rectangle), skipping spots where `blocked` returns
 ## true (roads, river, houses).
@@ -47,7 +50,7 @@ func _tuft_mesh() -> ArrayMesh:
 			st.set_normal(Vector3.UP)
 			st.add_vertex(v)
 	var mesh: ArrayMesh = st.commit()
-	var mat: ShaderMaterial = PaintedMaterials.make(Color(0.45, 0.72, 0.36), 0.12).duplicate()
+	var mat: ShaderMaterial = PaintedMaterials.make(color, 0.12).duplicate()
 	mat.set_shader_parameter(&"gradient", 0.45)
 	mat.set_shader_parameter(&"gradient_scale", 2.0)
 	mesh.surface_set_material(0, mat)

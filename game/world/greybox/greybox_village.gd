@@ -25,9 +25,27 @@ const PETAL_COLOR: Color = Color(1.0, 0.80, 0.18)
 const SUNFLOWER_FIELD: Rect2 = Rect2(-37, 8, 9, 12)
 const EDGE: float = 40.0
 const DOOR_OPTIONS: int = 3
+## How the country looks: its light, sky, ground, grass and roads. Ukraine: a warm golden summer,
+## a deep blue sky, yellow-green meadows and earth roads. England sets its own in _configure().
+const UKRAINE_LOOK: Dictionary = {
+	"sky_top": Color(0.30, 0.55, 0.92),
+	"sky_horizon": Color(1.0, 0.88, 0.66),
+	"cloud_cover": 0.42,
+	"sun": Color(1.0, 0.84, 0.6),
+	"sun_energy": 1.0,
+	"ambient": Color(0.56, 0.62, 0.82),
+	"saturation": 1.06,
+	"ground": Color(0.52, 0.71, 0.33),
+	"grass": Color(0.48, 0.71, 0.31),
+	"road": Color(0.60, 0.47, 0.34),
+	"hills": [Color(0.44, 0.64, 0.32), Color(0.54, 0.66, 0.30), Color(0.40, 0.58, 0.32)],
+	"fields":
+	[Color(0.80, 0.68, 0.34), Color(0.50, 0.68, 0.32), Color(0.86, 0.74, 0.32), Color(0.44, 0.62, 0.30)],
+}
 
 ## Town layout (a town subclass sets these in _configure()).
 var door_pos: Vector3 = Vector3(-14, 0, -28)
+var look: Dictionary = UKRAINE_LOOK
 var car_start: Vector3 = Vector3(-6, 0, 16)
 var hero_start: Vector3 = Vector3(-14, 0, 8)
 ## Words the door may ask: all are things in this village, so each can be taught on the spot.
@@ -101,6 +119,7 @@ func _ready() -> void:
 	_build_road()
 	_build_river()
 	_build_houses()
+	_build_scenery()
 	_bake_navigation()
 	_build_grass()
 	_build_actors()
@@ -619,25 +638,28 @@ func _build_environment() -> void:
 	var sky: Sky = Sky.new()
 	var sky_mat: ShaderMaterial = ShaderMaterial.new()
 	sky_mat.shader = preload("res://game/art/painted_sky.gdshader")
+	sky_mat.set_shader_parameter(&"top_color", look["sky_top"])
+	sky_mat.set_shader_parameter(&"horizon_color", look["sky_horizon"])
+	sky_mat.set_shader_parameter(&"cloud_cover", look["cloud_cover"])
 	sky.sky_material = sky_mat
 	sky.process_mode = Sky.PROCESS_MODE_QUALITY
 	sky.radiance_size = Sky.RADIANCE_SIZE_32
 	env.sky = sky
 	# Golden morning (time-of-day preset): warm key light, cool blue-violet fill.
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.56, 0.62, 0.82)
+	env.ambient_light_color = look["ambient"]
 	env.ambient_light_energy = 0.42
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	env.tonemap_exposure = 0.92
 	env.adjustment_enabled = true
-	env.adjustment_saturation = 1.08
+	env.adjustment_saturation = look["saturation"]
 	env.adjustment_contrast = 1.04
 	var world_env: WorldEnvironment = WorldEnvironment.new()
 	world_env.environment = env
 	add_child(world_env)
 	var sun: DirectionalLight3D = DirectionalLight3D.new()
-	sun.light_color = Color(1.0, 0.86, 0.66)
-	sun.light_energy = 0.95
+	sun.light_color = look["sun"]
+	sun.light_energy = look["sun_energy"]
 	sun.rotation_degrees = Vector3(-55, -35, 0)
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 60.0
@@ -650,7 +672,7 @@ func _build_ground() -> void:
 	)
 	# A soft painted colour wash across the meadow.
 	(ground.get_child(1) as MeshInstance3D).material_override = PaintedMaterials.make(
-		Color(0.5, 0.72, 0.38), 0.0, 0.35
+		look["ground"], 0.0, 0.35
 	)
 	# Low fences at the edge so nobody leaves the village.
 	for side: Vector3 in [Vector3(0, 0.4, -40), Vector3(0, 0.4, 40)]:
@@ -661,6 +683,7 @@ func _build_ground() -> void:
 
 func _build_grass() -> void:
 	var grass: WindGrass = WindGrass.new()
+	grass.color = look["grass"]
 	add_child(grass)
 	grass.scatter(Rect2(-38, -38, 76, 76), 2500, _grass_blocked)
 	_build_sunflower_field()
@@ -685,7 +708,7 @@ func _build_sunflower_field() -> void:
 			spots.append(Transform3D(basis, Vector3(x, 0, z) + jitter))
 			z += step
 		x += step
-	add_child(_multimesh("sunflower", spots, [PETAL_COLOR, Color(0.38, 0.62, 0.30)]))
+	add_child(Scenery.scatter("sunflower", spots, [PETAL_COLOR, Color(0.38, 0.62, 0.30)]))
 
 
 ## The wicker fence (tyn) all around the village edge, one MultiMesh.
@@ -698,25 +721,26 @@ func _build_fence_ring() -> void:
 		spots.append(Transform3D(Basis(Vector3.UP, PI / 2.0), Vector3(-EDGE, 0, x)))
 		spots.append(Transform3D(Basis(Vector3.UP, PI / 2.0), Vector3(EDGE, 0, x)))
 		x += 2.0
-	add_child(_multimesh("fence", spots))
+	add_child(Scenery.scatter("fence", spots))
 	for child: Node in _nav.get_children():
 		# The old plain edge boards are now only collision.
 		if child is StaticBody3D and absf((child as StaticBody3D).position.y - 0.4) < 0.01:
 			(child.get_child(1) as MeshInstance3D).visible = false
 
 
-func _multimesh(
-	model_name: String, spots: Array[Transform3D], sway_colors: Array[Color] = []
-) -> MultiMeshInstance3D:
-	var mm: MultiMesh = MultiMesh.new()
-	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = ModelPainter.merged_mesh(model_name, sway_colors)
-	mm.instance_count = spots.size()
-	for i: int in spots.size():
-		mm.set_instance_transform(i, spots[i])
-	var inst: MultiMeshInstance3D = MultiMeshInstance3D.new()
-	inst.multimesh = mm
-	return inst
+## Where a bush may not go: where no grass grows, and near anything he clicks or walks to.
+func _clear_of_things(p: Vector2) -> bool:
+	if _grass_blocked(p):
+		return true
+	var keep_clear: Array[Vector3] = [POSTMAN_POS, hero_start, car_start, door_pos]
+	for thing: Dictionary in _clickable_things():
+		keep_clear.append(thing["pos"])
+	for spot: Array in learning_spots:
+		keep_clear.append(spot[1])
+	for q: Vector3 in keep_clear:
+		if p.distance_to(Vector2(q.x, q.z)) < 3.5:
+			return true
+	return false
 
 
 ## Where no grass grows: roads, the river and bridges, houses, the door house.
@@ -734,7 +758,7 @@ func _grass_blocked(p: Vector2) -> bool:
 
 
 func _build_road() -> void:
-	var road: Color = Color(0.6, 0.58, 0.55)
+	var road: Color = look["road"]
 	add_child(Blocks.box_mesh(Vector3(52, 0.04, 5), road, Vector3(0, 0.02, -22)))
 	add_child(Blocks.box_mesh(Vector3(52, 0.04, 5), road, Vector3(0, 0.02, 22)))
 	add_child(Blocks.box_mesh(Vector3(5, 0.04, 44), road, Vector3(-24, 0.02, 0)))
@@ -783,6 +807,47 @@ func _build_houses() -> void:
 		Blocks.hidden_solid(_nav, t + Vector3(0, 1, 0), Vector3(0.5, 2, 0.5))
 		if not clickable_trees.has(t):
 			add_child(Blocks.prop("tree", t, t.x * 37.0, Vector3.ONE, [LEAF_COLOR]))
+
+
+## The village's own things: wheat fields, a cherry orchard, poplars along the road, willows by
+## the river, haystacks, a stork on its nest, a well sweep, pumpkins, yard fences with clay pots
+## and painted gates, and the golden fields and hills beyond the edge.
+func _build_scenery() -> void:
+	Scenery.backdrop(self, look["hills"], look["fields"], 3)
+	var wheat: Array[Transform3D] = Scenery.field(Rect2(27, -37, 10, 10), 0.75, 21, 0.25)
+	wheat.append_array(Scenery.field(Rect2(-37, -37, 9, 6), 0.75, 22, 0.25))
+	add_child(Scenery.scatter("wheat", wheat, [Color(0.93, 0.76, 0.36)], 0.1))
+	for x: float in [-16.0, -12.0, -8.0]:
+		for z: float in [-15.0, -11.0]:
+			Scenery.solid(_nav, self, "cherry_tree", Vector3(x, 0, z), x * 13.0, Vector3(0.4, 2, 0.4))
+	var poplars: Array[Transform3D] = []
+	for x: float in [-20.0, -14.0, -8.0, -2.0, 4.0, 20.0]:
+		poplars.append(Scenery.at(Vector3(x, 0, -27.5), x * 7.0))
+	for z: float in [-12.0, -4.0, 14.0]:
+		poplars.append(Scenery.at(Vector3(36.5, 0, z), z * 5.0))
+	add_child(Scenery.scatter("poplar", poplars, [Color(0.30, 0.55, 0.28)], 0.04))
+	for spot: Vector3 in [Vector3(8.6, 0, -9), Vector3(15.6, 0, 13), Vector3(8.6, 0, 31)]:
+		Scenery.solid(
+			_nav, self, "willow", spot, spot.z * 9.0, Vector3(0.6, 2, 0.6), 0.9, [Color(0.50, 0.70, 0.36)]
+		)
+	for spot: Vector3 in [Vector3(-33, 0, -24), Vector3(-29, 0, -27), Vector3(32, 0, 30), Vector3(28, 0, 34)]:
+		Scenery.solid(_nav, self, "haystack", spot, spot.x * 11.0, Vector3(2, 2, 2))
+	Scenery.solid(_nav, self, "stork_nest", Vector3(-2, 0, -11), 160.0, Vector3(0.4, 5, 0.4))
+	Scenery.solid(_nav, self, "zhuravel", Vector3(20, 0, 15), 200.0, Vector3(1.4, 1, 1.4))
+	var pumpkins: Array[Transform3D] = Scenery.field(Rect2(-9, 34, 8, 2.5), 1.3, 31, 0.3)
+	pumpkins.append_array(Scenery.field(Rect2(33, 9, 3, 4), 1.3, 32, 0.3))
+	add_child(Scenery.scatter("pumpkin", pumpkins))
+	# Each hata's front yard: a wicker fence with clay pots and a painted gate in the middle.
+	var yard: Array[Transform3D] = []
+	for spot: Vector3 in [Vector3(4, 0, 8), Vector3(-30, 0, -8), Vector3(30, 0, 6), Vector3(-4, 0, 30)]:
+		yard.append(Scenery.at(spot + Vector3(-2.3, 0, 3.6)))
+		yard.append(Scenery.at(spot + Vector3(2.3, 0, 3.6)))
+		add_child(Blocks.prop("gate", spot + Vector3(0, 0, 3.6)))
+	add_child(Scenery.scatter("pot_fence", yard))
+	# Wild poppies and cornflowers in the meadows, and soft bushes.
+	var meadow: Rect2 = Rect2(-37, -37, 74, 74)
+	add_child(Scenery.scatter("poppies", Scenery.loose(meadow, 170, _grass_blocked, 41), [], 0.0))
+	add_child(Scenery.scatter("bush", Scenery.loose(meadow, 26, _clear_of_things, 42)))
 
 
 ## The password door at door_pos (its house is built by the town).
