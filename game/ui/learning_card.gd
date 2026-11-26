@@ -13,6 +13,8 @@ const MAX_SENTENCES: int = 2
 const LINE_PAUSE: float = 0.5
 const SILENT_LINE_SECONDS: float = 2.2
 const MIN_OPEN_SECONDS: float = 1.0
+## Time for him to say the word back before the praise.
+const SAY_IT_PAUSE: float = 1.8
 
 var is_open: bool = false
 
@@ -153,6 +155,11 @@ func _play(run: int) -> void:
 	await _line(Speech.text("card:this_is", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
 	await _line(_entry.en, Speech.LANG_EN, run)
 	await _line(_entry.en, Speech.LANG_EN, run)
+	# Say it back: a pause for him to repeat the word, then praise (no speech check).
+	await _line(Speech.text("card:say_it", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
+	if run == _run:
+		await get_tree().create_timer(SAY_IT_PAUSE, true).timeout
+	await _line(Speech.text("card:great", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
 	var sentences: PackedStringArray = _entry.examples_en.duplicate()
 	if sentences.size() > MAX_SENTENCES:
 		sentences = sentences.slice(0, MAX_SENTENCES)
