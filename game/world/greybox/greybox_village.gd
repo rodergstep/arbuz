@@ -15,6 +15,20 @@ const DOOR_POS: Vector3 = Vector3(-14, 0, -20)
 const DRIVE_SPOTS: Array[Vector3] = [Vector3(22, 0, -18), Vector3(22, 0, 18), Vector3(-22, 0, 18)]
 const CAR_START: Vector3 = Vector3(-6, 0, 16)
 const HERO_START: Vector3 = Vector3(-14, 0, 8)
+## Places that teach a word when he walks or drives past: [word, position, radius, camera offset].
+const LEARNING_SPOTS: Array[Array] = [
+	[&"bridge", Vector3(12, 0, -22), 3.5, Vector3(7, 4, 6)],
+	[&"bridge", Vector3(12, 0, 22), 3.5, Vector3(7, 4, -6)],
+	[&"river", Vector3(9, 0, 5), 2.5, Vector3(-4, 5, 5)],
+	[&"river", Vector3(9, 0, -10), 2.5, Vector3(-4, 5, 5)],
+	[&"river", Vector3(15, 0, 8), 2.5, Vector3(4, 5, 5)],
+	[&"road", Vector3(-24, 0, 8), 3.0, Vector3(6, 5, 6)],
+	[&"road", Vector3(0, 0, 22), 3.0, Vector3(5, 5, 7)],
+	[&"fence", Vector3(-37, 0, 0), 3.0, Vector3(6, 3, 4)],
+	[&"fence", Vector3(37, 0, 0), 3.0, Vector3(-6, 3, 4)],
+	[&"fence", Vector3(0, 0, -37), 3.0, Vector3(4, 3, 6)],
+	[&"fence", Vector3(0, 0, 37), 3.0, Vector3(4, 3, -6)],
+]
 
 var hero: Hero
 var car: Car
@@ -23,6 +37,7 @@ var door: PasswordDoor
 var marker: GoalMarker
 var pointer: PointerInput
 var pause_overlay: PauseOverlay
+var learning: LearningDirector
 var step: Step = Step.TO_CAR
 
 var _walk_cam: PhantomCamera3D
@@ -31,6 +46,7 @@ var _nav: NavigationRegion3D
 var _drive_spot: int = 0
 var _pending_enter: bool = false
 var _last_input_ms: int = 0
+var _taught_car: bool = false
 
 
 func _ready() -> void:
@@ -45,6 +61,7 @@ func _ready() -> void:
 	_build_actors()
 	_build_clickables()
 	_build_camera()
+	_build_learning()
 	pointer = PointerInput.new()
 	add_child(pointer)
 	pointer.ground_clicked.connect(_on_ground_clicked)
@@ -101,7 +118,10 @@ func _on_pickable_clicked(area: Area3D) -> void:
 	if area is PasswordCard:
 		door.pick(area)
 	elif area is Clickable:
-		area.activate()
+		var thing: Clickable = area
+		thing.activate(false)
+		if not learning.request(thing.word_id, thing.global_position, thing.picture_view()):
+			thing.say_name()
 	elif area.has_meta(&"car"):
 		if car.driving:
 			car.honk()
@@ -133,6 +153,8 @@ func _enter_car() -> void:
 	_drive_cam.priority = 20
 	Sfx.play(&"pop")
 	EventLog.log_event(&"car_enter")
+	if not _taught_car:
+		_taught_car = learning.offer(&"car", car.global_position, car.global_position + Vector3(4, 3, 5))
 	if step == Step.TO_CAR:
 		_go_to_step(Step.DRIVE)
 
@@ -237,6 +259,22 @@ func _restart_loop() -> void:
 
 
 # --- Building the world ---------------------------------------------------------------
+
+
+func _build_learning() -> void:
+	learning = LearningDirector.new()
+	add_child(learning)
+	learning.is_busy = func() -> bool: return door.is_active() or pause_overlay.visible
+	for spot_data: Array in LEARNING_SPOTS:
+		var spot: LearningSpot = LearningSpot.new()
+		spot.setup(spot_data[0], spot_data[2], spot_data[3])
+		add_child(spot)
+		spot.global_position = spot_data[1]
+		spot.passed.connect(_on_learning_spot)
+
+
+func _on_learning_spot(spot: LearningSpot) -> void:
+	learning.offer(spot.word_id, spot.global_position, spot.global_position + spot.view_offset)
 
 
 func _build_environment() -> void:

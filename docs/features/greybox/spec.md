@@ -7,7 +7,7 @@ updated_at: "2026-11-26"
 
 # Spec (lite) — Greybox prototype (Phase 1)
 
-> Roadmap steps 2–7. Proves that walking, driving and the password door are fun for a
+> Roadmap steps 2–7 and 30. Proves that walking, driving and the password door are fun for a
 > three-year-old before any art. Mouse and keyboard are the primary input for now (no gamepad
 > yet; D8 in the roadmap). Voices are the operating system's text-to-speech.
 
@@ -32,6 +32,15 @@ updated_at: "2026-11-26"
 - **AC-06 Event log.** Every click, idle pause (≥5 s), hint, card pick, car enter/exit, bump and
   step is written with a timestamp to `user://logs/<session>.jsonl`.
 - **AC-07 Pause.** Esc or P pauses with a dim screen and a big play button; any click resumes.
+
+- **AC-08 Learning moments (education first).** Passing the bridge, the river, the road or the
+  fence (walking or driving), clicking any object, or getting into the car for the first time
+  opens a card: a live picture of that thing, the English word large and the Ukrainian word
+  under it, spoken («Це міст!», "bridge", "bridge"), then two short English sentences, each
+  shown while spoken. The game waits behind it; one tap or Space skips. Passing moments open
+  at most every 20 s, each word at most twice a session; clicked moments always open.
+- **AC-09 Car drives smoothly.** The car accelerates to full speed in about a second and only
+  bounces when it hits something upright (a house, the fence, the river bank), never the ground.
 
 ## 8. Open questions
 

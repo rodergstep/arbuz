@@ -1,8 +1,7 @@
 class_name Clickable
 extends Area3D
-## A thing that says its name when clicked: Ukrainian first, then English, with the written
-## word shown briefly above it. Scenes report the click; the word logic stays here for Phase 1
-## and moves to InteractionSystem with the word database in Phase 2.
+## A thing in the world that reacts when clicked (a pop, a squash, its written word for a
+## moment). What it teaches is decided by the scene: normally a learning moment for word_id.
 
 signal clicked(word_id: StringName)
 
@@ -36,19 +35,30 @@ func setup(id: StringName, uk: String, en: String, art: Node3D, pick_size: Vecto
 	add_child(shape)
 
 
-func activate() -> void:
+func activate(show_word: bool = true) -> void:
 	Sfx.play(&"pop")
-	Speech.say(word_uk, Speech.LANG_UK, true)
-	Speech.say(word_en, Speech.LANG_EN)
 	EventLog.log_event(&"object_clicked", {"word_id": String(word_id)})
 	clicked.emit(word_id)
-	_show_label()
+	if show_word:
+		_show_label()
 	if visual != null:
 		var tween: Tween = create_tween()
 		tween.tween_property(visual, "scale", Vector3(1.15, 0.85, 1.15), 0.08)
 		tween.tween_property(visual, "scale", Vector3.ONE, 0.3).set_trans(Tween.TRANS_ELASTIC).set_ease(
 			Tween.EASE_OUT
 		)
+
+
+## Says the word aloud (used when no learning moment can open).
+## A good camera spot for picturing this thing, scaled to its size.
+func picture_view() -> Vector3:
+	var distance: float = clampf(_height * 2.0, 3.0, 10.0)
+	return global_position + Vector3(0.55, 0.5, 0.67).normalized() * distance
+
+
+func say_name() -> void:
+	Speech.say(word_uk, Speech.LANG_UK, true)
+	Speech.say(word_en, Speech.LANG_EN)
 
 
 func _show_label() -> void:

@@ -63,6 +63,8 @@ Each town is a small open world he explores freely on foot or by car. All contro
 
 ## Learning design
 
+**Education first** (decided after the first greybox playtest, 2026-11-26): the main idea is not play but learning something new, and every situation is used for it. Passing a landmark (a bridge, the river, the road), clicking anything, or getting into the car opens a short **learning moment**: a picture of the real thing, the word in Ukrainian and English, and the English word used in two short sentences from different situations ("The car goes over the bridge." / "The duck swims under the bridge."). Moments are voiced, skippable with one tap, and paced so play still flows.
+
 Everything works without reading or speaking. He learns by listening and clicking, in Ukrainian first and then the target language.
 
 - **Language approach:** Тигриця and the narrator speak Ukrainian. Local characters say the new words in English, Spanish or French.

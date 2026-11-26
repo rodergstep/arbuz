@@ -36,6 +36,10 @@ func say(text: String, lang: StringName = LANG_UK, interrupt: bool = false) -> v
 	DisplayServer.tts_speak(text, _voices[lang], VOLUME, 1.0, RATE, 0, interrupt)
 
 
+func can_speak(lang: StringName) -> bool:
+	return _enabled and _voices.has(lang)
+
+
 func stop() -> void:
 	if _enabled:
 		DisplayServer.tts_stop()

@@ -23,6 +23,14 @@ func _process(_delta: float) -> bool:
 			_village.call("_on_pickable_clicked", _village.get("car").get_child(-1))
 		240:
 			_shot("02_walking_to_car")
+		250:
+			for child: Node in _village.get_children():
+				if child.has_method("say_name") and child.get("word_id") == &"duck":
+					_village.call("_on_pickable_clicked", child)
+		330:
+			_shot("02b_learning_card")
+		335:
+			_village.get("learning").get("card").call("close")
 		420:
 			_shot("03_in_car")
 			_village.get("car").call("drive_to", Vector3(22, 0, 18))

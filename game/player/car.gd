@@ -6,12 +6,15 @@ extends CharacterBody3D
 
 signal bumped
 
-const MAX_SPEED: float = 8.0
-const ACCEL: float = 7.0
+const MAX_SPEED: float = 10.0
+const ACCEL: float = 12.0
 const BRAKE: float = 10.0
 const TURN_RATE: float = 2.6
 const ARRIVE_RADIUS: float = 1.8
-const BUMP_COOLDOWN: float = 0.5
+const BUMP_COOLDOWN: float = 0.6
+const GRAVITY: float = 20.0
+## A collision counts as a bump only against something upright, never the ground.
+const WALL_NORMAL_MAX_Y: float = 0.5
 
 var driving: bool = false
 
@@ -19,6 +22,7 @@ var _speed: float = 0.0
 var _target: Vector3 = Vector3.ZERO
 var _has_target: bool = false
 var _bump_timer: float = 0.0
+var _fall_speed: float = 0.0
 var _body: Node3D
 
 
@@ -94,16 +98,24 @@ func _physics_process(delta: float) -> void:
 		var target_yaw: float = atan2(-want.x, -want.z)
 		rotation.y = rotate_toward(rotation.y, target_yaw, TURN_RATE * delta)
 		var facing: Vector3 = -transform.basis.z
-		var alignment: float = clampf(facing.dot(want), 0.2, 1.0)
+		var alignment: float = clampf(facing.dot(want), 0.45, 1.0)
 		_speed = move_toward(_speed, MAX_SPEED * alignment, ACCEL * delta)
 	else:
 		_speed = move_toward(_speed, 0.0, BRAKE * delta)
 	var forward: Vector3 = -transform.basis.z
+	_fall_speed = 0.0 if is_on_floor() else _fall_speed + GRAVITY * delta
 	velocity = forward * _speed
-	velocity.y = -1.0
+	velocity.y = -_fall_speed
 	move_and_slide()
-	if get_slide_collision_count() > 0 and absf(_speed) > 2.0 and _bump_timer <= 0.0:
+	if _hit_wall() and absf(_speed) > 2.0 and _bump_timer <= 0.0:
 		_bounce()
+
+
+func _hit_wall() -> bool:
+	for i: int in get_slide_collision_count():
+		if get_slide_collision(i).get_normal().y < WALL_NORMAL_MAX_Y:
+			return true
+	return false
 
 
 func _bounce() -> void:
