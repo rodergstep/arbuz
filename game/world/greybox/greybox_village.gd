@@ -253,6 +253,7 @@ func _begin_find(word_id: StringName) -> void:
 		func(c: Clickable) -> bool: return c.word_id == word_id
 	)
 	_find_target = candidates.pick_random()
+	_find_target.set_highlight(true)
 	_find_wrong = 0
 	var word: WordEntry = WordDB.get_word(word_id)
 	say_when_free_word("find:ask", word)
@@ -269,6 +270,7 @@ func _on_find_click(thing: Clickable) -> void:
 		if _find_wrong == 0:
 			LearningTracker.record_answer(word.id, true)
 		Speech.line("find:yes", word, true)
+		_find_target.set_highlight(false)
 		_find_target = null
 		clear_marker()
 		quest.notify_found()

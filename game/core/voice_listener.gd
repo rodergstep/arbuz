@@ -9,6 +9,7 @@ const BUS_NAME: StringName = &"Listen"
 ## RMS loudness (0..1) that counts as his voice, and for how long.
 const VOICE_LEVEL: float = 0.04
 const VOICE_SECONDS: float = 0.25
+const BLOCKED_AFTER: int = 3
 
 var _player: AudioStreamPlayer
 var _capture: AudioEffectCapture
@@ -17,9 +18,10 @@ var _heard_for: float = 0.0
 var _heard: bool = false
 ## Each listen() gets a new id; cancel() or a newer listen() ends the older one.
 var _session: int = 0
-## True once a listen got only exact digital silence: the microphone is blocked (for example
-## macOS permission denied). Then cards stop waiting for him, so he can never get stuck.
-var _blocked: bool = false
+## Listen windows in a row that got only exact digital silence. A blocked microphone (for
+## example macOS permission denied) gives that every time; a quiet child on a noise-gated mic
+## can too, so one window proves nothing. Any real signal resets the count.
+var _silent_windows: int = 0
 var _any_signal: bool = false
 
 
@@ -39,8 +41,7 @@ func _ready() -> void:
 
 func available() -> bool:
 	return (
-		not _blocked
-		and bool(SaveSystem.settings.get("microphone", true))
+		bool(SaveSystem.settings.get("microphone", true))
 		and bool(ProjectSettings.get_setting("audio/driver/enable_input", false))
 		and DisplayServer.get_name() != "headless"
 	)
@@ -68,12 +69,16 @@ func listen(seconds: float) -> bool:
 	if session != _session:
 		return false
 	var heard: bool = _heard
-	if not _any_signal:
-		_blocked = true
-		push_warning("VoiceListener: the microphone gives no signal (permission?); not waiting for speech")
+	_silent_windows = 0 if _any_signal else _silent_windows + 1
 	_stop_mic()
 	EventLog.log_event(&"say_it_listen", {"heard": heard, "after_s": snappedf(waited, 0.1)})
 	return heard
+
+
+## True after BLOCKED_AFTER windows in a row of exact digital silence: the microphone is most
+## likely blocked, so a card should stop waiting for him (he must never get stuck).
+func seems_blocked() -> bool:
+	return _silent_windows >= BLOCKED_AFTER
 
 
 ## Stops listening at once (the card was closed); the pending listen() returns false.

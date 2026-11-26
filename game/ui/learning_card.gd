@@ -181,14 +181,14 @@ func _play(run: int) -> void:
 
 
 ## Listens until he makes a sound, re-asking after each quiet try (every third try the word is
-## said again first). Returns false only when there is no microphone.
+## said again first). Returns false only when there is no microphone or it seems blocked.
 func _wait_for_his_turn(run: int) -> bool:
 	var tries: int = 0
 	while run == _run:
 		_mic.visible = true
 		var heard: bool = await VoiceListener.listen(SAY_IT_LISTEN)
 		_mic.visible = false
-		if heard or not VoiceListener.available():
+		if heard or not VoiceListener.available() or VoiceListener.seems_blocked():
 			return heard
 		tries += 1
 		EventLog.log_event(&"say_it_reprompt", {"word_id": String(_entry.id), "tries": tries})
