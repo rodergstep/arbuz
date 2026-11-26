@@ -21,6 +21,7 @@ var _last_closed_ms: int = -1000000
 var _auto_counts: Dictionary[StringName, int] = {}
 var _last_shown_ms: Dictionary[StringName, int] = {}
 var _start_ms: int = 0
+var _taught: Array[StringName] = []
 
 
 func _ready() -> void:
@@ -32,6 +33,15 @@ func _ready() -> void:
 
 func is_open() -> bool:
 	return card.is_open
+
+
+## Words shown on a learning card this session, oldest first.
+func taught_words() -> Array[StringName]:
+	return _taught.duplicate()
+
+
+func was_taught(word_id: StringName) -> bool:
+	return _taught.has(word_id)
 
 
 ## A passing moment: may be declined. Returns true when the card opened.
@@ -63,6 +73,8 @@ func _open(word_id: StringName, focus: Vector3, view_from: Vector3) -> bool:
 	if entry == null:
 		return false
 	_last_shown_ms[word_id] = Time.get_ticks_msec()
+	if not _taught.has(word_id):
+		_taught.append(word_id)
 	get_tree().paused = true
 	card.open(entry, focus, view_from)
 	return true

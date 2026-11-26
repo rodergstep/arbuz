@@ -63,7 +63,7 @@ Each town is a small open world he explores freely on foot or by car. All contro
 
 ## Learning design
 
-**Education first** (decided after the first greybox playtest, 2026-11-26): the main idea is not play but learning something new, and every situation is used for it. Passing a landmark (a bridge, the river, the road), clicking anything, or getting into the car opens a short **learning moment**: a picture of the real thing, the word in Ukrainian and English, and the English word used in two short sentences from different situations ("The car goes over the bridge." / "The duck swims under the bridge."). Moments are voiced, skippable with one tap, and paced so play still flows.
+**Education first** (decided after the first greybox playtest, 2026-11-26): the main idea is not play but learning something new, and every situation is used for it. Passing a landmark (a bridge, the river, the road), clicking anything, or getting into the car opens a short **learning moment**: a picture of the real thing, the word in Ukrainian and English, and the English word used in two short sentences from different situations ("The car goes over the bridge." / "The duck swims under the bridge."). Moments are voiced in English only (no Ukrainian on the card), skippable with one tap, and paced so play still flows. **Teach before test:** a password door or quiz only asks words he has already met in a learning moment; if none fits, the moment teaches the word first and the door asks right after.
 
 Everything works without reading or speaking. He learns by listening and clicking, in Ukrainian first and then the target language.
 
@@ -78,6 +78,8 @@ Everything works without reading or speaking. He learns by listening and clickin
 * **Word labels:** when a word is spoken, its written form appears briefly on the object, for early exposure to letters. No other text in the child's view.
 
 ### Password doors
+
+The door's word is always one he has already been taught (see Learning design).
 
 Buildings are locked. When he walks up to a door, Тигриця asks in Ukrainian, for example, how to say "lion" in English. Three blank cards appear, and each one says its word aloud when he points at it or clicks it ("dog", "ox", "lion"). He picks the right card and the door opens.
 

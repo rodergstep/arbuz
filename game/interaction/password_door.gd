@@ -5,24 +5,24 @@ extends Node3D
 ## A wrong pick gets a gentle wiggle, the card says its word and the question repeats. After 2
 ## wrong picks the right card glows and the door opens with praise. No fail state.
 ## Re-arms with a new word after the hero walks away, so it can be played again.
+## Teach before test: the door never picks its own word. When the hero arrives it emits
+## wants_question; the scene chooses a word he has already been taught (or teaches it first)
+## and then calls ask().
 
+signal wants_question
 signal opened(word_id: StringName, wrong_picks: int)
 signal cards_shown
 signal cards_hidden
 
 const MAX_WRONG: int = 2
 const CARD_SPACING: float = 2.6
-const ROUNDS: Array[Dictionary] = [
-	{"uk": "лев", "answer": "lion", "others": ["dog", "ox"]},
-	{"uk": "кіт", "answer": "cat", "others": ["cow", "duck"]},
-	{"uk": "яблуко", "answer": "apple", "others": ["milk", "ball"]},
-	{"uk": "собака", "answer": "dog", "others": ["sun", "fish"]},
-]
 
 var cards: Array[PasswordCard] = []
 var focused_index: int = 1
 
-var _round: int = 0
+var _answer: WordEntry
+var _others: Array[WordEntry] = []
+var _hero_inside: bool = false
 var _wrong: int = 0
 var _active: bool = false
 var _open: bool = false
@@ -63,7 +63,31 @@ func is_active() -> bool:
 
 
 func question_line() -> String:
-	return "Як англійською буде «%s»? Послухай картки і вибери!" % ROUNDS[_round]["uk"]
+	return "Як англійською буде «%s»? Послухай картки і вибери!" % _answer.uk
+
+
+func is_hero_inside() -> bool:
+	return _hero_inside
+
+
+## Shows the cards and asks. answer must be a word he has already been taught.
+func ask(answer: WordEntry, others: Array[WordEntry]) -> void:
+	if _open or _active or not _hero_inside:
+		return
+	_answer = answer
+	_others = others
+	_active = true
+	_wrong = 0
+	_build_cards()
+	_cards_root.visible = true
+	_cards_root.position.y = -1.5
+	var rise: Tween = create_tween()
+	rise.tween_property(_cards_root, "position:y", 0.0, 0.5).set_trans(Tween.TRANS_BACK).set_ease(
+		Tween.EASE_OUT
+	)
+	Speech.say(question_line(), Speech.LANG_UK, true)
+	EventLog.log_event(&"door_question", {"word": String(answer.id)})
+	cards_shown.emit()
 
 
 func focus_step(step: int) -> void:
@@ -111,26 +135,17 @@ func pick(card: PasswordCard) -> void:
 		Speech.say("Молодець! Двері відчиняються!", Speech.LANG_UK)
 		_open_door()
 	else:
-		Speech.say("Спробуймо ще! Як буде «%s»?" % ROUNDS[_round]["uk"], Speech.LANG_UK)
+		Speech.say("Спробуймо ще! Як буде «%s»?" % _answer.uk, Speech.LANG_UK)
 
 
 func _on_hero_entered(_body: Node3D) -> void:
-	if _open or _active:
-		return
-	_active = true
-	_wrong = 0
-	_build_cards()
-	_cards_root.visible = true
-	_cards_root.position.y = -1.5
-	create_tween().tween_property(_cards_root, "position:y", 0.0, 0.5).set_trans(Tween.TRANS_BACK).set_ease(
-		Tween.EASE_OUT
-	)
-	Speech.say(question_line(), Speech.LANG_UK, true)
-	EventLog.log_event(&"door_question", {"word": ROUNDS[_round]["answer"]})
-	cards_shown.emit()
+	_hero_inside = true
+	if not _open and not _active:
+		wants_question.emit()
 
 
 func _on_hero_exited(_body: Node3D) -> void:
+	_hero_inside = false
 	if _active:
 		_active = false
 		_cards_root.visible = false
@@ -150,13 +165,12 @@ func _open_door() -> void:
 	)
 	tween.tween_interval(1.5)
 	tween.tween_callback(func() -> void: _cards_root.visible = false)
-	opened.emit(StringName(ROUNDS[_round]["answer"]), _wrong)
+	opened.emit(_answer.id, _wrong)
 	cards_hidden.emit()
 
 
 func _close_and_rearm() -> void:
 	_open = false
-	_round = (_round + 1) % ROUNDS.size()
 	create_tween().tween_property(_panel, "rotation:y", 0.0, 0.8)
 
 
@@ -171,14 +185,13 @@ func _build_cards() -> void:
 	for card: PasswordCard in cards:
 		card.queue_free()
 	cards.clear()
-	var words: Array[String] = [ROUNDS[_round]["answer"]]
-	for other: String in ROUNDS[_round]["others"]:
-		words.append(other)
+	var words: Array[WordEntry] = [_answer]
+	words.append_array(_others)
 	words.shuffle()
 	for i: int in words.size():
 		var card: PasswordCard = PasswordCard.new()
-		card.word_en = words[i]
-		card.is_answer = words[i] == ROUNDS[_round]["answer"]
+		card.word_en = words[i].en
+		card.is_answer = words[i] == _answer
 		card.position = Vector3((i - 1) * CARD_SPACING, 1.6, 0.0)
 		card.door = self
 		_cards_root.add_child(card)

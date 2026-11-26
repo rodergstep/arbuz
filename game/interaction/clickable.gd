@@ -57,15 +57,14 @@ func picture_view() -> Vector3:
 
 
 func say_name() -> void:
-	Speech.say(word_uk, Speech.LANG_UK, true)
-	Speech.say(word_en, Speech.LANG_EN)
+	Speech.say(word_en, Speech.LANG_EN, true)
 
 
 func _show_label() -> void:
 	if _label == null:
 		_label = Blocks.label("", _height, 72)
 		add_child(_label)
-	_label.text = "%s · %s" % [word_uk, word_en]
+	_label.text = word_en
 	_label.visible = true
 	_label_timer = LABEL_SECONDS
 

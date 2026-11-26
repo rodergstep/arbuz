@@ -22,9 +22,11 @@ updated_at: "2026-11-26"
 - **AC-03 Guidance.** A glowing marker shows the next spot (car → a drive spot → the door).
   Тигриця follows and points at it. After ~15 s without getting closer she gives a voiced hint
   and the marker brightens; after +10 s she runs to the marker.
-- **AC-04 Speaking objects.** Clicking a tree, flower, sunflower, ball, duck, dog or house says
-  its name in Ukrainian then English and shows the written word briefly.
-- **AC-05 Password door.** Walking up to the door, Тигриця asks how to say a word in English;
+- **AC-04 Speaking objects.** Clicking a tree, flower, sunflower, ball, duck, dog or house opens
+  its learning moment (AC-08); everything spoken there is English.
+- **AC-05 Password door (teach before test).** The door only asks a word he has already seen
+  on a learning card this session (a different one each visit when possible); if none, it first
+  opens the learning card for a village word, then asks that word. Тигриця asks in Ukrainian;
   three blank cards rise and each says its word when pointed at or clicked (left/right + Space
   on the keyboard). A wrong pick wiggles, says its word and repeats the question, never a sad
   sound. After 2 wrong picks the right card glows and the door opens with praise. The loop
@@ -35,11 +37,11 @@ updated_at: "2026-11-26"
 
 - **AC-08 Learning moments (education first).** Passing the bridge, the river, the road or the
   fence (walking or driving), clicking any object, or getting into the car for the first time
-  opens a card: a live picture of that thing, the English word large and the Ukrainian word
-  under it, spoken («Це міст!», "bridge", "bridge"), then two short English sentences, each
-  shown while spoken. The game waits behind it; one tap or Space skips. Passing moments open
+  opens a card in English only: a live picture of that thing and the English word, spoken
+  twice ("bridge", "bridge"), then two short English sentences, each shown while spoken. The game waits behind it; one tap or Space skips. Passing moments open
   at most every 20 s, each word at most twice a session; clicked moments always open.
-- **AC-09 Car drives smoothly.** The car accelerates to full speed in about a second and only
+- **AC-09 Car drives smoothly.** Top speed 7 m/s (30% slower after the second playtest); it
+  accelerates to full speed in about a second and only
   bounces when it hits something upright (a house, the fence, the river bank), never the ground.
 
 ## 8. Open questions

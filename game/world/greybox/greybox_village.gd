@@ -16,6 +16,11 @@ const DRIVE_SPOTS: Array[Vector3] = [Vector3(22, 0, -18), Vector3(22, 0, 18), Ve
 const CAR_START: Vector3 = Vector3(-6, 0, 16)
 const HERO_START: Vector3 = Vector3(-14, 0, 8)
 ## Places that teach a word when he walks or drives past: [word, position, radius, camera offset].
+## Words the door may ask: all are things in this village, so each can be taught on the spot.
+const DOOR_WORDS: Array[StringName] = [
+	&"tree", &"flower", &"duck", &"dog", &"ball", &"house", &"bridge", &"car", &"river", &"road"
+]
+const DOOR_OPTIONS: int = 3
 const LEARNING_SPOTS: Array[Array] = [
 	[&"bridge", Vector3(12, 0, -22), 3.5, Vector3(7, 4, 6)],
 	[&"bridge", Vector3(12, 0, 22), 3.5, Vector3(7, 4, -6)],
@@ -47,6 +52,9 @@ var _drive_spot: int = 0
 var _pending_enter: bool = false
 var _last_input_ms: int = 0
 var _taught_car: bool = false
+var _word_places: Dictionary[StringName, Array] = {}
+var _pending_door_word: StringName = &""
+var _last_door_word: StringName = &""
 
 
 func _ready() -> void:
@@ -156,7 +164,7 @@ func _enter_car() -> void:
 	if not _taught_car:
 		_taught_car = learning.offer(&"car", car.global_position, car.global_position + Vector3(4, 3, 5))
 	if step == Step.TO_CAR:
-		_go_to_step(Step.DRIVE)
+		_go_to_step(Step.DRIVE)  # its instruction waits for the card
 
 
 func _exit_car() -> void:
@@ -189,12 +197,12 @@ func _go_to_step(next: Step) -> void:
 			_place_marker(car.global_position + Vector3(-2.2, 0, 0))
 			companion.set_goal(marker, "Я тут! Ходи до машини — натисни на неї!")
 		Step.DRIVE:
-			Speech.say("Поїхали! Їдь до вогника!", Speech.LANG_UK)
+			_say_when_free("Поїхали! Їдь до вогника!")
 			_place_marker(DRIVE_SPOTS[_drive_spot])
 			_drive_spot = (_drive_spot + 1) % DRIVE_SPOTS.size()
 			companion.set_goal(marker, "Їдь до вогника! Натисни туди, де світиться.")
 		Step.TO_DOOR:
-			Speech.say("Приїхали! Виходимо з машини і йдемо до дверей.", Speech.LANG_UK)
+			_say_when_free("Приїхали! Виходимо з машини і йдемо до дверей.")
 			_place_marker(DOOR_POS + Vector3(0, 0, 6.5))
 			companion.set_goal(marker, "Ходімо до дверей! Вони там, де вогник.")
 		Step.DOOR:
@@ -203,6 +211,13 @@ func _go_to_step(next: Step) -> void:
 		Step.FREE:
 			_remove_marker()
 			companion.set_goal(null, "")
+
+
+## Tells a Ukrainian instruction, after any open learning card has finished.
+func _say_when_free(text: String) -> void:
+	if learning.is_open():
+		await learning.moment_closed
+	Speech.say(text, Speech.LANG_UK)
 
 
 func _place_marker(pos: Vector3) -> void:
@@ -254,7 +269,7 @@ func _on_door_opened(_word: StringName, _wrong: int) -> void:
 
 
 func _restart_loop() -> void:
-	Speech.say("Ще раз? Ходімо до машини!", Speech.LANG_UK)
+	_say_when_free("Ще раз? Ходімо до машини!")
 	_go_to_step(Step.TO_CAR)
 
 
@@ -271,6 +286,74 @@ func _build_learning() -> void:
 		add_child(spot)
 		spot.global_position = spot_data[1]
 		spot.passed.connect(_on_learning_spot)
+		_remember_place(spot.word_id, spot.global_position, spot.global_position + spot.view_offset)
+	for child: Node in get_children():
+		if child is Clickable:
+			var thing: Clickable = child
+			_remember_place(thing.word_id, thing.global_position, thing.picture_view())
+	_remember_place(&"car", car.global_position, car.global_position + Vector3(4, 3, 5))
+	learning.moment_closed.connect(_on_moment_closed)
+
+
+func _remember_place(word_id: StringName, focus: Vector3, view_from: Vector3) -> void:
+	if not _word_places.has(word_id):
+		_word_places[word_id] = [focus, view_from]
+
+
+func _picture_of(word_id: StringName) -> Array:
+	if word_id == &"car":
+		return [car.global_position, car.global_position + Vector3(4, 3, 5)]
+	return _word_places.get(word_id, [door.global_position, door.global_position + Vector3(4, 3, 6)])
+
+
+# --- Teach before test: the door only asks words he has already met ------------------
+
+
+func _on_door_wants_question() -> void:
+	var taught: Array[StringName] = learning.taught_words().filter(
+		func(w: StringName) -> bool: return DOOR_WORDS.has(w) and w != _last_door_word
+	)
+	if not taught.is_empty():
+		_ask_door(taught.pick_random())
+		return
+	# Nothing taught yet: teach a word right here, then ask it.
+	var fresh: Array[StringName] = DOOR_WORDS.filter(func(w: StringName) -> bool: return w != _last_door_word)
+	_pending_door_word = fresh.pick_random()
+	Speech.say("Спершу вивчимо слово!", Speech.LANG_UK, true)
+	var place: Array = _picture_of(_pending_door_word)
+	if not learning.request(_pending_door_word, place[0], place[1]):
+		_ask_door(_pending_door_word)
+
+
+func _on_moment_closed(word_id: StringName) -> void:
+	if word_id == _pending_door_word:
+		_pending_door_word = &""
+		if door.is_hero_inside():
+			_ask_door(word_id)
+
+
+func _ask_door(answer_id: StringName) -> void:
+	var answer: WordEntry = WordDB.get_word(answer_id)
+	if answer == null:
+		return
+	_last_door_word = answer_id
+	var pool: Array[StringName] = learning.taught_words().filter(
+		func(w: StringName) -> bool: return w != answer_id
+	)
+	pool.shuffle()
+	var rest: Array[StringName] = DOOR_WORDS.filter(
+		func(w: StringName) -> bool: return w != answer_id and not pool.has(w)
+	)
+	rest.shuffle()
+	pool.append_array(rest)
+	var others: Array[WordEntry] = []
+	for w: StringName in pool:
+		if others.size() >= DOOR_OPTIONS - 1:
+			break
+		var entry: WordEntry = WordDB.get_word(w)
+		if entry != null:
+			others.append(entry)
+	door.ask(answer, others)
 
 
 func _on_learning_spot(spot: LearningSpot) -> void:
@@ -353,6 +436,7 @@ func _build_houses() -> void:
 	door.cards_shown.connect(_on_cards_shown)
 	door.cards_hidden.connect(_on_cards_hidden)
 	door.opened.connect(_on_door_opened)
+	door.wants_question.connect(_on_door_wants_question)
 	for t: Vector3 in [
 		Vector3(-10, 0, 2), Vector3(-18, 0, -2), Vector3(16, 0, -6), Vector3(18, 0, 12), Vector3(-30, 0, 30)
 	]:

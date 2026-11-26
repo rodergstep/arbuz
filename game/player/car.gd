@@ -6,8 +6,8 @@ extends CharacterBody3D
 
 signal bumped
 
-const MAX_SPEED: float = 10.0
-const ACCEL: float = 12.0
+const MAX_SPEED: float = 7.0
+const ACCEL: float = 8.5
 const BRAKE: float = 10.0
 const TURN_RATE: float = 2.6
 const ARRIVE_RADIUS: float = 1.8
