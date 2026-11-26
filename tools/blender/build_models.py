@@ -611,6 +611,30 @@ def build_farmer():
     export("farmer")
 
 
+def build_clock_maker():
+    """The clock maker: a brown waistcoat, a white beard, round glasses, a flat cap. 1.7 m."""
+    reset()
+    root = empty("ClockMaker", (0, 0, 0))
+    vest, shirt, skin = mat("vest", (0.50, 0.36, 0.26, 1)), mat("shirt", (0.95, 0.93, 0.88, 1)), mat("skin", (0.94, 0.78, 0.66, 1))
+    limb("LegL", (-0.12, 0, 0.7), 0.63, 0.08, mat("trousers", (0.30, 0.30, 0.38, 1)), root, mat("shoe", DARK))
+    limb("LegR", (0.12, 0, 0.7), 0.63, 0.08, mat("trousers", (0.30, 0.30, 0.38, 1)), root, mat("shoe", DARK))
+    body = empty("Body", (0, 0, 0.7), root)
+    sphere("Shirt", (0, 0, 1.08), (0.3, 0.23, 0.35), shirt, body)
+    sphere("Vest", (0, 0.04, 1.06), (0.31, 0.22, 0.3), vest, body)
+    sphere("Watch", (0.12, 0.25, 1.05), (0.05, 0.02, 0.05), mat("gold", (0.95, 0.80, 0.30, 1)), body, 10)
+    for side, x in (("L", -0.32), ("R", 0.32)):
+        limb("Arm" + side, (x, 0, 1.33), 0.48, 0.075, shirt, root, skin)
+    head = empty("Head", (0, 0, 1.55), root)
+    sphere("Face", (0, 0, 1.6), (0.2, 0.19, 0.22), skin, head, 20)
+    sphere("Beard", (0, 0.1, 1.48), (0.17, 0.12, 0.13), mat("beard", (0.97, 0.97, 0.97, 1)), head, 14)
+    for x in (-0.075, 0.075):
+        bpy.ops.mesh.primitive_torus_add(location=(x, 0.18, 1.65), major_radius=0.05, minor_radius=0.01, rotation=(math.radians(90), 0, 0))
+        finish(bpy.context.active_object, "GlassesC%+.0f" % (x * 100), mat("glasses", DARK), head)
+        sphere("EyeC%+.0f" % (x * 100), (x, 0.17, 1.65), (0.02, 0.012, 0.025), mat("eye", DARK), head, 8)
+    sphere("CapC", (0, 0.03, 1.77), (0.22, 0.24, 0.07), mat("flatcap", (0.35, 0.40, 0.50, 1)), head, 18)
+    export("clock_maker")
+
+
 build_tygrytsa()
 build_hatchback()
 build_jeep()
@@ -637,3 +661,4 @@ build_sheep()
 build_pig()
 build_duck()
 build_farmer()
+build_clock_maker()

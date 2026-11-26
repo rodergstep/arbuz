@@ -14,6 +14,9 @@ const TOY_MAKER_POS: Vector3 = Vector3(-30, 0, 11)
 const CHAPTER3_PATH: String = "res://content/chapters/chapter3_animals.tres"
 const CHAPTER3_DONE: String = "chapter:animals"
 const FARMER_POS: Vector3 = Vector3(24, 0, 25)
+const CHAPTER4_PATH: String = "res://content/chapters/chapter4_clock.tres"
+const CHAPTER4_DONE: String = "chapter:clock"
+const CLOCK_MAKER_POS: Vector3 = Vector3(3, 0, 7)
 const BAKER_POS: Vector3 = Vector3(-5.5, 0, -8.5)
 const SEA_Z: float = -31.0
 const BAKERY_POS: Vector3 = Vector3(-8, 0, -12)
@@ -47,6 +50,19 @@ const TALKS: Dictionary = {
 	},
 	&"farmer_thanks":
 	{"who": "farmer", "lines": ["ch3:farmer_thanks"], "card": &"farm", "after": ["ch3:hooray"]},
+	&"clock_intro":
+	{
+		"who": "clock_maker",
+		"lines": ["ch4:clock_hello", "ch4:clock_help", "ch4:help_clock"],
+		"say_back": &"hello"
+	},
+	&"clock_thanks":
+	{
+		"who": "clock_maker",
+		"lines": ["ch4:clock_thanks", "ch4:count_ten"],
+		"card": &"clock",
+		"after": ["ch4:clock_works"]
+	},
 }
 const HOUSES: Array[Vector3] = [
 	Vector3(-14, 0, 30),
@@ -71,6 +87,7 @@ const LAMPS: Array[Vector3] = [
 var baker: StoryNpc
 var toy_maker: StoryNpc
 var farmer: StoryNpc
+var clock_maker: StoryNpc
 var _collect_items: Array[CollectItem] = []
 var _collect_word: WordEntry
 var _collect_count: int = 0
@@ -118,11 +135,13 @@ func _first_chapter_path() -> String:
 		return CHAPTER2_PATH
 	if not SaveSystem.has_encountered(CHAPTER3_DONE):
 		return CHAPTER3_PATH
+	if not SaveSystem.has_encountered(CHAPTER4_DONE):
+		return CHAPTER4_PATH
 	return PRACTICE_PATH
 
 
 func _talking() -> bool:
-	for npc: StoryNpc in [baker, toy_maker, farmer]:
+	for npc: StoryNpc in [baker, toy_maker, farmer, clock_maker]:
 		if npc != null and npc.is_talking():
 			return true
 	return false
@@ -137,7 +156,9 @@ func start_talk(talk_id: StringName = &"") -> void:
 	if talk.is_empty():
 		quest.notify_talk_done()
 		return
-	var npcs: Dictionary[String, StoryNpc] = {"baker": baker, "toy_maker": toy_maker, "farmer": farmer}
+	var npcs: Dictionary[String, StoryNpc] = {
+		"baker": baker, "toy_maker": toy_maker, "farmer": farmer, "clock_maker": clock_maker
+	}
 	var npc: StoryNpc = npcs[talk["who"]]
 	hero.stop()
 	hero.keyboard_enabled = false
@@ -341,6 +362,7 @@ func _build_story_cast() -> void:
 	baker = _add_npc("baker", BAKER_POS)
 	toy_maker = _add_npc("toy_maker", TOY_MAKER_POS)
 	farmer = _add_npc("farmer", FARMER_POS)
+	clock_maker = _add_npc("clock_maker", CLOCK_MAKER_POS)
 	# His turn to speak during a talk: the microphone sign at the bottom of the screen.
 	say_hud = CanvasLayer.new()
 	say_hud.layer = 4
@@ -360,5 +382,5 @@ func _add_npc(model_name: String, pos: Vector3) -> StoryNpc:
 	add_child(npc)
 	npc.global_position = pos
 	npc.rotation.y = PI
-	Blocks.hidden_solid(_nav, pos + Vector3(0, 0.9, 0), Vector3(0.6, 1.8, 0.6))
+	# No collision: a character added after the navigation bake would block paths he walks.
 	return npc
