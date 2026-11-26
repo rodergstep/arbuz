@@ -213,7 +213,9 @@ func _on_collect_click(item: CollectItem) -> void:
 	say_when_free_word(key, _collect_word)
 	LearningTracker.record_heard(item.word_id)
 	if _collect_count >= _collect_total:
-		say_when_free_word("ch1:all_found", _collect_word)
+		# "We found them all!" only after a step with several things (not after each balloon).
+		if _collect_total > 1:
+			say_when_free_word("ch1:all_found", _collect_word)
 		_collect_word = null
 		companion.set_goal(null)
 		quest.notify_collected()
@@ -339,16 +341,7 @@ func _build_story_cast() -> void:
 	baker = _add_npc("baker", BAKER_POS)
 	toy_maker = _add_npc("toy_maker", TOY_MAKER_POS)
 	farmer = _add_npc("farmer", FARMER_POS)
-
-
-func _add_npc(model_name: String, pos: Vector3) -> StoryNpc:
-	var npc: StoryNpc = StoryNpc.new()
-	npc.setup(model_name)
-	add_child(npc)
-	npc.global_position = pos
-	npc.rotation.y = PI
-	Blocks.hidden_solid(_nav, pos + Vector3(0, 0.9, 0), Vector3(0.6, 1.8, 0.6))
-	return npc
+	# His turn to speak during a talk: the microphone sign at the bottom of the screen.
 	say_hud = CanvasLayer.new()
 	say_hud.layer = 4
 	var center: CenterContainer = CenterContainer.new()
@@ -359,3 +352,13 @@ func _add_npc(model_name: String, pos: Vector3) -> StoryNpc:
 	_say_mic.visible = false
 	center.add_child(_say_mic)
 	add_child(say_hud)
+
+
+func _add_npc(model_name: String, pos: Vector3) -> StoryNpc:
+	var npc: StoryNpc = StoryNpc.new()
+	npc.setup(model_name)
+	add_child(npc)
+	npc.global_position = pos
+	npc.rotation.y = PI
+	Blocks.hidden_solid(_nav, pos + Vector3(0, 0.9, 0), Vector3(0.6, 1.8, 0.6))
+	return npc
