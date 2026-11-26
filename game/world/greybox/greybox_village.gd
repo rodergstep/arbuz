@@ -123,6 +123,7 @@ func _ready() -> void:
 	Speech.line("line:intro")
 	quest = QuestRunner.new()
 	add_child(quest)
+	quest.step_started.connect(_on_step_started)
 	quest.start(load(_first_chapter_path()), self)
 
 
@@ -170,6 +171,8 @@ func _on_pickable_clicked(area: Area3D) -> void:
 		return
 	if area is PasswordCard:
 		door.pick(area)
+	elif area is CollectItem:
+		_on_collect_click(area)
 	elif area is Clickable and _find_target != null:
 		_on_find_click(area)
 	elif area is Clickable:
@@ -345,13 +348,18 @@ func say_when_free_word(key: String, word: WordEntry) -> void:
 	Speech.line(key, word)
 
 
+## A town with collect tasks handles the click (Chapter 1).
+func _on_collect_click(_item: CollectItem) -> void:
+	pass
+
+
 ## True while a character is talking with him.
 func _talking() -> bool:
 	return postman != null and postman.is_talking()
 
 
 ## Prologue: the postman says hello, gives a letter from England, says bye (talks to the child).
-func start_talk() -> void:
+func start_talk(_talk_id: StringName = &"") -> void:
 	hero.stop()
 	hero.keyboard_enabled = false
 	set_hint(null, "")
@@ -531,7 +539,24 @@ func _picture_of(word_id: StringName) -> Array:
 # --- Teach before test: the door only asks words he has already met ------------------
 
 
+## If he is already standing at the door when the quest gets there, ask now.
+func _on_step_started(_index: int, _step: QuestStep) -> void:
+	if door != null and door.is_hero_inside() and not door.is_active():
+		_on_door_wants_question.call_deferred()
+
+
+## The door only asks when the quest is at it (walking to the door, or the door step), so
+## passing by during another task never pops the cards up.
+func _door_step_near() -> bool:
+	var step: QuestStep = quest.current() if quest != null else null
+	if step == null:
+		return false
+	return step.kind == QuestStep.Kind.OPEN_DOOR or quest.next_is(QuestStep.Kind.OPEN_DOOR)
+
+
 func _on_door_wants_question() -> void:
+	if not _door_step_near():
+		return
 	var taught: Array[StringName] = learning.taught_words().filter(
 		func(w: StringName) -> bool: return door_words.has(w) and w != _last_door_word
 	)

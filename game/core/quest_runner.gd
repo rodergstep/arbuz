@@ -3,7 +3,7 @@ extends Node
 ## Runs a ChapterData in a scene. The scene reports what happened (car entered, marker reached,
 ## door opened); the runner decides when a step is done and what comes next. It talks to the
 ## scene only through the QuestHost methods: place_marker, clear_marker, set_hint, say_when_free,
-## exit_car, car_position, start_find, start_talk, play_ferry.
+## exit_car, car_position, start_find, start_talk(talk_id), play_ferry, start_collect(step).
 
 signal step_started(index: int, step: QuestStep)
 signal chapter_finished(chapter_id: StringName)
@@ -55,7 +55,7 @@ func notify_marker_reached(body_kind: StringName) -> void:
 		QuestStep.Kind.TALK_TO:
 			if body_kind == &"hero":
 				host.call("clear_marker")
-				host.call("start_talk")
+				host.call("start_talk", step.talk_id)
 
 
 func notify_door_question() -> void:
@@ -78,6 +78,11 @@ func notify_ferry_done() -> void:
 		_advance()
 
 
+func notify_collected() -> void:
+	if _is(QuestStep.Kind.COLLECT):
+		_advance()
+
+
 func notify_found() -> void:
 	if _is(QuestStep.Kind.FIND_OBJECT):
 		_advance()
@@ -86,6 +91,11 @@ func notify_found() -> void:
 func _is(kind: QuestStep.Kind) -> bool:
 	var step: QuestStep = current()
 	return step != null and step.kind == kind
+
+
+## True when the step after the current one is of this kind.
+func next_is(kind: QuestStep.Kind) -> bool:
+	return _next_is(kind)
 
 
 func _next_is(kind: QuestStep.Kind) -> bool:
@@ -141,6 +151,11 @@ func _go(next: int) -> void:
 		QuestStep.Kind.FIND_OBJECT:
 			host.call("clear_marker")
 			host.call("start_find")
+			step_started.emit(next, step)
+			return
+		QuestStep.Kind.COLLECT:
+			host.call("clear_marker")
+			host.call("start_collect", step)
 			step_started.emit(next, step)
 			return
 		QuestStep.Kind.FERRY:

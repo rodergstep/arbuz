@@ -6,6 +6,9 @@ extends GreyboxVillage
 ## quests) is the shared town machinery from GreyboxVillage.
 
 const PRACTICE_PATH: String = "res://content/chapters/england_practice.tres"
+const CHAPTER1_PATH: String = "res://content/chapters/chapter1_bakery.tres"
+const CHAPTER1_DONE: String = "chapter:bakery"
+const BAKER_POS: Vector3 = Vector3(-5.5, 0, -8.5)
 const SEA_Z: float = -31.0
 const BAKERY_POS: Vector3 = Vector3(-8, 0, -12)
 const CAFE_POS: Vector3 = Vector3(8, 0, -12)
@@ -34,12 +37,33 @@ const LAMPS: Array[Vector3] = [
 	Vector3(-4, 0, 1), Vector3(4, 0, 1), Vector3(-20.5, 0, -18), Vector3(20.5, 0, -18)
 ]
 
+var baker: BakerNpc
+var _collect_items: Array[CollectItem] = []
+var _collect_word: WordEntry
+var _collect_count: int = 0
+var _collect_total: int = 0
+
 
 func _configure() -> void:
 	door_pos = BAKERY_POS + Vector3(-1.4, 0, 2.6)
 	hero_start = Vector3(-4, 0, -27)
 	car_start = Vector3(-8, 0, -26)
-	door_words = [&"tree", &"house", &"car", &"road", &"clock", &"bus", &"shop", &"lamp", &"sea", &"boat"]
+	door_words = [
+		&"tree",
+		&"house",
+		&"car",
+		&"road",
+		&"clock",
+		&"bus",
+		&"shop",
+		&"lamp",
+		&"sea",
+		&"boat",
+		&"apple",
+		&"egg",
+		&"milk",
+		&"flour"
+	]
 	learning_spots = [
 		[&"sea", Vector3(10, 0, -29), 3.0, Vector3(-4, 5, 6)],
 		[&"boat", Vector3(4, 0, -29.5), 2.5, Vector3(-4, 4, 6)],
@@ -53,7 +77,80 @@ func _configure() -> void:
 
 
 func _first_chapter_path() -> String:
-	return PRACTICE_PATH
+	return PRACTICE_PATH if SaveSystem.has_encountered(CHAPTER1_DONE) else CHAPTER1_PATH
+
+
+func _talking() -> bool:
+	return baker != null and baker.is_talking()
+
+
+## Chapter 1 conversations with the baker.
+func start_talk(talk_id: StringName = &"") -> void:
+	hero.stop()
+	hero.keyboard_enabled = false
+	set_hint(null, "")
+	match talk_id:
+		&"baker_intro":
+			await baker.intro(_say_mic, hero.global_position)
+		&"baker_thanks":
+			await baker.thanks(learning, hero.global_position)
+	hero.keyboard_enabled = true
+	quest.notify_talk_done()
+
+
+## Find and count: the things are put at the step's spots; each click collects one and counts
+## it aloud ("One apple! Two apples!"). Teach before test: the first one opens its learning
+## card if he hasn't met the word yet.
+func start_collect(step: QuestStep) -> void:
+	_collect_word = WordDB.get_word(step.word)
+	_collect_total = step.spots.size()
+	_collect_count = 0
+	_collect_items.clear()
+	for spot: Vector3 in step.spots:
+		var item: CollectItem = CollectItem.new()
+		item.setup(step.word)
+		add_child(item)
+		item.global_position = spot
+		_collect_items.append(item)
+	_remember_place(step.word, step.spots[0], step.spots[0] + Vector3(2.0, 1.8, 2.6))
+	say_when_free_word("ch1:find_items" if _collect_total > 1 else "ch1:find_one", _collect_word)
+	_point_companion_at_next()
+
+
+func _on_collect_click(item: CollectItem) -> void:
+	if item.is_collected() or _collect_word == null or item.word_id != _collect_word.id:
+		return
+	item.collect()
+	_collect_items.erase(item)
+	_collect_count += 1
+	EventLog.log_event(&"collect", {"word": String(item.word_id), "n": _collect_count})
+	if _collect_count == 1 and not learning.was_taught(item.word_id):
+		learning.request(
+			item.word_id, item.global_position, item.global_position + Vector3(2.0, 1.8, 2.6), true
+		)
+	var keys: Array[String] = ["count:one", "count:two", "count:three"]
+	say_when_free_word(keys[mini(_collect_count, 3) - 1], _collect_word)
+	LearningTracker.record_heard(item.word_id)
+	if _collect_count >= _collect_total:
+		say_when_free_word("ch1:all_found", _collect_word)
+		_collect_word = null
+		companion.set_goal(null)
+		quest.notify_collected()
+	else:
+		_point_companion_at_next()
+
+
+func _point_companion_at_next() -> void:
+	if _collect_items.is_empty():
+		return
+	var nearest: CollectItem = _collect_items[0]
+	for item: CollectItem in _collect_items:
+		if (
+			item.global_position.distance_to(hero.global_position)
+			< nearest.global_position.distance_to(hero.global_position)
+		):
+			nearest = item
+	companion.set_goal(nearest, "ch1:find_one", _collect_word)
 
 
 func _ready() -> void:
@@ -149,7 +246,7 @@ func _grass_blocked(p: Vector2) -> bool:
 func _clickable_things() -> Array[Dictionary]:
 	return [
 		{"id": &"tree", "uk": "дерево", "en": "tree", "pos": Vector3(-20, 0, 2)},
-		{"id": &"ball", "uk": "м'яч", "en": "ball", "pos": Vector3(-30, 0, 14)},
+		{"id": &"ball", "uk": "м'яч", "en": "ball", "pos": Vector3(14, 0, 18)},
 		{"id": &"duck", "uk": "качка", "en": "duck", "pos": Vector3(14, 0, -29)},
 		{"id": &"dog", "uk": "собака", "en": "dog", "pos": Vector3(10, 0, 16)},
 		{"id": &"house", "uk": "будинок", "en": "house", "pos": HOUSES[5]},
@@ -157,8 +254,13 @@ func _clickable_things() -> Array[Dictionary]:
 	]
 
 
-## No postman here; the ferry is moored in the harbour.
+## No postman here; the ferry is moored in the harbour; the baker waits by her bakery.
 func _build_story_cast() -> void:
+	baker = BakerNpc.new()
+	add_child(baker)
+	baker.global_position = BAKER_POS
+	baker.rotation.y = PI
+	Blocks.hidden_solid(_nav, BAKER_POS + Vector3(0, 0.9, 0), Vector3(0.6, 1.8, 0.6))
 	say_hud = CanvasLayer.new()
 	say_hud.layer = 4
 	var center: CenterContainer = CenterContainer.new()

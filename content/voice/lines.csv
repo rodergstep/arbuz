@@ -44,3 +44,18 @@ hint:to_ferry,"Їдь до порому, до вогника біля річки
 ferry:board,,"Onto the ferry! Here we go!"
 ferry:bye,"Бувай, село! Привіт, Англіє!","Bye bye, village! Hello, England!"
 england:arrive,"Ми в Англії! Привіт, Англіє!","We are in England! Hello, England!"
+ch1:to_baker,"Ходімо до пекарки! Вона нас кличе.","Let's go to the baker! She is calling us."
+hint:to_baker,"Іди до пекарки, біля пекарні!","Go to the baker, by the bakery!"
+ch1:baker_hello,,"Hello! Oh no, oh no! I lost my apples, my eggs, my milk and my flour!",baker
+ch1:baker_help,,"I want to bake a cake. Can you help me? Please find them!",baker
+ch1:help_baker,"Пекарка загубила продукти для торта. Допоможемо їй!","The baker lost her things for the cake. Let's help her!"
+ch1:find_items,"Знайди {uk_word}! Скільки їх?","Find the {word}s! Let's count them!"
+ch1:find_one,"Знайди {uk_word}!","Find the {word}!"
+count:one,,"One {word}!"
+count:two,,"Two {word}s!"
+count:three,,"Three {word}s!"
+ch1:all_found,,"We found them all! Well done!"
+ch1:back_to_baker,"Несемо все пекарці!","Let's bring everything to the baker!"
+ch1:baker_thanks,,"Thank you! Apples, eggs, milk and flour! Now I can bake my cake!",baker
+ch1:baker_cake,,"Look! A big cake! Thank you, my friend!",baker
+ch1:hooray,"Ура! Торт!","Hooray! A cake! Yummy!"

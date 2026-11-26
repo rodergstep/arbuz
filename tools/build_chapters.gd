@@ -61,7 +61,38 @@ func _initialize() -> void:
 	]
 	var err3: Error = ResourceSaver.save(england, "res://content/chapters/england_practice.tres")
 	print("england_practice.tres: ", error_string(err3))
-	quit(0 if err == OK and err2 == OK and err3 == OK else 1)
+	# Chapter 1: the baker lost her apples, eggs, milk and flour; find and count them, bring
+	# them back through the bakery door, and she bakes a cake.
+	var ch1: ChapterData = ChapterData.new()
+	ch1.id = &"chapter1_bakery"
+	ch1.done_key = "chapter:bakery"
+	ch1.next_chapter = "res://content/chapters/england_practice.tres"
+	var intro: QuestStep = _step(
+		QuestStep.Kind.TALK_TO, [Vector3(-5.5, 0, -6.2)], "ch1:to_baker", "hint:to_baker"
+	)
+	intro.talk_id = &"baker_intro"
+	var thanks: QuestStep = _step(QuestStep.Kind.TALK_TO, [Vector3(-5.5, 0, -6.2)], "", "hint:to_baker")
+	thanks.talk_id = &"baker_thanks"
+	ch1.steps = [
+		intro,
+		_collect(&"apple", [Vector3(-30, 0, 18), Vector3(-34, 0, 10), Vector3(-22, 0, 25)]),
+		_collect(&"egg", [Vector3(26, 0, 26), Vector3(35, 0, 22)]),
+		_collect(&"milk", [Vector3(8, 0, -6)]),
+		_collect(&"flour", [Vector3(22, 0, -6)]),
+		_step(QuestStep.Kind.WALK_TO, [Vector3(-9.4, 0, -2.9)], "ch1:back_to_baker", "hint:to_door"),
+		_step(QuestStep.Kind.OPEN_DOOR, [], "", ""),
+		thanks,
+	]
+	var err4: Error = ResourceSaver.save(ch1, "res://content/chapters/chapter1_bakery.tres")
+	print("chapter1_bakery.tres: ", error_string(err4))
+	quit(0 if err == OK and err2 == OK and err3 == OK and err4 == OK else 1)
+
+
+func _collect(word: StringName, spots: Array[Vector3]) -> QuestStep:
+	var s: QuestStep = _step(QuestStep.Kind.COLLECT, spots, "", "")
+	s.word = word
+	s.count = spots.size()
+	return s
 
 
 func _step(
