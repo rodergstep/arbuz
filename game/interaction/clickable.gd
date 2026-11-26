@@ -15,6 +15,7 @@ var visual: Node3D
 var _label: Label3D
 var _label_timer: float = 0.0
 var _height: float = 2.0
+var _footprint: float = 1.0
 var _highlight: StandardMaterial3D
 var _highlight_time: float = 0.0
 var _hop_timer: float = 0.0
@@ -28,6 +29,7 @@ func setup(id: StringName, uk: String, en: String, art: Node3D, pick_size: Vecto
 	word_en = en
 	visual = art
 	_height = pick_size.y + 0.6
+	_footprint = maxf(pick_size.x, pick_size.z) / 2.0
 	add_child(art)
 	collision_layer = Blocks.LAYER_PICKABLE
 	collision_mask = 0
@@ -76,8 +78,9 @@ func set_highlight(on: bool) -> void:
 		_highlight_time = 0.0
 		_hop_timer = 1.5
 		var disc: CylinderMesh = CylinderMesh.new()
-		disc.top_radius = 1.0
-		disc.bottom_radius = 1.0
+		# Wider than the thing itself, so the ring shows even around a house.
+		disc.top_radius = _footprint + 0.6
+		disc.bottom_radius = _footprint + 0.6
 		disc.height = 0.02
 		_ring = Blocks.mesh(disc, Color(1.0, 0.85, 0.4), Vector3(0, 0.03, 0))
 		var ring_mat: StandardMaterial3D = _ring.mesh.material

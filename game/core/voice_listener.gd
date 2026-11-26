@@ -11,6 +11,7 @@ const BUS_NAME: StringName = &"Listen"
 ## a fixed level fails (playtest bug: 0.04 never triggered). The room level is a slow moving
 ## average that adapts while he is quiet.
 const VOICE_RATIO: float = 2.0
+const START_ROOM_LEVEL: float = 0.002
 const MIN_VOICE_LEVEL: float = 0.006
 ## Never ask for more than this: in a noisy room a missed word (he gets stuck, asked again and
 ## again) is worse than a noise counted as his word (he is praised; nothing is ever judged).
@@ -73,7 +74,8 @@ func listen(seconds: float) -> bool:
 	_heard = false
 	_heard_for = 0.0
 	_elapsed = 0.0
-	_room = 0.0
+	# Start from a quiet room; it adapts only on quiet frames, so his first word never sets it.
+	_room = START_ROOM_LEVEL
 	_peak = 0.0
 	_any_signal = false
 	_capture.clear_buffer()
@@ -150,8 +152,6 @@ func _process(_delta: float) -> void:
 	level_changed.emit(rms)
 	if _elapsed <= WARMUP_SECONDS or rms == 0.0:
 		return
-	if _room == 0.0:
-		_room = rms
 	if rms >= threshold():
 		_heard_for += seconds
 		if _heard_for >= VOICE_SECONDS:
