@@ -71,7 +71,7 @@ their contracts are written by `/contracts` when they do.
 | Speech | `game/core/speech.gd` | everything the game says: `line(key, word)` from `content/voice/lines.csv`, plays generated `audio/voice/<lang>/<hash>.ogg`, OS text-to-speech fallback; Ukrainian only the first time (`say_first`) | `queue_finished` | `docs/contracts/voice-lines.md` |
 | Sfx | `game/core/sfx.gd` | Phase 1 placeholder sound effects synthesized in code (`play(kind)`) | — | — |
 | PhantomCameraManager | `addons/phantom_camera/…/phantom_camera_manager.gd` | required by Phantom Camera | — | addon |
-| VoiceListener | `game/core/voice_listener.gd` | microphone loudness only, during `listen(seconds)`; nothing recorded | `level_changed(level: float)` | — |
+| VoiceListener | `game/core/voice_listener.gd` | microphone loudness only, during `listen(seconds)` (once he starts, waits until he has finished the word: 0.9 s quiet, at most 4 s more); nothing recorded | `level_changed(level: float)` | — |
 | Settings *(planned, Ph 2)* | `game/core/settings.gd` | volume, session length, language, parent options | `setting_changed(key: StringName)` | — |
 | SaveSystem | `game/core/save_system.gd` | versioned JSON per profile; Phase 1 keeps first meetings (`has_encountered`, `mark_encountered`), Phase 2 adds progress | `saved()`, `loaded(profile_id: String)` | `docs/contracts/save-format.md` |
 | AudioManager *(planned; music ducking)* | `game/core/audio_manager.gd` | voice by line id, music ducking, no overlap | `line_finished(line_id: StringName)` | — |

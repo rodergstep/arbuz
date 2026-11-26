@@ -14,10 +14,10 @@ static func wait_for_word(caller: Node, word: WordEntry, mic: Control, alive: Ca
 	while alive.call():
 		await wait_while_paused(caller, alive)
 		if mic != null:
-			mic.visible = true
+			mic.shown = true
 		var heard: bool = await VoiceListener.listen(LISTEN_SECONDS)
 		if mic != null:
-			mic.visible = false
+			mic.shown = false
 		if heard or not VoiceListener.available() or VoiceListener.seems_blocked():
 			return heard
 		tries += 1

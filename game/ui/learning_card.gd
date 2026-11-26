@@ -80,7 +80,7 @@ func _ready() -> void:
 	_word_uk = _label(UiTokens.SIZE_SUBTITLE, UiTokens.INK)
 	words.add_child(_word_uk)
 	_mic = MicBubble.new()
-	_mic.visible = false
+	_mic.shown = false
 	words.add_child(_mic)
 	_sentence = _label(UiTokens.SIZE_BODY, UiTokens.INK)
 	_sentence.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -131,7 +131,7 @@ func close() -> void:
 	_run += 1
 	Speech.stop()
 	VoiceListener.cancel()
-	_mic.visible = false
+	_mic.shown = false
 	visible = false
 	_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	EventLog.log_event(&"learning_moment_closed", {"word_id": String(_entry.id), "skipped": _skipped})

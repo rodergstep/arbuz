@@ -455,7 +455,7 @@ func _build_story_cast() -> void:
 	center.position.y -= 160
 	say_hud.add_child(center)
 	_say_mic = MicBubble.new()
-	_say_mic.visible = false
+	_say_mic.shown = false
 	center.add_child(_say_mic)
 	add_child(say_hud)
 
