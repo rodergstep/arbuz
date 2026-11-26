@@ -151,6 +151,9 @@ func _on_ground_held(point: Vector3) -> void:
 
 
 func _on_pickable_clicked(area: Area3D) -> void:
+	# Story sequences own the input (the postman's talk, the ferry).
+	if _cutscene or postman.is_talking():
+		return
 	if area is PasswordCard:
 		door.pick(area)
 	elif area is Clickable and _find_target != null:
