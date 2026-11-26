@@ -26,9 +26,13 @@ hint_line = "hint:to_door"
 script = ExtResource("2_w0m8y")
 kind = 3
 
+[sub_resource type="Resource" id="Resource_tausa"]
+script = ExtResource("2_w0m8y")
+kind = 4
+
 [resource]
 script = ExtResource("1_umbh8")
 id = &"greybox_loop"
-steps = Array[ExtResource("2_w0m8y")]([SubResource("Resource_7ik2a"), SubResource("Resource_xfikn"), SubResource("Resource_hmele"), SubResource("Resource_41m1f")])
+steps = Array[ExtResource("2_w0m8y")]([SubResource("Resource_7ik2a"), SubResource("Resource_xfikn"), SubResource("Resource_hmele"), SubResource("Resource_41m1f"), SubResource("Resource_tausa")])
 loop = true
 loop_line = "line:again"

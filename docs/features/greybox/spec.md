@@ -51,6 +51,11 @@ updated_at: "2026-11-26"
   Ukrainian word that one time); after that, English only. First meetings persist in the save
   (`user://saves/default.json`), so a second session is English only for everything met.
 
+- **AC-11 Find the object (teach before test).** After the door, Тигриця asks "Find the duck!
+  Where is the duck?" for a thing he has already learned (or teaches one first). A wrong click
+  says that thing's name and repeats the ask; after 2 wrong clicks a marker glows under the
+  right thing. The answer goes to the learning tracker.
+
 ## 8. Open questions
 
 - Is touch easier than the mouse for him? Tried at the Gate 1 playtest (roadmap D5).

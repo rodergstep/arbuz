@@ -24,6 +24,7 @@ func _initialize() -> void:
 		),
 		_step(QuestStep.Kind.WALK_TO, [DOOR_POS + Vector3(0, 0, 6.5)], "line:to_door", "hint:to_door"),
 		_step(QuestStep.Kind.OPEN_DOOR, [], "", ""),
+		_step(QuestStep.Kind.FIND_OBJECT, [], "", ""),
 	]
 	var err: Error = ResourceSaver.save(chapter, "res://content/chapters/greybox_loop.tres")
 	print("greybox_loop.tres: ", error_string(err))

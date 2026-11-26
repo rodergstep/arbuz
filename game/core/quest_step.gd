@@ -3,7 +3,8 @@ extends Resource
 ## One step of a chapter, as data (ADR-0004). The scene supplies the actors; the step says what
 ## to do, where, and what Тигриця says (keys in content/voice/lines.csv).
 
-enum Kind { GET_IN_CAR, DRIVE_TO, WALK_TO, OPEN_DOOR }
+## New kinds are appended (saved .tres files store the number).
+enum Kind { GET_IN_CAR, DRIVE_TO, WALK_TO, OPEN_DOOR, FIND_OBJECT }
 
 @export var kind: Kind = Kind.WALK_TO
 ## Target spots; each visit of the loop uses the next one (DRIVE_TO, WALK_TO).

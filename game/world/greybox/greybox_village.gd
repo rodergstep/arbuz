@@ -55,6 +55,9 @@ var _taught_car: bool = false
 var _word_places: Dictionary[StringName, Array] = {}
 var _pending_door_word: StringName = &""
 var _last_door_word: StringName = &""
+var _find_target: Clickable
+var _find_wrong: int = 0
+var _pending_find_word: StringName = &""
 
 
 func _ready() -> void:
@@ -124,6 +127,8 @@ func _on_ground_held(point: Vector3) -> void:
 func _on_pickable_clicked(area: Area3D) -> void:
 	if area is PasswordCard:
 		door.pick(area)
+	elif area is Clickable and _find_target != null:
+		_on_find_click(area)
 	elif area is Clickable:
 		var thing: Clickable = area
 		thing.activate(false)
@@ -220,7 +225,84 @@ func exit_car() -> void:
 	_exit_car()
 
 
+## Find the object (teach before test): asks for a thing he has already learned; if none, teaches
+## one first. Wrong clicks say the clicked thing's name and repeat the ask; after 2 the target
+## glows under a marker.
+func start_find() -> void:
+	var things: Array[Clickable] = _clickables()
+	var ids: Array[StringName] = []
+	for thing: Clickable in things:
+		if not ids.has(thing.word_id):
+			ids.append(thing.word_id)
+	var taught: Array[StringName] = learning.taught_words().filter(
+		func(w: StringName) -> bool: return ids.has(w)
+	)
+	if taught.is_empty():
+		_pending_find_word = ids.pick_random()
+		Speech.line("line:teach", null, true)
+		var place: Array = _picture_of(_pending_find_word)
+		if learning.request(_pending_find_word, place[0], place[1]):
+			return
+		taught = [_pending_find_word]
+	_begin_find(LearningTracker.most_needed(taught)[0])
+
+
+func _begin_find(word_id: StringName) -> void:
+	_pending_find_word = &""
+	var candidates: Array[Clickable] = _clickables().filter(
+		func(c: Clickable) -> bool: return c.word_id == word_id
+	)
+	_find_target = candidates.pick_random()
+	_find_wrong = 0
+	var word: WordEntry = WordDB.get_word(word_id)
+	say_when_free_word("find:ask", word)
+	companion.set_goal(_find_target, "find:hint", word)
+	EventLog.log_event(&"find_ask", {"word": String(word_id)})
+
+
+func _on_find_click(thing: Clickable) -> void:
+	var word: WordEntry = WordDB.get_word(_find_target.word_id)
+	EventLog.log_event(&"find_pick", {"word": String(thing.word_id), "correct": thing.word_id == word.id})
+	if thing.word_id == word.id:
+		thing.activate()
+		Sfx.play(&"chime")
+		if _find_wrong == 0:
+			LearningTracker.record_answer(word.id, true)
+		Speech.line("find:yes", word, true)
+		_find_target = null
+		clear_marker()
+		quest.notify_found()
+		return
+	_find_wrong += 1
+	if _find_wrong == 1:
+		LearningTracker.record_answer(word.id, false)
+	thing.activate()
+	thing.say_name()
+	if _find_wrong >= 2:
+		place_marker(_find_target.global_position)
+		Speech.line("find:glow", word)
+	else:
+		Speech.line("find:retry", word)
+
+
+func _clickables() -> Array[Clickable]:
+	var out: Array[Clickable] = []
+	for child: Node in get_children():
+		if child is Clickable:
+			out.append(child)
+	return out
+
+
+## Like say_when_free, for a line that names a word.
+func say_when_free_word(key: String, word: WordEntry) -> void:
+	if learning.is_open():
+		await learning.moment_closed
+	Speech.line(key, word)
+
+
 func _on_marker_reached(body: Node3D) -> void:
+	if _find_target != null:
+		return
 	quest.notify_marker_reached(&"car" if body == car else &"hero")
 
 
@@ -319,6 +401,8 @@ func _on_door_wants_question() -> void:
 
 
 func _on_moment_closed(word_id: StringName) -> void:
+	if word_id == _pending_find_word:
+		_begin_find(word_id)
 	if word_id == _pending_door_word:
 		_pending_door_word = &""
 		if door.is_hero_inside():
