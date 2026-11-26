@@ -1,10 +1,12 @@
 # Workflow settings (per machine, created by the pipeline)
 .claude/*.local.md
 
-# Godot
+# Godot 4
 .godot/
-*.import.tmp
+/android/
+*.tmp
 export_credentials.cfg
+*.translation
 
 # Builds, playtest logs, PR drafts
 build/

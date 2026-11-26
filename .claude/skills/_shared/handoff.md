@@ -96,9 +96,8 @@ Rules for filling it:
 | `ux-flows` | `docs/features/<slug>/ux-flows.md` (flows + scene/state manifest) | `/design <slug>` ↳ or `/tasks <slug>` (`quick` only: no system/API change) |
 | `design` | `sad.md` (+ `areas`, §6 sequences) + `adr/` | `/contracts <slug>` ↳ or `/tasks <slug>` (no contract change) |
 | `contracts` | `contracts/*.md` (+ `contract-check.md`) | `/tasks <slug>` |
-| `tasks` | `tasks/` + `tasks.json` | `/plan-tests <slug>` |
-| `plan-tests` | `test-plan.md` (or `spec.md` `## Test plan`) | `/implement <slug>` |
-| `implement` | the committed diff (code + tests) + `tasks/tracker.md` / `tasks.json` | `/review <slug>` |
+| `tasks` | `tasks/` + `tasks.json` | `/implement <slug>` |
+| `implement` | the committed diff + `tasks/tracker.md` / `tasks.json` | `/ship <slug>` on `quick` · `/review <slug>` on `standard`/`full` |
 | `review` | `_review/review-<date>.md` (+ `codex-<date>.md`) | `/ship <slug>` (PASS) · `/implement <slug>` (CHANGES REQUESTED, no `/clear`) |
 | `ship` | `CHANGELOG.md`, `docs/roadmap.md`, promoted `docs/adr/` + `docs/contracts/`, the PR | **Done** — PR link; merge is your call. after merge → `/playtest <slug> before` |
 | `playtest` | `docs/playtests/<date>-<slug>.md` | before: go play; after: `/fix <slug>` or `/specify <slug>` for the top finding |

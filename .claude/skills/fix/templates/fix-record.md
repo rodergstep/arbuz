@@ -17,12 +17,12 @@ recurrence_of: <none | _fixes/<date>-<short>.md>
 ## Root cause
 
 <!-- 2–4 sentences: the mechanism, the file:line, and why it slipped past the existing
-     tests (no test at that level? a too-weak assertion? an untested branch?). -->
+     checks (which case nobody played?). -->
 
-## The pinning test
+## How it was checked
 
-<!-- Test name + level (unit / integration / contract / playthrough) + the failing line QUOTED from the RED
-     run — the proof it failed for the right reason before the fix. -->
+<!-- How the bug was reproduced in the game before the fix, and re-checked after it (input used,
+     scene, build). A GUT test only for a save/migration bug: name it. -->
 
 ## Spec patch
 

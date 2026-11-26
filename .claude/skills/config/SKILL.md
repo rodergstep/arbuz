@@ -5,7 +5,7 @@ effort: medium
 agents: []
 description: >
   Use to create and tune the per-machine settings file `.claude/sdd.local.md`: how deeply the
-  pipeline interviews you, which models the agents run on, how strict the TDD gate is, how work
+  pipeline interviews you, which models the agents run on, what the per-task smoke check runs, how work
   is committed, where Godot lives, and when Codex reviews. Triggers on "config", "settings",
   "tune the pipeline", "change the judgment model", "set the interview depth", "/config",
   "налаштування", "налаштуй sdd", "зміни модель", "глибина опитування". Creates the file with

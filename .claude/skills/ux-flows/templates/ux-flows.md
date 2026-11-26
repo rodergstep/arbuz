@@ -7,7 +7,7 @@ updated_at: "<YYYY-MM-DD>"
 # UX flows — <feature>
 
 > How the child (and the parent) move through this feature, and every state each scene/screen can
-> be in. Read by `design`, `tasks`, `implement`, `plan-tests` and `review`.
+> be in. Read by `design`, `tasks`, `implement` and `review`.
 
 ## Input & session assumptions
 

@@ -13,7 +13,7 @@
 | **Change values** | [`config`](../config/SKILL.md) only | asks, then patches confirmed keys in place |
 | **Read** `interview_depth` | `interview`, `specify`, `clarify`, `design`, `ux-flows` | the depth dial → [`interview-depth.md`](./interview-depth.md) |
 | **Read** model keys | every skill that dispatches an agent | → [`agent-roster.md`](./agent-roster.md) |
-| **Read** engine keys (`tdd`, `stop_on_red`, `max_red_retries`, `gate_*`, `auto_commit`, `branch_strategy`, `godot_bin`, `cmd_*`) | `implement`, `fix`, `ship` | → [`../implement/references/settings.md`](../implement/references/settings.md) |
+| **Read** engine keys (`gate_*`, `auto_commit`, `branch_strategy`, `godot_bin`, `cmd_*`) | `implement`, `fix`, `ship` | → [`../implement/references/settings.md`](../implement/references/settings.md) |
 | **Read** `codex_review` | `review` | → [`codex-review.md`](./codex-review.md) |
 | **Read** `auto_commit` | every skill that writes a document | `off` → no commits, the handoff prints the commands |
 
@@ -32,29 +32,22 @@ The settings file is never committed. The `.gitignore` patch rides in the stage'
 ## The documented frontmatter
 
 ```yaml
-interview_depth: medium    # easy | medium | hard — default depth for interview/specify/clarify/design
-tdd: true                  # enforce red→green→refactor
-stop_on_red: true          # halt on a red that survives escalation, vs drop-and-continue
-max_red_retries: 3         # integer ≥1 — RED→GREEN attempts before escalation
-gate_lint: true            # include gdlint/gdformat in the per-task gate
-gate_vet: true             # include the headless script check in the per-task gate
+interview_depth: easy      # easy | medium | hard — default depth for interview/specify/clarify/design
+gate_vet: true             # smoke check: headless import, no script errors (per task)
+gate_lint: false           # also run gdlint/gdformat per task
+gate_tests: false          # also run existing GUT tests per task (tests are optional)
 auto_commit: per_task      # per_task | off — off also stops document-stage commits
 branch_strategy: feature   # feature | current
 godot_bin: ""              # empty = autodetect (godot on PATH, then /Applications/Godot.app/Contents/MacOS/Godot)
 cmd_test_unit: ""          # empty = autodetect (GUT headless, see implement/references/command-detection.md)
-cmd_test_integration: ""
 cmd_lint: ""
 cmd_vet: ""
 cmd_export: ""             # empty = autodetect from export_presets.cfg
 codex_review: auto         # auto (full route only) | always | never
-model_test_author: sonnet  # per-role model; inherit = session model
-model_implementer: sonnet
-model_refactorer: sonnet
+model_implementer: sonnet  # per-role model; inherit = session model
 model_reviewer: opus
 judgment_model: opus       # haiku | sonnet | opus | fable | inherit | full model id — all judgment agents
-effort_test_author: medium # raised to high on escalation
 effort_implementer: medium
-effort_refactorer: medium
 effort_reviewer: high
 ```
 
@@ -63,12 +56,9 @@ effort_reviewer: high
 - **`interview_depth`** — `easy | medium | hard`. Pre-selects the depth dial in the Q&A skills
   (how much they decide for you vs ask). Never changes what gets covered. `--depth=` overrides
   it for one run.
-- **`tdd`** — false skips RED (the engine warns: you lose the oracle protection).
-- **`stop_on_red`** — true halts the run on a red that survives escalation; false drops that task,
-  blocks its dependents and continues.
-- **`max_red_retries`** — RED→GREEN attempts before escalation.
-- **`gate_lint` / `gate_vet`** — include lint / the headless script check in the per-task gate
-  (skipped with a warning if the tool is missing).
+- **`gate_vet`** — the per-task smoke check: headless import with no script errors.
+- **`gate_lint` / `gate_tests`** — also run lint / existing GUT tests per task (off by default:
+  speed first; skipped with a warning if the tool is missing).
 - **`auto_commit`** — `per_task` commits each task (and each document at the end of a stage);
   `off` leaves commits to you and prints the commands.
 - **`branch_strategy`** — `feature` makes sure work is on a feature branch; `current` commits

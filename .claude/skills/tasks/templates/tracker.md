@@ -3,7 +3,7 @@
 > Status of every task in the epic. `implement` updates **Status** and **Step** after every
 > subagent it runs (and commits them with the task), so this table shows where the run is right now.
 > Status: `todo` · `in_progress` · `blocked` · `review` · `done`.
-> Step: `SELECT` · `RED` · `GREEN` · `REFACTOR` · `GATE` · `REVIEW` · `COMMIT` (`—` before the task starts).
+> Step: `SELECT` · `BUILD` · `SMOKE` · `COMMIT` (`—` before the task starts).
 > A `blocked` row carries its reason in Step, e.g. `GATE — lint red after 3 retries`.
 
 | # | Task | Layer | Owner | Estimate | Blocked by | Status | Step |

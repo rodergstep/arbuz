@@ -21,9 +21,7 @@ strongest model. Skills run on the session model.
 |---|---|---|---|---|
 | `explorer` | scan repo / logs / addon code, categorize, return a cited summary | `haiku` | `low` | Read, Grep, Glob, Bash |
 | `researcher` | bounded web research (Godot docs, child-development facts), cited | `sonnet` | `medium` | Read, Grep, Glob, WebSearch, WebFetch |
-| `test-author` | write the failing GUT test from the ACs (RED) | `sonnet` | `medium` → `high` on escalation | + Write, Edit, Bash |
-| `implementer` | minimal production code to make the test pass + the gate (GREEN) | `sonnet` | `medium` → `high` on escalation | + Write, Edit, Bash |
-| `refactorer` | refactor to the project conventions while staying green (REFACTOR) | `sonnet` | `medium` | + Write, Edit, Bash |
+| `implementer` | build one task directly + the smoke check (for tasks too big to do inline) | `sonnet` | `medium` | + Write, Edit, Bash |
 | `contract-checker` | drift between contracts, data files, code and spec | `sonnet` | `medium` | Read, Grep, Glob, Bash |
 | `playtest-analyst` | read the playtest event log + notes, find confusion points, draft fixes | `sonnet` (`opus` on `full`) | `medium` | Read, Grep, Glob, Bash |
 | `reviewer` | independent clean-context review of the whole change | `opus` | `high` | Read, Grep, Glob, Bash |
@@ -32,10 +30,9 @@ strongest model. Skills run on the session model.
 | `strategist` | three real alternative approaches (`full` route only) | `opus` | `high` | Read, Grep, Glob |
 | `analyst` | multi-lens review of those approaches (`full` route only) | `opus` | `high` | Read, Grep, Glob |
 
-**Three agents for code, on purpose (the oracle problem).** If the same agent writes the code and
-then the test, the test tends to encode the code's bugs, or the agent quietly deletes a test that
-fails. So `test-author` writes the test from the ACs and proves it fails; `implementer` (who never
-edits the test) makes it pass; `refactorer` cleans up to conventions without changing behaviour.
+**Code is written fast, not test-first.** This is a home-use game with no production: code is
+written inline or by one `implementer`, checked by the headless smoke check and by playing it.
+The playtest with the child is the real test.
 
 **Cross-vendor review.** For blind spots shared by one model family, `full`-route features also
 get a Codex review → [`codex-review.md`](./codex-review.md).
@@ -43,7 +40,7 @@ get a Codex review → [`codex-review.md`](./codex-review.md).
 ## Dispatching
 
 Project agents are dispatched by their bare name: `subagent_type: "explorer"`,
-`"test-author"`, `"implementer"`, `"refactorer"`, `"contract-checker"`, `"playtest-analyst"`,
+`"implementer"`, `"contract-checker"`, `"playtest-analyst"`,
 `"reviewer"`, `"critic"`, `"devils-advocate"`, `"researcher"`, `"strategist"`, `"analyst"`.
 If a named agent isn't available at runtime, fall back to `general-purpose` (or `Explore` for
 read-only scans) with the same prompt. A fallback agent never reads `.claude/agents/*.md`, so
@@ -73,7 +70,7 @@ stage.
 ## Scale with the route
 
 - `quick` / `standard` → roster defaults.
-- `full` → execution agents at `high`; `reviewer` and `critic` at `xhigh` (via
+- `full` → `reviewer` and `critic` at `xhigh` (via
   `CLAUDE_CODE_EFFORT_LEVEL`, capped at what the model supports); `playtest-analyst` on `opus`.
 
 ## The shared agent contract (every spawned agent)

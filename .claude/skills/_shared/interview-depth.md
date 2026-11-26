@@ -9,7 +9,7 @@
 ## Adaptive interview exception
 
 `interview` resolves a **ceiling**, not a mandatory interview length: explicit
-`--depth=easy|medium|hard` → saved `interview_depth` → `medium`. It announces the ceiling and
+`--depth=easy|medium|hard` → saved `interview_depth` → `easy`. It announces the ceiling and
 starts from existing context, without a depth-selection question. Easy ≤4 substantive user
 questions; medium ≤10; hard ≤15. Count all questions seeking user decisions/facts, including
 identity clarification and final acceptance; reserve room for an unconfirmed consequential
@@ -35,7 +35,7 @@ A consuming skill resolves the level once, at the top of its run, in this preced
    - **medium**.
    The user can always override per run — the saved default only pre-selects the recommendation; it never skips the question (unless `--depth=` was passed).
 
-`interview_depth` is a **plugin-wide** setting (documented with the rest in [`settings-file.md`](./settings-file.md)), not implement-only. The settings file is **created with documented defaults by the first of six skills to run** — `interview` / `survey` / `roadmap` / `scaffold` / `specify` / `implement` (`interview` defers creation until its final authorized write; the others create after their entry gate) — so later Q&A skills read a real file; a reader that still finds it missing defaults the question to medium. There is **no hard dependency** on `implement` having run first (the create step is the same documented template wherever it fires), and the value is changed only by [`../config/SKILL.md`](../config/SKILL.md).
+`interview_depth` is a **plugin-wide** setting (documented with the rest in [`settings-file.md`](./settings-file.md)), not implement-only. The settings file is **created with documented defaults by the first of six skills to run** — `interview` / `survey` / `roadmap` / `scaffold` / `specify` / `implement` (`interview` defers creation until its final authorized write; the others create after their entry gate) — so later Q&A skills read a real file; a reader that still finds it missing defaults to easy. There is **no hard dependency** on `implement` having run first (the create step is the same documented template wherever it fires), and the value is changed only by [`../config/SKILL.md`](../config/SKILL.md).
 
 The opening question is also where the skill states what the level will *do* to this run («easy → I'll decide the reversible calls myself and list my assumptions; hard → I'll walk every decision and run the full analysis suite»), so the user picks with eyes open.
 

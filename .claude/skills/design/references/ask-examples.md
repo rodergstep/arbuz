@@ -28,7 +28,7 @@ question: "This is borderline for an ADR: using a Tween instead of an AnimationP
   card bounce is cheap to change, but three activities will copy the pattern. Record it?"
 options:
   - label: "Keep it inline (Recommended)"
-    description: "I note it in §5's block table. If more activities copy it, the refactorer will
+    description: "I note it in §5's block table. If more activities copy it, a later task will
       flag it and we can record an ADR then."
   - label: "Record as ADR"
     description: "I write a short ADR so later activities follow the same pattern."

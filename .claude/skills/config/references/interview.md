@@ -8,7 +8,7 @@ Phrasing follows [`../../_shared/ask-style.md`](../../_shared/ask-style.md): eve
 
 | Option | Writes |
 |---|---|
-| **Balanced (recommended):** Haiku scans, Sonnet writes tests and code, Opus judges and reviews | `judgment_model: opus`, `model_reviewer: opus`, `model_test_author/implementer/refactorer: sonnet` |
+| **Balanced (recommended):** Haiku scans, Sonnet writes code, Opus judges and reviews | `judgment_model: opus`, `model_reviewer: opus`, `model_implementer: sonnet` |
 | **Cheaper:** Sonnet everywhere | all of the above `sonnet` |
 | **Strongest judge:** Fable for judgment and review, Sonnet for code | `judgment_model: fable`, `model_reviewer: fable`, code roles `sonnet` |
 | **Same as this session** | all `inherit` |
@@ -19,19 +19,19 @@ The session cannot list which models the account has, so this is asked, never pr
 
 | Option | Writes |
 |---|---|
-| **Medium (recommended):** asks the decisions that matter, drafts the rest | `interview_depth: medium` |
-| **Easy:** drafts almost everything, asks only blockers | `interview_depth: easy` |
+| **Easy (recommended):** drafts almost everything, asks only blockers | `interview_depth: easy` |
+| **Medium:** asks the decisions that matter, drafts the rest | `interview_depth: medium` |
 | **Hard:** walks every branch with you | `interview_depth: hard` |
 
 ## Call 2
 
-**Q3. Gate strictness.** «How strict should the per-task gate be?»
+**Q3. Smoke check.** «What should run after each task?»
 
 | Option | Writes |
 |---|---|
-| **Strict (recommended):** TDD on, lint and script check in the gate, stop on a red that survives 3 retries | `tdd: true`, `gate_lint: true`, `gate_vet: true`, `stop_on_red: true`, `max_red_retries: 3` |
-| **Keep going:** same gate, but a stuck task is set aside and the rest continue | `stop_on_red: false` |
-| **Loose:** TDD on, no lint in the gate (for spikes) | `gate_lint: false`, `gate_vet: false` |
+| **Fast (recommended):** headless import only, no script errors | `gate_vet: true`, `gate_lint: false`, `gate_tests: false` |
+| **Tidy:** also lint and format check | `gate_lint: true` |
+| **With tests:** also run any GUT tests that exist | `gate_tests: true` |
 
 **Q4. Commits and Codex.** «How should work be committed, and when should Codex review?»
 
@@ -47,5 +47,5 @@ Q4 is multiSelect: the commit choice and the Codex choice combine.
 ## Not asked
 
 - `cmd_*`: empty = autodetect.
-- `effort_*`: defaults are right; escalation raises them automatically.
+- `effort_*`: defaults are right.
 - `godot_bin`: asked only when autodetect failed, as a free-text path.

@@ -1,6 +1,6 @@
 # arbuz: Тигриця's Journey
 
-An offline educational game for a three-year-old, built in **Godot 4.7** with **GDScript** and tested with **GUT**. Developed on a MacBook M4; must run well on an **Intel MacBook** with integrated graphics (the minimum play machine). Builds for macOS (universal) and Windows. The game's vision is [`docs/game-spec.md`](docs/game-spec.md); the phased plan is [`docs/development-plan.md`](docs/development-plan.md).
+An offline educational game for a three-year-old, built in **Godot 4.7** with **GDScript**. It is for home use, so development is fast and testing is light. Developed on a MacBook M4; must run well on an **Intel MacBook** with integrated graphics (the minimum play machine). Builds for macOS (universal) and Windows. The game's vision is [`docs/game-spec.md`](docs/game-spec.md); the phased plan is [`docs/development-plan.md`](docs/development-plan.md).
 
 ## Non-negotiable product rules
 
@@ -21,14 +21,14 @@ These come before any feature request. If a request conflicts with one, say so a
 All non-trivial work goes through the spec-driven workflow in `.claude/`. Read [`docs/workflow.md`](docs/workflow.md) for the one-page guide. In short:
 
 ```
-/interview → /specify → /clarify → /ux-flows → /design → /contracts → /tasks → /plan-tests → /implement → /review → /ship → /playtest
+/interview → /specify → /clarify → /ux-flows → /design → /contracts → /tasks → /implement → /review → /ship → /playtest
 ```
 
-`/classify-size <slug>` picks the route (`quick` / `standard` / `full`), which decides which stages run. Small fixes go through `/fix`. Stages are separate sessions: run `/clear` between them; each stage re-reads its inputs from disk.
+`/classify-size <slug>` picks the route: `quick` by default, `standard` for save-format, word-DB or child-safety changes, `full` only when asked. Small fixes go through `/fix`. Stages are separate sessions: run `/clear` between them; each stage re-reads its inputs from disk.
 
 Rules for agents working in this repo:
 
-- **Tests first.** Production code is written only against a failing GUT test, by a different agent than the one that wrote the test. Never edit a test to make it pass.
+- **Speed over tests.** No TDD and no test suite to maintain. After each task run the smoke check (headless import, no script errors); the parent plays the build and the playtest with the child is the real test. Write a GUT test only when it is cheaper than checking by hand, mainly a fixture save that must still load after a save-format change.
 - **Follow the map.** `docs/architecture-map.md` holds the conventions and pattern few-shots; `docs/design-system.md` holds the UI components and tokens. A new UI component needs a justification and the parent's approval in `docs/design-system.md` before it is built.
 - **Contracts are documented.** Save format, word DB, content Resources, autoload APIs and tool CLIs live in `docs/contracts/`. Change the contract with the code, never only the code.
 - **Commit per task** with `SDD-Task:` and `SDD-AC:` trailers, on a feature branch. Never push or merge without the parent's go-ahead.
@@ -52,19 +52,20 @@ Rules for agents working in this repo:
 
 ## Commands
 
-Prefer the values in `docs/architecture-map.md` once `/survey` has written them. Defaults:
+Canonical values live in `docs/architecture-map.md` (frontmatter). `godot` is not on PATH on the M4, so commands use the full binary path; gdtoolkit lives in `~/Library/Python/3.13/bin`.
 
 ```bash
-# unit + integration tests (GUT, headless)
-godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
-# import / script check
-godot --headless --path . --import --quit
-# lint and format check
-gdlint . && gdformat --check .
-# macOS build
-godot --headless --path . --export-release "macOS" build/macos/arbuz.zip
+# smoke check: import / script check (the per-task gate)
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --import --quit
+# optional: GUT tests (config in .gutconfig.json)
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json
+# optional: lint and format check (addons/ excluded)
+gdlint game tests tools && gdformat -l 110 --check game tests tools
+# builds
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release "macOS" build/macos/arbuz.zip
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release "Windows" build/windows/arbuz.exe
+# regenerate the input map in project.godot
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --script res://tools/setup_input_map.gd
 # validate the workflow files after editing .claude/
 python3 scripts/validate_workflow.py
 ```
-
-If `godot` is not on PATH, use `/Applications/Godot.app/Contents/MacOS/Godot` or set `godot_bin` with `/config`.

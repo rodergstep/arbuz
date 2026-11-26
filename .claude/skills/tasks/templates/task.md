@@ -16,7 +16,7 @@ context_budget: "S"     # what the task costs the executing agent to hold (markd
                         # L = beyond that — split the task, or keep it and say why right here:
                         #     context_budget: "L"   # justified: <one line>
 status: "todo"          # todo | in_progress | blocked | review | done — `implement` keeps it live
-step: ""                # SELECT | RED | GREEN | REFACTOR | GATE | REVIEW | COMMIT — markdown only;
+step: ""                # SELECT | BUILD | SMOKE | COMMIT — markdown only;
                         # for `blocked`, the reason: step: "GATE — lint red after 3 retries"
 ---
 
@@ -145,9 +145,9 @@ error branches. Behaviour is observable, not «handle gracefully». -->
 
 ## Definition of Done
 
-<!-- instruction: testable bullets, then the gate. e.g.: -->
-- [ ] <GUT test for this task passes, and was seen failing first>
-- [ ] <every fixture save migrates and validates> (save tasks)
-- [ ] <scripted playthrough reaches the spec'd state for AC-01> (scene/ui tasks)
+<!-- instruction: bullets checkable in the running game, then the smoke check. e.g.: -->
+- [ ] <checked in the running game: what you did and what you saw>
+- [ ] <a v<N> fixture save loads with every stat intact> (save tasks only)
+- [ ] <played with mouse, keys and gamepad; reaches the spec'd state for AC-01> (scene/ui tasks)
 - [ ] every Hard Rule inlined above still holds
-- [ ] lint + headless check clean
+- [ ] headless import clean (no script errors)

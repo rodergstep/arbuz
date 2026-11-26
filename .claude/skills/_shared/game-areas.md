@@ -1,7 +1,7 @@
 # Game areas — what a feature touches (replaces web "surfaces")
 
 > **Reference-only.** Not a skill. `design` owns the **selection**: it declares the areas a feature
-> touches in `sad.md` frontmatter `areas: [...]`. `contracts`, `tasks`, `plan-tests`, `implement`
+> touches in `sad.md` frontmatter `areas: [...]`. `contracts`, `tasks`, `implement`
 > and `review` **read** that list and gate their output by the table below. They never re-derive it.
 
 ## The taxonomy
@@ -21,14 +21,14 @@ large; say so when sizing.
 
 ## The gating table
 
-| Area | `contracts` form | `tasks` layer | test tiers added (`plan-tests`) |
+| Area | `contracts` form | `tasks` layer | how it is checked |
 |---|---|---|---|
-| `core-system` | autoload public API (methods + signals) in `contracts/autoloads.md`; save schema if it persists | `core` | GUT unit + GUT integration (with other autoloads) |
-| `scene` | signals the scene emits/consumes; required nodes | `scene` | scripted playthrough (GUT drives input) |
-| `ui` | none (consumes system APIs); states come from `ux-flows.md` | `ui` | scripted playthrough of each state + a manual look |
-| `content-data` | data schema (`contracts/word-db.md`, `contracts/content.md`) | `data` | contract tests: every data file loads and validates |
-| `audio-pipeline` | word-id → file naming contract; tool CLI | `audio` | contract test: every word id has its audio file |
-| `tooling` | CLI flags + input/output files (`contracts/tools.md`) | `tooling` | unit tests in the tool's own language |
+| `core-system` | autoload public API (methods + signals) in `contracts/autoloads.md`; save schema if it persists | `core` | run it in the game; a GUT test only for save/migration logic |
+| `scene` | signals the scene emits/consumes; required nodes | `scene` | play the scene with mouse, keys and gamepad |
+| `ui` | none (consumes system APIs); states come from `ux-flows.md` | `ui` | look at each state in the running game |
+| `content-data` | data schema (`contracts/word-db.md`, `contracts/content.md`) | `data` | the game loads every data file without warnings |
+| `audio-pipeline` | word-id → file naming contract; tool CLI | `audio` | the tool reports any word id without an audio file |
+| `tooling` | CLI flags + input/output files (`contracts/tools.md`) | `tooling` | run the tool once on real input |
 | `build` | none | `build` | export builds + performance check on the Intel MacBook (manual at gates) |
 
 Anything that persists player state adds the **save contract** (`contracts/save-format.md`) and
