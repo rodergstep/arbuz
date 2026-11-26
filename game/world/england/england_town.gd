@@ -128,8 +128,10 @@ func _on_collect_click(item: CollectItem) -> void:
 		learning.request(
 			item.word_id, item.global_position, item.global_position + Vector3(2.0, 1.8, 2.6), true
 		)
+	# A single thing is found, not counted: "Here is the milk!" (never "One milk!").
 	var keys: Array[String] = ["count:one", "count:two", "count:three"]
-	say_when_free_word(keys[mini(_collect_count, 3) - 1], _collect_word)
+	var key: String = "count:found" if _collect_total == 1 else keys[mini(_collect_count, 3) - 1]
+	say_when_free_word(key, _collect_word)
 	LearningTracker.record_heard(item.word_id)
 	if _collect_count >= _collect_total:
 		say_when_free_word("ch1:all_found", _collect_word)

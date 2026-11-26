@@ -54,6 +54,7 @@ ch1:find_one,"Знайди {uk_word}!","Find the {word}!"
 count:one,,"One {word}!"
 count:two,,"Two {word}s!"
 count:three,,"Three {word}s!"
+count:found,,"Here is the {word}! You found it!"
 ch1:all_found,,"We found them all! Well done!"
 ch1:back_to_baker,"Несемо все пекарці!","Let's bring everything to the baker!"
 ch1:baker_thanks,,"Thank you! Apples, eggs, milk and flour! Now I can bake my cake!",baker
