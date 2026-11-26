@@ -853,40 +853,16 @@ func _pick_size_for(id: StringName) -> Vector3:
 
 
 func _art_for(id: StringName) -> Node3D:
-	var root: Node3D = Node3D.new()
 	match id:
 		&"tree":
+			var root: Node3D = Node3D.new()
 			root.add_child(Blocks.prop("tree", Vector3.ZERO, 40.0, Vector3.ONE, [LEAF_COLOR]))
+			return root
 		&"sunflower":
+			var root: Node3D = Node3D.new()
 			root.add_child(Blocks.prop("sunflower", Vector3.ZERO, 0.0, Vector3.ONE, [PETAL_COLOR]))
-		&"flower":
-			var head: SphereMesh = SphereMesh.new()
-			head.radius = 0.35
-			head.height = 0.3
-			root.add_child(Blocks.box_mesh(Vector3(0.1, 1.2, 0.1), Color(0.3, 0.6, 0.3), Vector3(0, 0.6, 0)))
-			root.add_child(Blocks.mesh(head, Color(1.0, 0.85, 0.2), Vector3(0, 1.3, 0), 0.06))
-		&"ball":
-			var ball: SphereMesh = SphereMesh.new()
-			ball.radius = 0.4
-			ball.height = 0.8
-			root.add_child(Blocks.mesh(ball, Color(0.9, 0.3, 0.35), Vector3(0, 0.4, 0)))
-		&"duck":
-			var duck: SphereMesh = SphereMesh.new()
-			duck.radius = 0.4
-			duck.height = 0.6
-			root.add_child(Blocks.mesh(duck, Color(1.0, 0.95, 0.5), Vector3(0, 0.35, 0)))
-			var head: SphereMesh = SphereMesh.new()
-			head.radius = 0.22
-			head.height = 0.44
-			root.add_child(Blocks.mesh(head, Color(1.0, 0.95, 0.5), Vector3(0, 0.75, -0.3)))
-		&"dog":
-			root.add_child(
-				Blocks.box_mesh(Vector3(0.6, 0.5, 1.1), Color(0.75, 0.55, 0.35), Vector3(0, 0.55, 0))
-			)
-			root.add_child(
-				Blocks.box_mesh(Vector3(0.45, 0.45, 0.45), Color(0.75, 0.55, 0.35), Vector3(0, 0.95, -0.6))
-			)
-	return root
+			return root
+	return Props.make(id)
 
 
 func _build_camera() -> void:

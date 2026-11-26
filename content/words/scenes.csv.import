@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dedlj8s0cdpi"
+
+[deps]
+
+files=["res://content/words/scenes.ground.translation", "res://content/words/scenes.actors.translation", "res://content/words/scenes.zoom.translation"]
+
+source_file="res://content/words/scenes.csv"
+dest_files=["res://content/words/scenes.ground.translation", "res://content/words/scenes.actors.translation", "res://content/words/scenes.zoom.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true
