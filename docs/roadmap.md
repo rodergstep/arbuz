@@ -74,6 +74,7 @@ Our son plays the whole England arc, from the Ukrainian prologue to the festival
 | D4 | Names for the English friends (baker, toy maker, farmer, clockmaker) | grilling | human | 19 |
 | D5 | Is touch or mouse the primary input, decided from the Gate 1 touchscreen trial? | prototype | human | 13 |
 | D6 | Does Piper's Ukrainian voice sound right, or do the parents record the narration? | prototype | human | 8 |
+| D8 | Run the gamepad check across USB, dongle and Bluetooth once the gamepad is bought | task | human | 13 |
 | D7 | Does the painted look (toon shader, sky, grass) hold 30 fps on the Intel MacBook, and at what grass density? | prototype | agent | 15 |
 
 ## Decisions so far
@@ -133,7 +134,7 @@ flowchart LR
 
 1. Project skeleton (#1)
 
-**Exit gate:** a test build opens on the Intel MacBook, and the gamepad check scene registers every button of the Machenike G5 Pro over USB, the 2.4G dongle and Bluetooth.
+**Exit gate:** a test build opens on the Intel MacBook. The gamepad half (the check scene registers every button of the Machenike G5 Pro over USB, the 2.4G dongle and Bluetooth) is **deferred until the gamepad is bought**; until then mouse and keyboard are the primary input.
 
 ### Phase 1: Greybox prototype
 
