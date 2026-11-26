@@ -1,0 +1,158 @@
+{
+  "slug": "_scaffold",
+  "source": "docs/architecture-map.md (greenfield-bootstrap), docs/development-plan.md Phase 0",
+  "smoke_test": "Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+  "tasks": [
+    {
+      "id": "S1",
+      "title": "Create project.godot: name, Compatibility renderer, 1280x720 viewport with canvas_items stretch and expand aspect, touch emulates mouse, 60 fps max with vsync, default theme slot",
+      "layer": "scaffold",
+      "deps": [],
+      "dod": "The project imports headless with renderer gl_compatibility and the window scales from 1280x720. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        "project.godot",
+        "icon.svg"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "S2",
+      "title": "Add .gitattributes with LFS rules (glb png jpg ogg wav blend ttf otf tpz) and extend .gitignore for Godot 4.7 and build output",
+      "layer": "scaffold",
+      "deps": [],
+      "dod": "git check-attr reports filter=lfs for each listed extension; .godot/ and build/ are ignored. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        ".gitattributes",
+        ".gitignore"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "S3",
+      "title": "Vendor and enable the pinned addons: GUT 9.7.1, Dialogic 2.0-alpha-20, Phantom Camera 0.12, Beehave 2.9.3",
+      "layer": "scaffold",
+      "deps": [
+        "S1"
+      ],
+      "dod": "All four plugins are listed in [editor_plugins] and the project imports headless without addon errors. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        "addons/",
+        "project.godot"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "S4",
+      "title": "Create the folder skeleton from the map and the example GameState autoload with a typed signal and its GUT test",
+      "layer": "scaffold",
+      "deps": [
+        "S1"
+      ],
+      "dod": "GameState is registered as an autoload and tests/core/test_game_state.gd passes. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        "game/core/game_state.gd",
+        "tests/core/test_game_state.gd",
+        "project.godot"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "S5",
+      "title": "Add .gutconfig.json and the headless GUT command; prove it with a failing-then-passing example test",
+      "layer": "scaffold",
+      "deps": [
+        "S3",
+        "S4"
+      ],
+      "dod": "The map's test_cmd runs every test under res://tests and exits 0; a deliberately failing test makes it exit non-zero. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        ".gutconfig.json",
+        "tests/"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "S6",
+      "title": "Add gdlintrc and the lint/format command, excluding addons/",
+      "layer": "scaffold",
+      "deps": [
+        "S4"
+      ],
+      "dod": "The map's lint_cmd passes on game/ and tests/. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        "gdlintrc"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "S7",
+      "title": "Define the input map once: move_left/right/up/down, use, horn, pause on keyboard and gamepad (mouse and touch go through the pointer path)",
+      "layer": "scaffold",
+      "deps": [
+        "S1"
+      ],
+      "dod": "project.godot [input] holds the seven actions, each with a key and a joypad event. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        "project.godot"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "S8",
+      "title": "Add macOS (universal) and Windows (x86_64) export presets; dev scenes excluded from release",
+      "layer": "scaffold",
+      "deps": [
+        "S1"
+      ],
+      "dod": "Both presets export headless to build/macos/arbuz.zip and build/windows/arbuz.exe. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        "export_presets.cfg"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "S9",
+      "title": "Gamepad check scene: shows every button, trigger and stick, the connected device name, and tests rumble",
+      "layer": "scaffold",
+      "deps": [
+        "S4",
+        "S7"
+      ],
+      "dod": "The scene runs, lists the joypad name, highlights each pressed button and axis, and the use button starts a rumble. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        "game/dev/gamepad_check/"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "S10",
+      "title": "Playtest EventLog autoload stub: timestamped JSON lines to user://logs/ with a GUT test",
+      "layer": "scaffold",
+      "deps": [
+        "S4",
+        "S5"
+      ],
+      "dod": "EventLog.log_event writes one valid JSON line per call to a file under the configured log dir; the test passes. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        "game/core/event_log.gd",
+        "tests/core/test_event_log.gd"
+      ],
+      "status": "todo"
+    },
+    {
+      "id": "S11",
+      "title": "Update CLAUDE.md Commands with the real commands and the godot binary path",
+      "layer": "scaffold",
+      "deps": [
+        "S5",
+        "S6",
+        "S8"
+      ],
+      "dod": "CLAUDE.md Commands match the map's test_cmd, lint_cmd, vet_cmd and export_cmd. Smoke test green: headless import exits 0, GUT runs and exits 0, gdlint/gdformat --check pass on game/ and tests/, and the macOS export builds build/macos/arbuz.zip.",
+      "files_hint": [
+        "CLAUDE.md"
+      ],
+      "status": "todo"
+    }
+  ]
+}
