@@ -1,7 +1,8 @@
 class_name Hero
 extends CharacterBody3D
-## The greybox hero (a capsule). Click to walk with pathfinding, hold to follow the cursor,
-## arrow keys or the stick to walk directly. Reports arrival; never judges anything.
+## The hero: a little boy (assets/models/boy.glb) who swings his arms and legs as he walks.
+## Click to walk with pathfinding, hold to follow the cursor, arrow keys or the stick to walk
+## directly. Reports arrival; never judges anything.
 
 signal arrived
 
@@ -15,6 +16,9 @@ var keyboard_enabled: bool = true
 var _agent: NavigationAgent3D
 var _body: Node3D
 var _has_target: bool = false
+var _model: Node3D
+var _limbs: Dictionary[String, Node3D] = {}
+var _walk_phase: float = 0.0
 
 
 func _ready() -> void:
@@ -29,14 +33,13 @@ func _ready() -> void:
 	add_child(shape)
 	_body = Node3D.new()
 	add_child(_body)
-	var mesh: CapsuleMesh = CapsuleMesh.new()
-	mesh.radius = 0.4
-	mesh.height = 1.4
-	_body.add_child(Blocks.mesh(mesh, Color(0.35, 0.55, 0.95), Vector3(0, 0.7, 0)))
-	var nose: SphereMesh = SphereMesh.new()
-	nose.radius = 0.15
-	nose.height = 0.3
-	_body.add_child(Blocks.mesh(nose, Color(1.0, 0.85, 0.7), Vector3(0, 1.1, -0.38)))
+	_model = ModelPainter.load_model("boy")
+	_model.scale = Vector3.ONE * 1.35
+	_body.add_child(_model)
+	# He starts facing the camera (south), so his face is seen.
+	_body.rotation.y = PI
+	for joint: String in ["LegL", "LegR", "ArmL", "ArmR", "Head"]:
+		_limbs[joint] = _model.find_child(joint, true, false) as Node3D
 	_agent = NavigationAgent3D.new()
 	_agent.radius = 0.4
 	_agent.path_desired_distance = 0.5
@@ -80,6 +83,22 @@ func _physics_process(delta: float) -> void:
 	velocity.z = dir.z * SPEED
 	velocity.y = 0.0 if is_on_floor() else velocity.y - GRAVITY * delta
 	move_and_slide()
+	_animate(delta, dir.length() > 0.1)
 	if dir.length() > 0.1:
 		var target_yaw: float = atan2(-dir.x, -dir.z)
 		_body.rotation.y = lerp_angle(_body.rotation.y, target_yaw, minf(1.0, TURN_SPEED * delta))
+
+
+## Arms and legs swing while he walks; a small bob; standing still, a gentle sway.
+func _animate(delta: float, moving: bool) -> void:
+	_walk_phase += delta * (10.0 if moving else 2.0)
+	var swing: float = sin(_walk_phase) * (0.7 if moving else 0.0)
+	if _limbs["LegL"] != null:
+		_limbs["LegL"].rotation.x = swing
+		_limbs["LegR"].rotation.x = -swing
+	if _limbs["ArmL"] != null:
+		_limbs["ArmL"].rotation.x = -swing * 0.8
+		_limbs["ArmR"].rotation.x = swing * 0.8
+	if _limbs["Head"] != null:
+		_limbs["Head"].rotation.z = sin(_walk_phase * 0.5) * (0.05 if moving else 0.03)
+	_model.position.y = absf(sin(_walk_phase)) * (0.06 if moving else 0.0)

@@ -222,10 +222,12 @@ func _leave_stage() -> void:
 	_stage = null
 
 
+## He said it: the word glows warmly for a moment. Nothing moves or changes size, so the text
+## never jumps (playtest: a growing word looked like jumping).
 func _celebrate() -> void:
 	var tween: Tween = create_tween()
-	tween.tween_property(_word_en, "scale", Vector2(1.25, 1.25), 0.15)
-	tween.tween_property(_word_en, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_ELASTIC)
+	tween.tween_property(_word_en, "modulate", Color(1.25, 1.15, 0.8), 0.2)
+	tween.tween_property(_word_en, "modulate", Color.WHITE, 0.6)
 
 
 func _label(font_size: int, color: Color) -> Label:

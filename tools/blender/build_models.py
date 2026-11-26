@@ -988,6 +988,64 @@ def build_bush():
     export("bush")
 
 
+def build_boy():
+    """The hero: an original little boy, about 1.1 m. Toddler proportions (a big round head), big
+    friendly eyes, rosy cheeks, a tuft of brown hair, a sunny yellow T-shirt with a blue star,
+    blue shorts, red trainers with white soles, and a small orange backpack.
+    Joints: LegL/LegR (hips), ArmL/ArmR (shoulders), Head (neck)."""
+    reset()
+    skin, hair = mat("skin", (0.98, 0.82, 0.70, 1)), mat("hair", (0.45, 0.28, 0.16, 1))
+    shirt, star = mat("tshirt", (1.0, 0.82, 0.22, 1)), mat("star", (0.25, 0.50, 0.88, 1))
+    shorts, shoe = mat("shorts", (0.26, 0.42, 0.78, 1)), mat("shoe", (0.88, 0.22, 0.22, 1))
+    sole, white = mat("sole", (0.98, 0.98, 0.96, 1)), mat("eye_white", (1.0, 1.0, 1.0, 1))
+    dark, cheek = mat("eye_dark", (0.18, 0.12, 0.10, 1)), mat("cheek", (0.96, 0.62, 0.60, 1))
+    root = empty("Boy", (0, 0, 0))
+    for side, x in (("L", -0.1), ("R", 0.1)):
+        leg = limb("Leg" + side, (x, 0, 0.36), 0.26, 0.065, skin, root, skin)
+        cylinder("ShortsLeg" + side, (x, 0, 0.3), 0.085, 0.14, shorts, leg, verts=14)
+        sphere("Shoe" + side, (x, 0.04, 0.07), (0.08, 0.13, 0.065), shoe, leg, 14)
+        box("Sole" + side, (x, 0.04, 0.02), (0.15, 0.24, 0.03), sole, leg, 0.01)
+    body = empty("Body", (0, 0, 0.36), root)
+    sphere("Hips", (0, 0, 0.4), (0.2, 0.16, 0.12), shorts, body, 16)
+    sphere("Torso", (0, 0, 0.55), (0.21, 0.17, 0.2), shirt, body, 18)
+    # A five-point star on the chest.
+    for i in range(5):
+        a = math.tau * i / 5 + math.pi / 2
+        box("StarRay%d" % i, (math.cos(a) * 0.035, 0.165, 0.56 + math.sin(a) * 0.035), (0.03, 0.015, 0.07), star, body, 0.0, (0, -a + math.pi / 2, 0))
+    sphere("StarMid", (0, 0.168, 0.56), (0.035, 0.012, 0.035), star, body, 10)
+    box("Backpack", (0, -0.2, 0.56), (0.24, 0.1, 0.24), mat("backpack", (0.95, 0.55, 0.2, 1)), body, 0.04)
+    for side, x in (("L", -0.23), ("R", 0.23)):
+        arm = limb("Arm" + side, (x, 0, 0.7), 0.26, 0.055, skin, root, skin)
+        sphere("Sleeve" + side, (x, 0, 0.66), (0.075, 0.075, 0.08), shirt, arm, 12)
+    head = empty("Head", (0, 0, 0.76), root)
+    sphere("Face", (0, 0, 0.95), (0.25, 0.23, 0.24), skin, head, 28)
+    for x in (-1, 1):
+        sphere("Ear%+d" % x, (x * 0.24, 0, 0.94), (0.045, 0.03, 0.06), skin, head, 10)
+    # Hair: a soft cap with a few tufts and a fringe.
+    sphere("HairCap", (0, -0.03, 1.03), (0.26, 0.24, 0.19), hair, head, 24)
+    for i, (x, y) in enumerate(((-0.1, 0.15), (0.0, 0.18), (0.1, 0.15))):
+        sphere("Fringe%d" % i, (x, y, 1.1), (0.07, 0.05, 0.05), hair, head, 10)
+    sphere("Tuft", (0.02, -0.02, 1.22), (0.05, 0.04, 0.07), hair, head, 10)
+    for x in (-0.085, 0.085):
+        sphere("EyeWhite%+.0f" % (x * 1000), (x, 0.2, 0.96), (0.05, 0.03, 0.06), white, head, 14)
+        sphere("Eye%+.0f" % (x * 1000), (x, 0.225, 0.955), (0.035, 0.015, 0.045), dark, head, 12)
+        sphere("Shine%+.0f" % (x * 1000), (x + 0.012, 0.24, 0.975), (0.012,) * 3, white, head, 6)
+        sphere("Cheek%+.0f" % (x * 1000), (x * 1.7, 0.17, 0.88), (0.045, 0.02, 0.03), cheek, head, 10)
+    sphere("Nose", (0, 0.235, 0.91), (0.025, 0.02, 0.02), skin, head, 8)
+    bpy.ops.mesh.primitive_torus_add(location=(0, 0.215, 0.86), major_radius=0.045, minor_radius=0.01, rotation=(math.radians(90), 0, 0))
+    o = bpy.context.active_object
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.select_all(action="DESELECT")
+    bpy.ops.object.mode_set(mode="OBJECT")
+    for v in o.data.vertices:
+        v.select = v.co.y > -0.005  # local after rotation: keep the lower half as a smile
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.delete(type="VERT")
+    bpy.ops.object.mode_set(mode="OBJECT")
+    finish(o, "Smile", dark, head)
+    export("boy")
+
+
 BUILDERS = {
     "tygrytsa": build_tygrytsa,
     "hatchback": build_hatchback,
@@ -1037,6 +1095,7 @@ BUILDERS = {
     "poppies": build_poppies,
     "flower_bed": build_flower_bed,
     "bush": build_bush,
+    "boy": build_boy,
 }
 
 # BUILD_ONLY="poplar oak" builds just those (all when unset).
