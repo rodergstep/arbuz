@@ -4,7 +4,7 @@ extends Resource
 ## to do, where, and what Tygrytsa says (keys in content/voice/lines.csv).
 
 ## New kinds are appended (saved .tres files store the number).
-enum Kind { GET_IN_CAR, DRIVE_TO, WALK_TO, OPEN_DOOR, FIND_OBJECT }
+enum Kind { GET_IN_CAR, DRIVE_TO, WALK_TO, OPEN_DOOR, FIND_OBJECT, TALK_TO, FERRY }
 
 @export var kind: Kind = Kind.WALK_TO
 ## Target spots; each visit of the loop uses the next one (DRIVE_TO, WALK_TO).

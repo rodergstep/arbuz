@@ -28,7 +28,22 @@ func _initialize() -> void:
 	]
 	var err: Error = ResourceSaver.save(chapter, "res://content/chapters/greybox_loop.tres")
 	print("greybox_loop.tres: ", error_string(err))
-	quit(0 if err == OK else 1)
+	# The prologue: learn to walk, meet the postman (hello, a letter, bye), drive to the ferry,
+	# sail to England. Played once; then the practice loop.
+	var prologue: ChapterData = ChapterData.new()
+	prologue.id = &"prologue"
+	prologue.done_key = "chapter:prologue"
+	prologue.next_chapter = "res://content/chapters/greybox_loop.tres"
+	prologue.steps = [
+		_step(QuestStep.Kind.WALK_TO, [Vector3(-9, 0, 12)], "line:walk_tutorial", "hint:walk"),
+		_step(QuestStep.Kind.TALK_TO, [Vector3(-15, 0, 17)], "line:to_postman", "hint:to_postman"),
+		_step(QuestStep.Kind.GET_IN_CAR, [], "", "hint:to_car", "line:here_car"),
+		_step(QuestStep.Kind.DRIVE_TO, [Vector3(8.5, 0, 14)], "line:to_ferry", "hint:to_ferry"),
+		_step(QuestStep.Kind.FERRY, [], "", ""),
+	]
+	var err2: Error = ResourceSaver.save(prologue, "res://content/chapters/prologue.tres")
+	print("prologue.tres: ", error_string(err2))
+	quit(0 if err == OK and err2 == OK else 1)
 
 
 func _step(

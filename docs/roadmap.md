@@ -36,7 +36,7 @@ Our son learns English words for the things around him, food, colours, animals a
 | 14 | Parent area behind the parent lock: name, languages, volume, and the 15-minute session timer with Tygrytsa's goodbye | `game-spec.md` §Parent features and profiles | L | building |
 | 15 | The village gets its painted look: toon shader, painted sky, wind in the grass, warm grading, holding 30 fps | `development-plan.md` §Phase 3 — Prologue vertical slice | L | building |
 | 16 | Hero, Tygrytsa and the three cars as real models; he picks his car | `development-plan.md` §Phase 3 — Prologue vertical slice | L | building |
-| 17 | The prologue plays start to finish: meet Tygrytsa, tutorial, the postman's "hello" and "bye", the ferry | `game-spec.md` §Story | L | idea |
+| 17 | The prologue plays start to finish: meet Tygrytsa, tutorial, the postman's "hello" and "bye", the ferry | `game-spec.md` §Story | L | building |
 | 18 | The English town is laid out in greybox with every landmark | `development-plan.md` §Phase 4 — Chapter 1: the bakery | M | idea |
 | 19 | Chapter 1: he finds the baker's ingredients and learns food words and counting, with bakery and café doors | `development-plan.md` §Phase 4 — Chapter 1: the bakery | L | idea |
 | 20 | Rewards: the map unlocks, souvenirs replay their word, the friends gallery fills | `game-spec.md` §Gameplay | M | idea |
