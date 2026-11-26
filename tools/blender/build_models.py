@@ -477,6 +477,30 @@ def build_lamp():
     export("lamp")
 
 
+def build_baker():
+    """The baker: a round, cheerful baker in a white apron and a tall chef's hat. About 1.65 m."""
+    reset()
+    root = empty("Baker", (0, 0, 0))
+    dress, skin = mat("dress", (0.92, 0.55, 0.45, 1)), mat("skin", (0.96, 0.80, 0.68, 1))
+    apron, white = mat("apron", (0.99, 0.98, 0.96, 1)), mat("hat", (1.0, 1.0, 1.0, 1))
+    limb("LegL", (-0.11, 0, 0.6), 0.55, 0.08, skin, root, mat("shoe", DARK))
+    limb("LegR", (0.11, 0, 0.6), 0.55, 0.08, skin, root, mat("shoe", DARK))
+    body = empty("Body", (0, 0, 0.6), root)
+    sphere("Dress", (0, 0, 0.95), (0.36, 0.3, 0.45), dress, body)
+    sphere("Apron", (0, 0.12, 0.92), (0.28, 0.2, 0.36), apron, body)
+    for side, x in (("L", -0.34), ("R", 0.34)):
+        limb("Arm" + side, (x, 0, 1.22), 0.45, 0.075, dress, root, skin)
+    head = empty("Head", (0, 0, 1.45), root)
+    sphere("Face", (0, 0, 1.5), (0.2, 0.19, 0.21), skin, head, 20)
+    sphere("Cheeks", (0, 0.13, 1.46), (0.15, 0.06, 0.06), mat("blush", (0.95, 0.62, 0.60, 1)), head, 12)
+    for x in (-0.07, 0.07):
+        sphere("EyeB%+.0f" % (x * 100), (x, 0.17, 1.55), (0.025, 0.015, 0.03), mat("eye", DARK), head, 8)
+    sphere("SmileB", (0, 0.17, 1.42), (0.06, 0.02, 0.015), mat("mouth", (0.75, 0.35, 0.35, 1)), head, 10)
+    cylinder("HatBand", (0, 0, 1.7), 0.19, 0.12, white, head, verts=18)
+    sphere("HatTop", (0, 0, 1.86), (0.26, 0.26, 0.2), white, head, 18)
+    export("baker")
+
+
 build_tygrytsa()
 build_hatchback()
 build_jeep()
@@ -496,3 +520,4 @@ build_clock_tower()
 build_bus_stop()
 build_barn()
 build_lamp()
+build_baker()

@@ -27,7 +27,7 @@ MODELS = ROOT / "audio_gen/models"
 
 EN_VOICE = "bf_emma"  # Tygrytsa: British English, warm and clear
 # Other speakers (the `speaker` column of lines.csv) and their English voices.
-SPEAKER_VOICES = {"postman": "bm_george"}
+SPEAKER_VOICES = {"postman": "bm_george", "baker": "bf_isabella"}
 EN_SPEED = 0.95  # natural pace; slowness comes from pauses, never from stretching (playtests)
 UK_SPEAKER = 0  # "lada"
 UK_LENGTH_SCALE = 1.0  # natural pace

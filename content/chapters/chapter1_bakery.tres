@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="ChapterData" format=3]
+
+[ext_resource type="Script" path="res://game/core/chapter_data.gd" id="1_m03df"]
+[ext_resource type="Script" path="res://game/core/quest_step.gd" id="2_0krcj"]
+
+[sub_resource type="Resource" id="Resource_xixx3"]
+script = ExtResource("2_0krcj")
+kind = 5
+spots = Array[Vector3]([Vector3(-5.5, 0, -6.2)])
+start_line = "ch1:to_baker"
+hint_line = "hint:to_baker"
+talk_id = &"baker_intro"
+
+[sub_resource type="Resource" id="Resource_2iskw"]
+script = ExtResource("2_0krcj")
+kind = 7
+spots = Array[Vector3]([Vector3(-30, 0, 18), Vector3(-34, 0, 10), Vector3(-22, 0, 25)])
+word = &"apple"
+count = 3
+
+[sub_resource type="Resource" id="Resource_gjvqy"]
+script = ExtResource("2_0krcj")
+kind = 7
+spots = Array[Vector3]([Vector3(26, 0, 26), Vector3(35, 0, 22)])
+word = &"egg"
+count = 2
+
+[sub_resource type="Resource" id="Resource_ond6e"]
+script = ExtResource("2_0krcj")
+kind = 7
+spots = Array[Vector3]([Vector3(8, 0, -6)])
+word = &"milk"
+
+[sub_resource type="Resource" id="Resource_qtijy"]
+script = ExtResource("2_0krcj")
+kind = 7
+spots = Array[Vector3]([Vector3(22, 0, -6)])
+word = &"flour"
+
+[sub_resource type="Resource" id="Resource_fpilf"]
+script = ExtResource("2_0krcj")
+spots = Array[Vector3]([Vector3(-9.4, 0, -2.9)])
+start_line = "ch1:back_to_baker"
+hint_line = "hint:to_door"
+
+[sub_resource type="Resource" id="Resource_4o35c"]
+script = ExtResource("2_0krcj")
+kind = 3
+
+[sub_resource type="Resource" id="Resource_qqawx"]
+script = ExtResource("2_0krcj")
+kind = 5
+spots = Array[Vector3]([Vector3(-5.5, 0, -6.2)])
+hint_line = "hint:to_baker"
+talk_id = &"baker_thanks"
+
+[resource]
+script = ExtResource("1_m03df")
+id = &"chapter1_bakery"
+steps = Array[ExtResource("2_0krcj")]([SubResource("Resource_xixx3"), SubResource("Resource_2iskw"), SubResource("Resource_gjvqy"), SubResource("Resource_ond6e"), SubResource("Resource_qtijy"), SubResource("Resource_fpilf"), SubResource("Resource_4o35c"), SubResource("Resource_qqawx")])
+next_chapter = "res://content/chapters/england_practice.tres"
+done_key = "chapter:bakery"
