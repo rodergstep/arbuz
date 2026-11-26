@@ -36,7 +36,7 @@ const LAMPS: Array[Vector3] = [
 
 
 func _configure() -> void:
-	door_pos = BAKERY_POS + Vector3(1.4, 0, 2.6)
+	door_pos = BAKERY_POS + Vector3(-1.4, 0, 2.6)
 	hero_start = Vector3(-4, 0, -27)
 	car_start = Vector3(-8, 0, -26)
 	door_words = [&"tree", &"house", &"car", &"road", &"clock", &"bus", &"shop", &"lamp", &"sea", &"boat"]

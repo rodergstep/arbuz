@@ -18,7 +18,7 @@ hint_line = "hint:drive"
 
 [sub_resource type="Resource" id="Resource_ifn27"]
 script = ExtResource("2_jth82")
-spots = Array[Vector3]([Vector3(-6.6, 0, -2.9)])
+spots = Array[Vector3]([Vector3(-9.4, 0, -2.9)])
 start_line = "line:to_door"
 hint_line = "hint:to_door"
 

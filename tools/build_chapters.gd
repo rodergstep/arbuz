@@ -55,7 +55,7 @@ func _initialize() -> void:
 			"line:drive",
 			"hint:drive"
 		),
-		_step(QuestStep.Kind.WALK_TO, [Vector3(-6.6, 0, -2.9)], "line:to_door", "hint:to_door"),
+		_step(QuestStep.Kind.WALK_TO, [Vector3(-9.4, 0, -2.9)], "line:to_door", "hint:to_door"),
 		_step(QuestStep.Kind.OPEN_DOOR, [], "", ""),
 		_step(QuestStep.Kind.FIND_OBJECT, [], "", ""),
 	]
