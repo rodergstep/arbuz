@@ -13,7 +13,7 @@ translation. Loaded by the `WordDB` autoload (`game/core/word_db.gd`) into `Word
 |---|---|---|
 | `id` | yes | stable word id, `snake_case` (`bridge`, `sunflower`); used by scenes, saves and audio file names |
 | `topic` | yes | `places`, `nature`, `animals`, `food`, `toys`, `transport`, … |
-| `uk` | yes | Ukrainian word (what Тигриця says) |
+| `uk` | yes | Ukrainian word (what Tygrytsa says) |
 | `en` | yes | English word |
 | `es`, `fr` | no | Spanish and French words (later arcs) |
 | `model` | no | path of the model under `assets/` (Phase 3) |

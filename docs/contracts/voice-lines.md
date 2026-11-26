@@ -5,7 +5,7 @@ last_changed: phase2
 
 # Contract — voice lines
 
-**Catalogue:** `content/voice/lines.csv` (`key,uk,en`; `keep` importer). Keys: `line:*` (Тигриця's
+**Catalogue:** `content/voice/lines.csv` (`key,uk,en`; `keep` importer). Keys: `line:*` (Tygrytsa's
 instructions), `hint:*`, `door:*`, `card:*`, `thing:*`, `session:*`. Placeholders in either
 column: `{word}` (English word), `{Word}` (capitalized), `{a_word}` (with a/an), `{uk_word}`.
 An empty `uk` means English only; a line with `uk` is said in Ukrainian + English the first time

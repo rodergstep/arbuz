@@ -51,7 +51,7 @@ C4Context
     title <feature> — context
     Person(child, "Child", "Plays, 3+, pre-reader")
     Person(parent, "Parent", "Co-plays, settings")
-    System(game, "Тигриця's Journey", "<the part this feature adds>")
+    System(game, "Tygrytsa's Journey", "<the part this feature adds>")
     System_Ext(fs, "user:// storage", "Save files, logs")
     Rel(child, game, "Taps, drives, picks")
     Rel(parent, game, "Opens settings behind the parent gate")

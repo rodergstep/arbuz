@@ -20,14 +20,14 @@ updated_at: "2026-11-26"
   keys point the way to drive; a click on the ground drives there. Bumping bounces softly with a
   funny sound. Clicking the car while driving honks (H too); Space gets out.
 - **AC-03 Guidance.** A glowing marker shows the next spot (car → a drive spot → the door).
-  Тигриця follows and points at it. After ~15 s without getting closer she gives a voiced hint
+  Tygrytsa follows and points at it. After ~15 s without getting closer she gives a voiced hint
   and the marker brightens; after +10 s she runs to the marker.
 - **AC-04 Speaking objects.** Clicking a tree, flower, sunflower, ball, duck, dog or house opens
   its learning moment (AC-08); everything spoken there is English.
 - **AC-05 Password door (teach before test).** The door only asks a word he has already seen
   on a learning card this session (a different one each visit when possible); if none, it first
   opens the learning card for a village word, then asks that word. A live picture of the thing
-  appears over the door and Тигриця asks "What is this? Listen to the cards!" (all English);
+  appears over the door and Tygrytsa asks "What is this? Listen to the cards!" (all English);
   three blank cards rise and each says its word when pointed at or clicked (left/right + Space
   on the keyboard). A wrong pick wiggles, says its word and repeats the question, never a sad
   sound. After 2 wrong picks the right card glows and the door opens with praise. The loop
@@ -39,7 +39,7 @@ updated_at: "2026-11-26"
 - **AC-08 Learning moments (education first).** Passing the bridge, the river, the road or the
   fence (walking or driving), clicking any object, or getting into the car for the first time
   opens a card in English only: a live picture of that thing and the English word, spoken
-  ("This is a bridge.", "bridge", "bridge"), then two short English sentences, each shown while spoken. The game waits behind it; one tap or Space skips. Passing moments open
+  ("This is a bridge.", "bridge"), then asks him to say it (AC-12), then two short English sentences, each shown while spoken. The game waits behind it; one tap or Space skips. Passing moments open
   at most every 20 s, each word at most twice a session; clicked moments always open.
 - **AC-09 Car drives smoothly.** Top speed 7 m/s (30% slower after the second playtest); it
   accelerates to full speed in about a second and only
@@ -51,14 +51,20 @@ updated_at: "2026-11-26"
   Ukrainian word that one time); after that, English only. First meetings persist in the save
   (`user://saves/default.json`), so a second session is English only for everything met.
 
-- **AC-11 Find the object (teach before test).** After the door, Тигриця asks "Find the duck!
+- **AC-11 Find the object (teach before test).** After the door, Tygrytsa asks "Find the duck!
   Where is the duck?" for a thing he has already learned (or teaches one first). A wrong click
   says that thing's name and repeats the ask; after 2 wrong clicks a marker glows under the
   right thing. The answer goes to the learning tracker.
 
-- **AC-12 Say it back.** On every learning card, after the word, Тигриця says "Say it with me:
-  bridge!", waits about 2 s for him to repeat it, then praises "Great job! Bridge!" (praise only,
-  no speech check).
+- **AC-12 Say it back (microphone).** On every learning card Tygrytsa asks "Now you! Say: bridge!"
+  and a pulsing circle with a microphone shows it's his turn. The card waits until he makes any
+  sound (loudness only; nothing is recorded, stored or sent; pronunciation never judged), asking
+  again every 5 s ("Your turn! Say: bridge!", every third time saying the word first). Then a chime
+  and "Yes! Bridge! You said it! Great job!", and the sentences. He cannot skip a card; a parent
+  can close it with the parent gate (Ctrl + Shift + P held). With the microphone off or blocked,
+  the card praises after one wait so he never gets stuck.
+- **AC-13 Natural voice, calm pace.** Voices are rendered at natural speed (Kokoro 0.95); the calm
+  pace comes from 0.45 s pauses between sentences and 0.5 s between lines, never from stretching.
 
 ## 8. Open questions
 

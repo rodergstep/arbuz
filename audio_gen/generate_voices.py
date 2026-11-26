@@ -26,8 +26,15 @@ OUT = ROOT / "audio/voice"
 MODELS = ROOT / "audio_gen/models"
 
 EN_VOICE = "bf_emma"  # British English, warm and clear
-EN_SPEED = 0.85  # a bit slower for a three-year-old
+EN_SPEED = 0.95  # natural pace; slowness comes from pauses, never from stretching (playtests)
 UK_SPEAKER = 0  # "lada"
+UK_LENGTH_SCALE = 1.0  # natural pace
+# When a voice setting changes, every file of that language is rendered again.
+SENTENCE_PAUSE = 0.45  # seconds of silence between sentences of one line
+STAMPS = {
+    "en": f"kokoro:{EN_VOICE}:{EN_SPEED}:pause{SENTENCE_PAUSE}",
+    "uk": f"piper:{UK_SPEAKER}:{UK_LENGTH_SCALE}:pause{SENTENCE_PAUSE}",
+}
 
 
 def article(word: str) -> str:
@@ -74,18 +81,53 @@ def collect() -> dict:
     return texts
 
 
+def sentences(text: str) -> list:
+    """Splits a line into sentences, keeping their punctuation."""
+    import re
+
+    return [s for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s]
+
+
+def with_pauses(parts: list, rate: int):
+    """Joins rendered sentences with a short silence: a calmer pace with a natural voice."""
+    import numpy as np
+
+    gap = np.zeros(int(SENTENCE_PAUSE * rate), dtype="float32")
+    out = []
+    for i, part in enumerate(parts):
+        if i:
+            out.append(gap)
+        out.append(np.asarray(part, dtype="float32"))
+    return np.concatenate(out), rate
+
+
 def render_en(kokoro, text: str):
-    samples, rate = kokoro.create(text, voice=EN_VOICE, speed=EN_SPEED, lang="en-gb")
-    return samples, rate
+    parts = []
+    rate = 24000
+    for sentence in sentences(text):
+        samples, rate = kokoro.create(sentence, voice=EN_VOICE, speed=EN_SPEED, lang="en-gb")
+        parts.append(samples)
+    return with_pauses(parts, rate)
 
 
 def render_uk(piper_voice, text: str):
+    parts = []
+    rate = 22050
+    for sentence in sentences(text):
+        samples, rate = render_uk_one(piper_voice, sentence)
+        parts.append(samples)
+    return with_pauses(parts, rate)
+
+
+def render_uk_one(piper_voice, text: str):
     import numpy as np
     from piper import SynthesisConfig
 
     buf = io.BytesIO()
     with wave.open(buf, "wb") as w:
-        piper_voice.synthesize_wav(text.lower(), w, syn_config=SynthesisConfig(speaker_id=UK_SPEAKER))
+        piper_voice.synthesize_wav(
+            text.lower(), w, syn_config=SynthesisConfig(speaker_id=UK_SPEAKER, length_scale=UK_LENGTH_SCALE)
+        )
     buf.seek(0)
     with wave.open(buf, "rb") as r:
         rate = r.getframerate()
@@ -101,14 +143,29 @@ def main() -> int:
     todo = []
     for lang, items in texts.items():
         (OUT / lang).mkdir(parents=True, exist_ok=True)
+        stamp = OUT / lang / "voice-settings.txt"
+        rebuild = not stamp.exists() or stamp.read_text().strip() != STAMPS[lang]
+        if rebuild:
+            print(f"{lang}: voice settings changed -> render all again")
+            if not args.dry_run:
+                for old in (OUT / lang).glob("*.ogg"):
+                    old.unlink()
+                    old.with_name(old.name + ".import").unlink(missing_ok=True)
+                stamp.write_text(STAMPS[lang] + "\n")
         wanted = {voice_name(lang, t) for t in items}
+        # Godot's import sidecars of files that no longer exist.
+        for orphan in (OUT / lang).glob("*.ogg.import"):
+            if not orphan.with_suffix("").exists() and not args.dry_run:
+                orphan.unlink()
         for stale in (OUT / lang).glob("*.ogg"):
             if stale.name not in wanted:
                 print(f"remove {lang}/{stale.name}")
                 if not args.dry_run:
                     stale.unlink()
+                    stale.with_name(stale.name + ".import").unlink(missing_ok=True)
         for t in sorted(items):
-            if not (OUT / lang / voice_name(lang, t)).exists():
+            # After a settings change every line is rendered again (also counted in --dry-run).
+            if rebuild or not (OUT / lang / voice_name(lang, t)).exists():
                 todo.append((lang, t))
     print(f"{sum(len(v) for v in texts.values())} texts, {len(todo)} to render")
     if args.dry_run or not todo:

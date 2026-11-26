@@ -1,4 +1,4 @@
-# arbuz: Тигриця's Journey
+# arbuz: Tygrytsa's Journey
 
 An offline educational game for a three-year-old, built in **Godot 4.7** with **GDScript**. It is for home use, so development is fast and testing is light. Developed on a MacBook M4; must run well on an **Intel MacBook** with integrated graphics (the minimum play machine). Builds for macOS (universal) and Windows. The game's vision is [`docs/game-spec.md`](docs/game-spec.md); the phased plan is [`docs/development-plan.md`](docs/development-plan.md).
 
@@ -7,14 +7,15 @@ An offline educational game for a three-year-old, built in **Godot 4.7** with **
 These come before any feature request. If a request conflicts with one, say so and ask.
 
 - **Education first.** The game exists to teach; play is the vehicle. Every situation (passing a bridge, clicking a duck, getting into the car, opening a door) is a chance for a learning moment: a picture of the real thing, the word spoken in Ukrainian and English, and short English sentences using it. Moments are short, voiced, skippable with one tap, and paced (not more than about one every 20 s on their own). 
-- **English immersion, Ukrainian only the first time.** The game speaks English, including Тигриця's instructions ("Here is our car!", "This is a bridge.", "Look! This card is glowing!"). The intro and the **first time** he meets any line or thing (the first river card, the first door question) are said in Ukrainian, then English; from the second time on, English only. Every spoken line is a row in `content/voice/lines.csv` said with `Speech.line(key, word)` (never an inline string), and has a generated voice file; first meetings are kept in the save, so they survive restarts. Short, simple phrases, repeated a lot. Dev runs must use a separate save dir (`tools/capture.gd` does) so they never use up his first meetings.
+- **English immersion, Ukrainian only the first time.** The game speaks English, including Tygrytsa's instructions ("Here is our car!", "This is a bridge.", "Look! This card is glowing!"). The intro and the **first time** he meets any line or thing (the first river card, the first door question) are said in Ukrainian, then English; from the second time on, English only. Every spoken line is a row in `content/voice/lines.csv` said with `Speech.line(key, word)` (never an inline string), and has a generated voice file; first meetings are kept in the save, so they survive restarts. Short, simple phrases, repeated a lot. Dev runs must use a separate save dir (`tools/capture.gd` does) so they never use up his first meetings.
+- **Natural voices, calm pace.** Never slow or stretch the voice (it sounds unnatural); pace comes from pauses between sentences and lines.
 - **Teach before test.** Never ask him for a word (a password door, a quiz) that the game has not taught him earlier. If nothing suitable has been taught yet, teach it right there, then ask.
 - **No reading required.** Every instruction is voiced (English; Ukrainian the first time). Text is decoration for the parent, never the only cue.
 - **No fail states.** A wrong answer gets a soft response and another try. No lives, no timers that punish, no lost progress.
 - **Big targets, simple input.** Mouse (click to go, hold to follow), keyboard arrows, or a gamepad with one big action button; every task works with each. No double taps or precise timing.
-- **Never stuck.** After about 15 s without progress Тигриця gives a hint and the marker brightens, escalating to auto-help (exact ladder in `docs/design-system.md`). After 2 wrong picks the right card glows and the door opens.
+- **Never stuck.** After about 15 s without progress Tygrytsa gives a hint and the marker brightens, escalating to auto-help (exact ladder in `docs/design-system.md`). After 2 wrong picks the right card glows and the door opens.
 - **Colour is never the only cue.** Always pair it with a shape or pattern.
-- **Child safety and privacy.** No network, analytics, ads, links or purchases. Parent-only things sit behind the ParentGate. The child's name lives only in the local save; the hero reference photo and OBS playtest recordings never go into git.
+- **Child safety and privacy.** No network, analytics, ads, links or purchases. The microphone is used only to notice that he said something (loudness, live); audio is never recorded, stored or sent, and parents can switch it off. Parent-only things sit behind the ParentGate. The child's name lives only in the local save; the hero reference photo and OBS playtest recordings never go into git.
 - **Gentle sessions.** 15-minute default session timer, pause always available, nothing loud or flashing.
 - **Performance budget.** ≥30 fps and load ≤10 s on the Intel MacBook.
 - **Saves are sacred.** The save format is versioned JSON with a migration chain; old saves must always load.

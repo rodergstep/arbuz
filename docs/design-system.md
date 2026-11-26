@@ -5,7 +5,7 @@ components_dir: "game/ui/components/"
 status: draft              # draft | confirmed-at-gate-1 | …
 ---
 
-# Design system — Тигриця's Journey
+# Design system — Tygrytsa's Journey
 
 > The toddler UI canon. Values marked *(start)* are starting points to confirm at the Gate 1
 > playtest. Components may be added only with a written justification and the parent's OK.
@@ -96,7 +96,7 @@ Meaning never rests on telling `accent.leaf` from `accent.berry` (the red–gree
 | Level | After *(start)* | What happens |
 |---|---|---|
 | 0 | — | instruction voiced on entry |
-| 1 | ~15 s without progress (game spec) | Тигриця gives a voiced hint and points the way; the marker gets brighter |
+| 1 | ~15 s without progress (game spec) | Tygrytsa gives a voiced hint and points the way; the marker gets brighter |
 | 2 | +10 s | the target glows softly |
 | 3 | +10 s | `HintHand` points at the target |
 | auto-help | +10 s | the game does it with him, with praise |

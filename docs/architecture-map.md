@@ -14,7 +14,7 @@ export_cmd: "/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --
 save_format_version: "2"
 ---
 
-# Architecture map — Тигриця's Journey
+# Architecture map — Tygrytsa's Journey
 
 > What the game **is** right now, tied to `reflects_commit`. Read by `specify`, `design`,
 > `contracts`, `tasks`, `implement` and `review` instead of re-scanning. Refresh with `/survey`
@@ -52,7 +52,7 @@ flowchart TB
 | GUT | 9.7.1 | `addons/gut/` | the 9.7 line is the one built for Godot 4.7's stricter return types |
 | Dialogic | 2.0-alpha-20 | `addons/dialogic/` | dialogue timelines; alpha, pinned; don't upgrade mid-phase (its saves break across alphas) |
 | Phantom Camera | 0.12 | `addons/phantom_camera/` | follow camera, walk ↔ drive blend |
-| Beehave | 2.9.3 | `addons/beehave/` | behaviour trees for Тигриця and NPCs |
+| Beehave | 2.9.3 | `addons/beehave/` | behaviour trees for Tygrytsa and NPCs |
 | gdtoolkit | 4.x | `pip3 --user` | `gdlint`, `gdformat` |
 | Git LFS | 3.8 | `.gitattributes` | `glb png jpg ogg wav blend ttf otf` |
 | Python (voice tool) | 3.13 | `audio_gen/` | Piper (Ukrainian), Kokoro (EN/ES/FR) — Phase 2 |
@@ -71,6 +71,7 @@ their contracts are written by `/contracts` when they do.
 | Speech | `game/core/speech.gd` | everything the game says: `line(key, word)` from `content/voice/lines.csv`, plays generated `audio/voice/<lang>/<hash>.ogg`, OS text-to-speech fallback; Ukrainian only the first time (`say_first`) | `queue_finished` | `docs/contracts/voice-lines.md` |
 | Sfx | `game/core/sfx.gd` | Phase 1 placeholder sound effects synthesized in code (`play(kind)`) | — | — |
 | PhantomCameraManager | `addons/phantom_camera/…/phantom_camera_manager.gd` | required by Phantom Camera | — | addon |
+| VoiceListener | `game/core/voice_listener.gd` | microphone loudness only, during `listen(seconds)`; nothing recorded | `level_changed(level: float)` | — |
 | Settings *(planned, Ph 2)* | `game/core/settings.gd` | volume, session length, language, parent options | `setting_changed(key: StringName)` | — |
 | SaveSystem | `game/core/save_system.gd` | versioned JSON per profile; Phase 1 keeps first meetings (`has_encountered`, `mark_encountered`), Phase 2 adds progress | `saved()`, `loaded(profile_id: String)` | `docs/contracts/save-format.md` |
 | AudioManager *(planned; music ducking)* | `game/core/audio_manager.gd` | voice by line id, music ducking, no overlap | `line_finished(line_id: StringName)` | — |
@@ -88,7 +89,7 @@ mirroring `game/`. This replaces the workflow template's generic `autoload/ scen
 |---|---|---|
 | `game/core/` | autoloads | no scene references; talk through signals and public methods |
 | `game/player/` | hero, car, camera rigs | report to systems; never write saves |
-| `game/companion/` | Тигриця behaviour (Beehave) and hints | hints follow the ladder in `docs/design-system.md` |
+| `game/companion/` | Tygrytsa behaviour (Beehave) and hints | hints follow the ladder in `docs/design-system.md` |
 | `game/interaction/` | clickable, password door, pick-picture, find-object | scenes report picks to InteractionSystem; they don't judge |
 | `game/ui/` | Control scenes, `game/ui/theme/*.tres`, `game/ui/components/` | only design-system components; tokens from the Theme |
 | `game/world/<place>/` | `ukraine_village/`, `england_town/` scenes | one folder per place |

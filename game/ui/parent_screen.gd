@@ -10,6 +10,7 @@ const LENGTHS: Array[int] = [10, 15, 20, 30]
 
 var _length_buttons: Array[Button] = []
 var _volume_label: Label
+var _mic_button: Button
 
 
 func _ready() -> void:
@@ -49,6 +50,11 @@ func _ready() -> void:
 	var up: Button = _button("+")
 	up.pressed.connect(_change_volume.bind(0.1))
 	volume.add_child(up)
+	box.add_child(_text("Мікрофон (лише гучність, нічого не записується)", UiTokens.SIZE_BODY))
+	_mic_button = _button("")
+	_mic_button.toggle_mode = true
+	_mic_button.toggled.connect(_set_microphone)
+	box.add_child(_mic_button)
 	var extend: Button = _button("Грати ще 15 хвилин")
 	extend.pressed.connect(func() -> void: extend_requested.emit())
 	box.add_child(extend)
@@ -82,10 +88,21 @@ func _change_volume(step: float) -> void:
 	_refresh()
 
 
+func _set_microphone(on: bool) -> void:
+	SaveSystem.settings["microphone"] = on
+	SaveSystem.save_now()
+	if not on:
+		VoiceListener.cancel()
+	_refresh()
+
+
 func _refresh() -> void:
 	var current: int = int(SaveSystem.settings["session_minutes"])
 	for i: int in LENGTHS.size():
 		_length_buttons[i].button_pressed = LENGTHS[i] == current
+	var mic: bool = bool(SaveSystem.settings.get("microphone", true))
+	_mic_button.set_pressed_no_signal(mic)
+	_mic_button.text = "Увімкнено" if mic else "Вимкнено"
 	_volume_label.text = "%d%%" % roundi(float(SaveSystem.settings["volume"]) * 100.0)
 
 

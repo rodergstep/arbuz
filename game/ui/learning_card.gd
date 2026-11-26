@@ -1,7 +1,7 @@
 class_name LearningCard
 extends CanvasLayer
 ## A learning moment, in English (Ukrainian only the first time he meets the word): a big card
-## with a live picture of the real thing in the world and the English word, spoken twice, then
+## with a live picture of the real thing in the world and the English word, then asks him to say it, then
 ## short English sentences that use the word, each shown while it is spoken. Tap, click or
 ## Space skips. The game waits behind it.
 
@@ -12,9 +12,8 @@ const CARD_SIZE: Vector2 = Vector2(1040, 540)
 const MAX_SENTENCES: int = 2
 const LINE_PAUSE: float = 0.5
 const SILENT_LINE_SECONDS: float = 2.2
-const MIN_OPEN_SECONDS: float = 1.0
-## Time for him to say the word back before the praise.
-const SAY_IT_PAUSE: float = 1.8
+## How long to wait for him to say the word back before praising anyway.
+const SAY_IT_LISTEN: float = 5.0
 
 var is_open: bool = false
 
@@ -24,9 +23,9 @@ var _camera: Camera3D
 var _word_en: Label
 var _word_uk: Label
 var _first_time: bool = false
+var _mic: MicBubble
 var _sentence: Label
 var _entry: WordEntry
-var _opened_ms: int = 0
 var _skipped: bool = false
 var _run: int = 0
 
@@ -82,6 +81,9 @@ func _ready() -> void:
 	words.add_child(_word_en)
 	_word_uk = _label(UiTokens.SIZE_SUBTITLE, UiTokens.INK)
 	words.add_child(_word_uk)
+	_mic = MicBubble.new()
+	_mic.visible = false
+	words.add_child(_mic)
 	_sentence = _label(UiTokens.SIZE_BODY, UiTokens.INK)
 	_sentence.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_sentence.custom_minimum_size = Vector2(480, 120)
@@ -96,7 +98,6 @@ func open(entry: WordEntry, focus: Vector3, view_from: Vector3) -> void:
 	_run += 1
 	is_open = true
 	_skipped = false
-	_opened_ms = Time.get_ticks_msec()
 	_viewport.world_3d = get_viewport().world_3d
 	_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	_camera.global_position = view_from
@@ -131,20 +132,20 @@ func close() -> void:
 	is_open = false
 	_run += 1
 	Speech.stop()
+	VoiceListener.cancel()
+	_mic.visible = false
 	visible = false
 	_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	EventLog.log_event(&"learning_moment_closed", {"word_id": String(_entry.id), "skipped": _skipped})
 	closed.emit(_entry.id, _skipped)
 
 
-func _input(event: InputEvent) -> void:
-	if not is_open or PauseOverlay.active:
-		return
-	var skip: bool = event.is_action_pressed(&"use")
-	skip = skip or (event is InputEventMouseButton and event.pressed)
-	if skip and Time.get_ticks_msec() - _opened_ms > MIN_OPEN_SECONDS * 1000.0:
-		get_viewport().set_input_as_handled()
+## No skip for the child: the card finishes when he has said the word and heard the sentences.
+## A parent can close it with the parent gate (Ctrl + Shift + P held), see ParentGate.
+func parent_close() -> void:
+	if is_open:
 		_skipped = true
+		EventLog.log_event(&"learning_moment_parent_closed", {"word_id": String(_entry.id)})
 		close()
 
 
@@ -154,12 +155,17 @@ func _play(run: int) -> void:
 		await _line(Speech.text("card:first", Speech.LANG_UK, _entry), Speech.LANG_UK, run)
 	await _line(Speech.text("card:this_is", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
 	await _line(_entry.en, Speech.LANG_EN, run)
-	await _line(_entry.en, Speech.LANG_EN, run)
-	# Say it back: a pause for him to repeat the word, then praise (no speech check).
+	# Say it back: the card waits until he says the word (any sound counts, never judged),
+	# asking again gently. Without a microphone it praises after one wait so nobody gets stuck.
 	await _line(Speech.text("card:say_it", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
-	if run == _run:
-		await get_tree().create_timer(SAY_IT_PAUSE, true).timeout
-	await _line(Speech.text("card:great", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
+	var heard: bool = await _wait_for_his_turn(run)
+	if run != _run:
+		return
+	if heard:
+		Sfx.play(&"chime")
+		_celebrate()
+	var praise: String = "card:great_heard" if heard else "card:great"
+	await _line(Speech.text(praise, Speech.LANG_EN, _entry), Speech.LANG_EN, run)
 	var sentences: PackedStringArray = _entry.examples_en.duplicate()
 	if sentences.size() > MAX_SENTENCES:
 		sentences = sentences.slice(0, MAX_SENTENCES)
@@ -172,6 +178,24 @@ func _play(run: int) -> void:
 		await get_tree().create_timer(1.2, true).timeout
 	if run == _run:
 		close()
+
+
+## Listens until he makes a sound, re-asking after each quiet try (every third try the word is
+## said again first). Returns false only when there is no microphone.
+func _wait_for_his_turn(run: int) -> bool:
+	var tries: int = 0
+	while run == _run:
+		_mic.visible = true
+		var heard: bool = await VoiceListener.listen(SAY_IT_LISTEN)
+		_mic.visible = false
+		if heard or not VoiceListener.available():
+			return heard
+		tries += 1
+		EventLog.log_event(&"say_it_reprompt", {"word_id": String(_entry.id), "tries": tries})
+		if tries % 3 == 0:
+			await _line(_entry.en, Speech.LANG_EN, run)
+		await _line(Speech.text("card:your_turn", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
+	return false
 
 
 ## Speaks one line and waits until it is done (or for a fixed time when there is no voice).
@@ -190,6 +214,12 @@ func _line(text: String, lang: StringName, run: int) -> void:
 		await get_tree().create_timer(0.2, true).timeout
 	if run == _run:
 		await get_tree().create_timer(LINE_PAUSE, true).timeout
+
+
+func _celebrate() -> void:
+	var tween: Tween = create_tween()
+	tween.tween_property(_word_en, "scale", Vector2(1.25, 1.25), 0.15)
+	tween.tween_property(_word_en, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_ELASTIC)
 
 
 func _label(font_size: int, color: Color) -> Label:
