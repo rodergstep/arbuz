@@ -21,7 +21,7 @@ func _process(_delta: float) -> void:
 func _draw() -> void:
 	var c: Vector2 = size / 2.0
 	var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 250.0)
-	var grow: float = clampf(_level * 12.0, 0.0, 1.0)
+	var grow: float = clampf(_level / VoiceListener.threshold() - 0.3, 0.0, 1.0)
 	draw_circle(c, SIZE * (0.36 + 0.05 * pulse + 0.12 * grow), Color(UiTokens.ACCENT_SUN, 0.35))
 	draw_circle(c, SIZE * 0.32, UiTokens.ACCENT_SUN)
 	_draw_microphone(c, 1.0 + 0.15 * grow)
