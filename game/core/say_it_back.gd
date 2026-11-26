@@ -12,6 +12,7 @@ const LISTEN_SECONDS: float = 5.0
 static func wait_for_word(caller: Node, word: WordEntry, mic: Control, alive: Callable) -> bool:
 	var tries: int = 0
 	while alive.call():
+		await wait_while_paused(caller, alive)
 		if mic != null:
 			mic.visible = true
 		var heard: bool = await VoiceListener.listen(LISTEN_SECONDS)
@@ -47,3 +48,10 @@ static func wait_until_quiet(caller: Node, alive: Callable) -> void:
 	await caller.get_tree().create_timer(0.3, true).timeout
 	while alive.call() and Speech.is_speaking():
 		await caller.get_tree().create_timer(0.1, true).timeout
+	await wait_while_paused(caller, alive)
+
+
+## The pause screen stops the voice; the story waits here until it is closed.
+static func wait_while_paused(caller: Node, alive: Callable) -> void:
+	while alive.call() and PauseOverlay.active:
+		await caller.get_tree().create_timer(0.2, true).timeout
