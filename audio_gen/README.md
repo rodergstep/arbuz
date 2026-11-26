@@ -1,10 +1,11 @@
 # Voice generation
 
 Generates every line the game says as Ogg Vorbis files in `audio/voice/<lang>/`, from
-`content/words/words.csv` (words and example sentences) and `content/voice/lines.csv` (Тигриця's
+`content/words/words.csv` (words and example sentences) and `content/voice/lines.csv` (Tygrytsa's
 lines, templates with `{word}`, `{Word}`, `{a_word}`, `{uk_word}`). Runs locally and offline after
-the one-time setup. Free, open models only: Kokoro (English, voice `bf_emma`) and Piper
-(Ukrainian, `uk_UA-ukrainian_tts`, speaker "lada").
+the one-time setup. Free, open models only: Kokoro (English, voice `bf_emma`, speed 0.75: slower and clear for a
+toddler) and Piper (Ukrainian, `uk_UA-ukrainian_tts`, speaker "lada", length scale 1.12).
+Changing a voice setting re-renders that language (`voice-settings.txt` stamp per folder).
 
 ## One-time setup (M4)
 

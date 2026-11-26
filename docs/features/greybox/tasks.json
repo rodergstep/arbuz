@@ -38,7 +38,7 @@
     },
     {
       "id": "T3",
-      "title": "Тигриця placeholder, glowing marker and the idle hint",
+      "title": "Tygrytsa placeholder, glowing marker and the idle hint",
       "layer": "scene",
       "deps": [
         "T1"

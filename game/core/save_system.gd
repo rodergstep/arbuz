@@ -8,6 +8,9 @@ signal saved
 const VERSION: int = 2
 const DEFAULT_DIR: String = "user://saves"
 const DEFAULT_PROFILE: String = "default"
+## The game's user folder before the companion was renamed to Tygrytsa (2026-11-26). Saves found
+## there are moved into the current folder once, so no progress is lost.
+const LEGACY_USER_DIR_NAME: String = "Тигриця's Journey"
 
 var save_dir: String = DEFAULT_DIR
 var profile_id: String = DEFAULT_PROFILE
@@ -33,6 +36,7 @@ func load_profile() -> void:
 	_encountered.clear()
 	words.clear()
 	settings = default_settings()
+	_adopt_legacy_save()
 	if not FileAccess.file_exists(path()):
 		return
 	var json: JSON = JSON.new()
@@ -104,8 +108,21 @@ func save_now() -> bool:
 	return true
 
 
+## Copies a save from the pre-rename user folder when this folder has none yet.
+func _adopt_legacy_save() -> void:
+	if save_dir != DEFAULT_DIR or FileAccess.file_exists(path()):
+		return
+	var legacy_dir: String = OS.get_user_data_dir().get_base_dir().path_join(LEGACY_USER_DIR_NAME)
+	var legacy: String = legacy_dir.path_join("saves/%s.json" % profile_id)
+	if not FileAccess.file_exists(legacy):
+		return
+	DirAccess.make_dir_recursive_absolute(save_dir)
+	var err: Error = DirAccess.copy_absolute(legacy, path())
+	EventLog.log_event(&"save_migrated_folder", {"from": legacy, "ok": err == OK})
+
+
 static func default_settings() -> Dictionary:
-	return {"session_minutes": 15, "volume": 0.85}
+	return {"session_minutes": 15, "volume": 0.85, "microphone": true}
 
 
 func has_encountered(key: String) -> bool:

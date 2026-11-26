@@ -13,7 +13,7 @@ const LANG_EN: StringName = &"en"
 const LINES_PATH: String = "res://content/voice/lines.csv"
 const VOICE_DIR: String = "res://audio/voice"
 const TTS_VOLUME: int = 85
-const TTS_RATE: float = 0.85
+const TTS_RATE: float = 0.75
 
 var _voices: Dictionary[StringName, String] = {}
 var _tts: bool = false

@@ -1,0 +1,83 @@
+extends Node
+## Listens for a moment to hear whether he said something (any sound counts; pronunciation is
+## never judged). Only the loudness is looked at, live; no audio is stored, sent or kept.
+## The microphone runs only during a listen() window. Parents can turn it off.
+
+signal level_changed(level: float)
+
+const BUS_NAME: StringName = &"Listen"
+## RMS loudness (0..1) that counts as his voice, and for how long.
+const VOICE_LEVEL: float = 0.04
+const VOICE_SECONDS: float = 0.25
+
+var _player: AudioStreamPlayer
+var _capture: AudioEffectCapture
+var _listening: bool = false
+var _heard_for: float = 0.0
+var _heard: bool = false
+
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	var bus: int = AudioServer.bus_count
+	AudioServer.add_bus(bus)
+	AudioServer.set_bus_name(bus, BUS_NAME)
+	# Never play the microphone back: the bus is silent; the capture effect still reads it.
+	AudioServer.set_bus_volume_db(bus, -80.0)
+	_capture = AudioEffectCapture.new()
+	AudioServer.add_bus_effect(bus, _capture)
+	_player = AudioStreamPlayer.new()
+	_player.bus = BUS_NAME
+	add_child(_player)
+
+
+func available() -> bool:
+	return (
+		bool(SaveSystem.settings.get("microphone", true))
+		and bool(ProjectSettings.get_setting("audio/driver/enable_input", false))
+		and DisplayServer.get_name() != "headless"
+	)
+
+
+## Listens for up to `seconds`; returns true as soon as he makes a sound, false on timeout or
+## when there is no microphone.
+func listen(seconds: float) -> bool:
+	if not available():
+		await get_tree().create_timer(seconds, true).timeout
+		return false
+	_heard = false
+	_heard_for = 0.0
+	_capture.clear_buffer()
+	_player.stream = AudioStreamMicrophone.new()
+	_player.play()
+	_listening = true
+	var waited: float = 0.0
+	while waited < seconds and not _heard:
+		await get_tree().create_timer(0.05, true).timeout
+		waited += 0.05
+	_listening = false
+	_player.stop()
+	_player.stream = null
+	level_changed.emit(0.0)
+	EventLog.log_event(&"say_it_listen", {"heard": _heard, "after_s": snappedf(waited, 0.1)})
+	return _heard
+
+
+func _process(delta: float) -> void:
+	if not _listening:
+		return
+	var frames: int = _capture.get_frames_available()
+	if frames <= 0:
+		return
+	var buffer: PackedVector2Array = _capture.get_buffer(frames)
+	var sum: float = 0.0
+	for f: Vector2 in buffer:
+		sum += f.x * f.x
+	var rms: float = sqrt(sum / buffer.size())
+	level_changed.emit(rms)
+	if rms >= VOICE_LEVEL:
+		_heard_for += delta
+		if _heard_for >= VOICE_SECONDS:
+			_heard = true
+	else:
+		_heard_for = maxf(0.0, _heard_for - delta)

@@ -1,7 +1,7 @@
 class_name PasswordDoor
 extends Node3D
 ## Greybox password door, all in English. When the hero walks up, a picture of a thing he has
-## already learned appears over the door and Тигриця asks "What is this?". Three blank cards
+## already learned appears over the door and Tygrytsa asks "What is this?". Three blank cards
 ## rise; each says its English word when pointed at or clicked. The first wrong pick gives a
 ## hint (the retry names the word: "Where is the car?").
 ## A wrong pick gets a gentle wiggle, the card says its word and the question repeats. After 2

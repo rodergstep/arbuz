@@ -1,6 +1,6 @@
 class_name Companion
 extends Node3D
-## Тигриця, greybox placeholder: an orange capsule that follows the hero, points at the current
+## Tygrytsa, greybox placeholder: an orange capsule that follows the hero, points at the current
 ## goal and gives hints when there is no progress (hint ladder in docs/design-system.md):
 ## level 1 after 15 s (voiced hint, marker brighter), level 2 after +10 s (she runs ahead to
 ## the goal and the marker glows more).

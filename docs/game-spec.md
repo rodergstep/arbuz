@@ -1,4 +1,4 @@
-# Тигриця's Journey — Game Spec
+# Tygrytsa's Journey — Game Spec
 
 Nov 25, 2026 · roderg
 
@@ -24,7 +24,7 @@ A 3D story game where a 3-year-old Ukrainian speaker drives and walks through sm
 
 The game follows a journey: it starts at home in Ukraine and goes abroad, one country per arc. Each local problem he solves teaches a set of words.
 
-**Prologue: Ukraine (tutorial).** In a cozy Ukrainian village (sunflowers, a river, a hata with a garden) he meets Тигриця, picks one of three cars, and learns to walk, drive and click things. A friendly English postman brings the invitation to the English town's festival and teaches his first two words: "hello" and "bye". He drives onto a ferry, and a cutscene carries them to England.
+**Prologue: Ukraine (tutorial).** In a cozy Ukrainian village (sunflowers, a river, a hata with a garden) he meets Tygrytsa, picks one of three cars, and learns to walk, drive and click things. A friendly English postman brings the invitation to the English town's festival and teaches his first two words: "hello" and "bye". He drives onto a ferry, and a cutscene carries them to England.
 
 **England arc: The Festival.** The whole town is preparing a festival, but things keep going wrong.
 
@@ -52,24 +52,24 @@ Each town is a small open world he explores freely on foot or by car. All contro
 | England town | Bakery + café, toy shop + park with playground, farm / petting zoo at the edge of town, harbor, clock tower, bus stop |
 | Buildings | Many can be entered, each locked with a password door (see Learning design) |
 | Town life | People and animals walk around, slow traffic always stops for him, day/night cycle and weather |
-| Guidance | Тигриця says where to go, and a glowing marker shows the spot. He can wander first |
+| Guidance | Tygrytsa says where to go, and a glowing marker shows the spot. He can wander first |
 | Customizing | Car color from a paint shop, hero outfit and hat, car stickers, horn sound |
 | Rewards | A map that unlocks, a souvenir collection (each one replays its word), a gallery of the friends he helped |
 | Travel between countries | He drives his car onto a ferry or train, and a cutscene plays |
 
 - **Gamepad:** tested with an Xbox-layout controller (Machenike G5 Pro, ABXY). Xbox-style button prompts by default, with a setting to swap the layout for Nintendo-style buttons. Gentle vibration on bumps and successes where the controller supports it. Test Bluetooth on macOS early.
-- **Idle help:** after about 15 seconds without progress, Тигриця gives a hint and points the way, and the marker gets brighter.
+- **Idle help:** after about 15 seconds without progress, Tygrytsa gives a hint and points the way, and the marker gets brighter.
 - **Saving:** constant autosave of every word, door and item, so the game can be closed at any moment.
 
 ## Learning design
 
 **Education first** (decided after the first greybox playtest, 2026-11-26): the main idea is not play but learning something new, and every situation is used for it. Passing a landmark (a bridge, the river, the road), clicking anything, or getting into the car opens a short **learning moment**: a picture of the real thing, the word in Ukrainian and English, and the English word used in two short sentences from different situations ("The car goes over the bridge." / "The duck swims under the bridge."). Moments are voiced in English only, skippable with one tap, and paced so play still flows.
 
-**English immersion** (decided after the second greybox playtest, 2026-11-26): all speech is English, Тигриця's too ("Here is our car!", "This is a bridge.", "Look! This card is glowing!"). He sees what things are, so nothing is translated, with one exception: the introduction and the **first time** he meets any line or thing (the first click on the river, the first card, the first door question) are said in Ukrainian first, then English. From the second time on it is English only. First meetings are kept in the save. Phrases are short and repeated often. This replaces the earlier Ukrainian-narration approach below. **Teach before test:** a password door or quiz only asks words he has already met in a learning moment; if none fits, the moment teaches the word first and the door asks right after.
+**English immersion** (decided after the second greybox playtest, 2026-11-26): all speech is English, Tygrytsa's too ("Here is our car!", "This is a bridge.", "Look! This card is glowing!"). He sees what things are, so nothing is translated, with one exception: the introduction and the **first time** he meets any line or thing (the first click on the river, the first card, the first door question) are said in Ukrainian first, then English. From the second time on it is English only. First meetings are kept in the save. Phrases are short and repeated often. This replaces the earlier Ukrainian-narration approach below. **Teach before test:** a password door or quiz only asks words he has already met in a learning moment; if none fits, the moment teaches the word first and the door asks right after.
 
 Everything works without reading or speaking. He learns by listening and clicking, in Ukrainian first and then the target language.
 
-- **Language approach:** Тигриця and the narrator speak Ukrainian. Local characters say the new words in English, Spanish or French.
+- **Language approach:** Tygrytsa and the narrator speak Ukrainian. Local characters say the new words in English, Spanish or French.
 - **Task types:** hear a word and pick the right picture from 2–3; find and click an object in the scene; press a button to say a word back (praise only, no speech check).
 - **Free exploration:** clicking anything says its name in Ukrainian, then in the local language. Collectibles are hidden around town, each with a word. The car teaches words too: stop, go, fast, slow, left, right, and the horn, lights and radio.
 - **Mistakes:** a gentle "try again" that repeats the word. No penalty and no sad sounds.
@@ -81,9 +81,9 @@ Everything works without reading or speaking. He learns by listening and clickin
 
 ### Password doors
 
-The door's word is always one he has already been taught (see Learning design). In the greybox the door shows a picture of the thing and Тигриця asks "What is this?" in English; the retry names the word ("Where is the car?").
+The door's word is always one he has already been taught (see Learning design). In the greybox the door shows a picture of the thing and Tygrytsa asks "What is this?" in English; the retry names the word ("Where is the car?").
 
-Buildings are locked. When he walks up to a door, Тигриця asks in Ukrainian, for example, how to say "lion" in English. Three blank cards appear, and each one says its word aloud when he points at it or clicks it ("dog", "ox", "lion"). He picks the right card and the door opens.
+Buildings are locked. When he walks up to a door, Tygrytsa asks in Ukrainian, for example, how to say "lion" in English. Three blank cards appear, and each one says its word aloud when he points at it or clicks it ("dog", "ox", "lion"). He picks the right card and the door opens.
 
 - **Password types:** say a word, counting ("one, two, three"), name the picture on the door, polite phrases to the shopkeeper (hello, please, thank you).
 - **Fallback:** after 2 wrong picks the right card glows and the door opens with praise. He never gets stuck.
@@ -96,7 +96,7 @@ The look is stylized low-poly 3D with an original style inspired by the feeling 
 | Element | Decision |
 | --- | --- |
 | Hero | Our son, called by name (set in settings). A low-poly model based on a photo or drawing we provide |
-| Companion | Тигриця, an original Ukrainian tigress in a vyshyvanka. A brave adventurer, excited about everything, with "Let's go!" energy. Not based on any existing film character |
+| Companion | Tygrytsa, an original Ukrainian tigress in a vyshyvanka. A brave adventurer, excited about everything, with "Let's go!" energy. Not based on any existing film character |
 | Car | He picks one of three in the prologue: a round little hatchback, a small jeep, or a tiny van. All toy-like and custom-made |
 | Town models | CC0 low-poly packs (Kenney / Quaternius style), safe for any use |
 | Voices | AI-generated audio files from free, open-source text-to-speech models run locally on the M4 (no paid services): Ukrainian narration plus native-sounding English, Spanish and French words. Generated with a script and bundled with the game |
@@ -109,7 +109,7 @@ Parent features sit behind a parent lock (for example, holding a key combination
 
 - **Settings:** child's name, active languages, volume.
 - **Progress view:** which words he has heard and recognized, and which ones he struggles with.
-- **Gentle session end:** after a chosen time, Тигриця yawns, says goodbye, and the game pauses.
+- **Gentle session end:** after a chosen time, Tygrytsa yawns, says goodbye, and the game pauses.
 - **Chapter select:** replay any unlocked chapter.
 - **Profiles:** one player profile now. The save format supports adding more profiles later.
 
@@ -121,11 +121,11 @@ The whole build uses free tools only, following the stages professional studios 
 | --- | --- | --- |
 | Design and planning | This spec, Excalidraw or draw.io, Forgejo/GitHub issues | Town maps, chapter flows, task tracking |
 | Prototyping (greyboxing) | Godot CSG shapes, Blender | Block out the town in plain shapes and prove driving is fun before any art |
-| 3D modeling and animation | Blender + Rigify add-on | Hero, Тигриця, the three cars, buildings |
+| 3D modeling and animation | Blender + Rigify add-on | Hero, Tygrytsa, the three cars, buildings |
 | Ready-made models | Kenney, Quaternius, KayKit, Poly Pizza (CC0 only) | Trees, houses, props, animals |
 | Humanoid animation | Mixamo (free with an Adobe account) | Walk, run, wave, jump for the hero and townspeople |
 | Textures and 2D art | Krita, Material Maker | Hand-painted gradient textures and painted skies; CC0 models repainted to match the art direction |
-| Story, dialogue, cutscenes | Dialogic 2, Phantom Camera (Godot plugins) | Тигриця's lines, story beats, cinematic camera |
+| Story, dialogue, cutscenes | Dialogic 2, Phantom Camera (Godot plugins) | Tygrytsa's lines, story beats, cinematic camera |
 | Townspeople and animals | Beehave (Godot plugin) | Behavior trees for strolling, greeting, reacting |
 | Word database and translations | Godot translation system + Poedit, or CSV | Each word with its picture, audio and translations |
 | Voices | Piper (Ukrainian), Kokoro (EN/ES/FR) | Generated locally on the M4 |

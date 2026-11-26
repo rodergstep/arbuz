@@ -1,6 +1,6 @@
 class_name SessionTimer
 extends CanvasLayer
-## Gentle sessions: counts play time (not while paused). Two minutes before the end Тигриця
+## Gentle sessions: counts play time (not while paused). Two minutes before the end Tygrytsa
 ## warns; at the end she yawns, says goodbye, and a calm night screen stays until a parent
 ## unlocks it (ParentGate → "play 15 more minutes").
 

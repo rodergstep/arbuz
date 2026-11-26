@@ -1,7 +1,7 @@
 class_name GreyboxVillage
 extends Node3D
 ## Phase 1 greybox: a village blocked out in plain shapes (road loop, houses, river with a
-## bridge, one house with a password door), the hero, the car, Тигриця and the follow camera.
+## bridge, one house with a password door), the hero, the car, Tygrytsa and the follow camera.
 ## The quest (walk to the car → drive to the marker → walk to the door → open it) is data:
 ## content/chapters/greybox_loop.tres, run by QuestRunner. This scene is its host.
 

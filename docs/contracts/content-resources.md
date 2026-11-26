@@ -27,7 +27,7 @@ inspector.
 | `kind` | `GET_IN_CAR` · `DRIVE_TO` · `WALK_TO` · `OPEN_DOOR` · `FIND_OBJECT` | what finishes the step: entering the car; the car reaching the marker (he gets out); the hero reaching the marker or the door question starting; the door opening; clicking the asked thing. New kinds are appended (the `.tres` stores the number) |
 | `spots` | Array[Vector3] | marker positions; each loop visit uses the next |
 | `start_line` | String | line key said when the step starts (after any learning card) |
-| `hint_line` | String | Тигриця's idle-hint line key |
+| `hint_line` | String | Tygrytsa's idle-hint line key |
 | `arrive_line` | String | said on reaching the marker when one more action is needed |
 
 Line keys refer to `content/voice/lines.csv` (`docs/contracts/voice-lines.md`).

@@ -1,4 +1,4 @@
-# arbuz: Тигриця's Journey
+# arbuz: Tygrytsa's Journey
 
 An offline educational game for a three-year-old, in Ukrainian and English. Built with Godot 4.7 and GDScript, for macOS.
 

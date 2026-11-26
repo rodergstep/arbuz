@@ -23,7 +23,7 @@ last_changed: greybox
 | Field | Type | Meaning |
 |---|---|---|
 | `words` | object | per word id: `heard` (times on a learning card), `right`/`wrong` (answers when asked), `box` 1–5 (repetition box; right → +1, wrong → 1), `last_seen` (unix seconds) |
-| `settings` | object | parent settings: `session_minutes` (int), `volume` (0..1) |
+| `settings` | object | parent settings: `session_minutes` (int), `volume` (0..1), `microphone` (bool, default true; added without a version bump: missing keys take defaults) |
 
 Migration v1 → v2 (`_v1_to_v2`): adds empty `words` and default `settings`; keeps `encountered`.
 Fixtures: `tests/fixtures/saves/v1.json`, `v2.json`.
@@ -52,3 +52,4 @@ Fixtures: `tests/fixtures/saves/v1.json`, `v2.json`.
   `tests/fixtures/saves/v<N>.json`; `tests/core/test_save_system.gd` must load every fixture.
   This is the one test the project insists on (saves are sacred). Standard route.
 - Dev tools write to `user://dev_saves`, never to `user://saves`.
+- The user folder moved from `Тигриця's Journey` to `Tygrytsa's Journey` (rename); on first start `SaveSystem` copies an existing save from the old folder.

@@ -3,7 +3,7 @@ status: living
 updated_at: "2026-11-26"
 ---
 
-# Roadmap — Тигриця's Journey
+# Roadmap — Tygrytsa's Journey
 
 > **A decomposition, not a promise.** The overall idea broken into incremental steps: what each
 > step is, where it comes from, how big it is — or that nobody has looked at it yet — and in which
@@ -22,7 +22,7 @@ Our son learns English words for the things around him, food, colours, animals a
 | 1 | Project skeleton: Godot project boots, tests run, builds export, gamepad check scene | `development-plan.md` §Phase 0 — Setup | M | building |
 | 2 | He walks the greybox village: click to go, hold to follow, arrows, stick, with the follow camera | `development-plan.md` §Phase 1 — Greybox prototype | M | building |
 | 3 | He drives a box car: get in and out, forgiving driving, soft bounce, horn, camera blend | `development-plan.md` §Phase 1 — Greybox prototype | M | building |
-| 4 | Тигриця placeholder follows him and points the way; glowing marker; idle nudge after ~15 s | `development-plan.md` §Phase 1 — Greybox prototype | M | building |
+| 4 | Tygrytsa placeholder follows him and points the way; glowing marker; idle nudge after ~15 s | `development-plan.md` §Phase 1 — Greybox prototype | M | building |
 | 5 | Clicking an object says its name (OS text-to-speech) and shows the word briefly | `development-plan.md` §Phase 1 — Greybox prototype | S | building |
 | 6 | Greybox password door: three speaking cards, gentle wrong-pick response, opens after 2 wrong picks | `game-spec.md` §Password doors | M | building |
 | 7 | Playtest event log records every click, idle pause and card pick, ready to review next to OBS | `development-plan.md` §Phase 1 — Greybox prototype | S | building |
@@ -31,12 +31,12 @@ Our son learns English words for the things around him, food, colours, animals a
 | 9 | Progress is autosaved per profile and survives closing the game at any moment | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | building |
 | 10 | Doors and tasks bring back the words he struggles with (learning tracker, box-based repetition) | `game-spec.md` §Learning design | M | building |
 | 11 | Chapters, tasks and door passwords run from data files; the greybox runs on them | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | building |
-| 12 | Тигриця and townspeople speak through Dialogic, each line tied to its voice file | `development-plan.md` §Phase 2 — Core systems and content pipeline | M | idea |
+| 12 | Tygrytsa and townspeople speak through Dialogic, each line tied to its voice file | `development-plan.md` §Phase 2 — Core systems and content pipeline | M | idea |
 | 13 | Input switches seamlessly between mouse, keyboard and gamepad, with Xbox or Nintendo prompts and gentle rumble | `development-plan.md` §Phase 2 — Core systems and content pipeline | S | idea |
-| 14 | Parent area behind the parent lock: name, languages, volume, and the 15-minute session timer with Тигриця's goodbye | `game-spec.md` §Parent features and profiles | L | building |
+| 14 | Parent area behind the parent lock: name, languages, volume, and the 15-minute session timer with Tygrytsa's goodbye | `game-spec.md` §Parent features and profiles | L | building |
 | 15 | The village gets its painted look: toon shader, painted sky, wind in the grass, warm grading, holding 30 fps | `development-plan.md` §Phase 3 — Prologue vertical slice | L | idea |
-| 16 | Hero, Тигриця and the three cars as real models; he picks his car | `development-plan.md` §Phase 3 — Prologue vertical slice | L | idea |
-| 17 | The prologue plays start to finish: meet Тигриця, tutorial, the postman's "hello" and "bye", the ferry | `game-spec.md` §Story | L | idea |
+| 16 | Hero, Tygrytsa and the three cars as real models; he picks his car | `development-plan.md` §Phase 3 — Prologue vertical slice | L | idea |
+| 17 | The prologue plays start to finish: meet Tygrytsa, tutorial, the postman's "hello" and "bye", the ferry | `game-spec.md` §Story | L | idea |
 | 18 | The English town is laid out in greybox with every landmark | `development-plan.md` §Phase 4 — Chapter 1: the bakery | M | idea |
 | 19 | Chapter 1: he finds the baker's ingredients and learns food words and counting, with bakery and café doors | `development-plan.md` §Phase 4 — Chapter 1: the bakery | L | idea |
 | 20 | Rewards: the map unlocks, souvenirs replay their word, the friends gallery fills | `game-spec.md` §Gameplay | M | idea |
@@ -111,7 +111,7 @@ flowchart LR
   s15 -->|shared toon material| s16["16 · real models"]
   s11 -->|chapter data| s17["17 · prologue"]
   s12 -->|voiced lines| s17
-  s16 -->|hero, Тигриця, cars| s17
+  s16 -->|hero, Tygrytsa, cars| s17
   s3 -->|driving between landmarks| s18["18 · England greybox"]
   s17 -->|the ferry arrives here| s19["19 · Chapter 1"]
   s18 -->|bakery and café placed| s19
@@ -144,7 +144,7 @@ flowchart LR
 
 1. He walks the greybox village (#2)
 2. He drives a box car (#3)
-3. Тигриця placeholder, marker and idle nudge (#4)
+3. Tygrytsa placeholder, marker and idle nudge (#4)
 4. Clicking an object says its name (#5)
 5. Greybox password door (#6)
 6. Playtest event log (#7)

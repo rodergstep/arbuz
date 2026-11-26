@@ -1,7 +1,7 @@
 class_name LearningCard
 extends CanvasLayer
 ## A learning moment, in English (Ukrainian only the first time he meets the word): a big card
-## with a live picture of the real thing in the world and the English word, spoken twice, then
+## with a live picture of the real thing in the world and the English word, then asks him to say it, then
 ## short English sentences that use the word, each shown while it is spoken. Tap, click or
 ## Space skips. The game waits behind it.
 
@@ -13,8 +13,8 @@ const MAX_SENTENCES: int = 2
 const LINE_PAUSE: float = 0.5
 const SILENT_LINE_SECONDS: float = 2.2
 const MIN_OPEN_SECONDS: float = 1.0
-## Time for him to say the word back before the praise.
-const SAY_IT_PAUSE: float = 1.8
+## How long to wait for him to say the word back before praising anyway.
+const SAY_IT_LISTEN: float = 4.0
 
 var is_open: bool = false
 
@@ -24,6 +24,7 @@ var _camera: Camera3D
 var _word_en: Label
 var _word_uk: Label
 var _first_time: bool = false
+var _mic: MicBubble
 var _sentence: Label
 var _entry: WordEntry
 var _opened_ms: int = 0
@@ -82,6 +83,9 @@ func _ready() -> void:
 	words.add_child(_word_en)
 	_word_uk = _label(UiTokens.SIZE_SUBTITLE, UiTokens.INK)
 	words.add_child(_word_uk)
+	_mic = MicBubble.new()
+	_mic.visible = false
+	words.add_child(_mic)
 	_sentence = _label(UiTokens.SIZE_BODY, UiTokens.INK)
 	_sentence.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_sentence.custom_minimum_size = Vector2(480, 120)
@@ -154,12 +158,19 @@ func _play(run: int) -> void:
 		await _line(Speech.text("card:first", Speech.LANG_UK, _entry), Speech.LANG_UK, run)
 	await _line(Speech.text("card:this_is", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
 	await _line(_entry.en, Speech.LANG_EN, run)
-	await _line(_entry.en, Speech.LANG_EN, run)
-	# Say it back: a pause for him to repeat the word, then praise (no speech check).
+	# Say it back: he is asked to repeat the word; any sound he makes counts (never judged).
+	# Praise comes either way, a bit warmer when he joined in.
 	await _line(Speech.text("card:say_it", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
+	var heard: bool = false
 	if run == _run:
-		await get_tree().create_timer(SAY_IT_PAUSE, true).timeout
-	await _line(Speech.text("card:great", Speech.LANG_EN, _entry), Speech.LANG_EN, run)
+		_mic.visible = true
+		heard = await VoiceListener.listen(SAY_IT_LISTEN)
+		_mic.visible = false
+	if heard and run == _run:
+		Sfx.play(&"chime")
+		_celebrate()
+	var praise: String = "card:great_heard" if heard else "card:great"
+	await _line(Speech.text(praise, Speech.LANG_EN, _entry), Speech.LANG_EN, run)
 	var sentences: PackedStringArray = _entry.examples_en.duplicate()
 	if sentences.size() > MAX_SENTENCES:
 		sentences = sentences.slice(0, MAX_SENTENCES)
@@ -190,6 +201,12 @@ func _line(text: String, lang: StringName, run: int) -> void:
 		await get_tree().create_timer(0.2, true).timeout
 	if run == _run:
 		await get_tree().create_timer(LINE_PAUSE, true).timeout
+
+
+func _celebrate() -> void:
+	var tween: Tween = create_tween()
+	tween.tween_property(_word_en, "scale", Vector2(1.25, 1.25), 0.15)
+	tween.tween_property(_word_en, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_ELASTIC)
 
 
 func _label(font_size: int, color: Color) -> Label:

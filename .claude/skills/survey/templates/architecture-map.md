@@ -14,7 +14,7 @@ export_cmd: ""           # e.g. "godot --headless --path . --export-release \"ma
 save_format_version: ""  # current SaveSystem version, e.g. "3"
 ---
 
-# Architecture map — Тигриця's Journey
+# Architecture map — Tygrytsa's Journey
 
 > What the game **is** right now, tied to `reflects_commit`. Read by `specify`, `design`,
 > `contracts`, `tasks`, `implement` and `review` instead of re-scanning. Refresh with `/survey`

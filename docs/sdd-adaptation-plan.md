@@ -1,4 +1,4 @@
-# SDD framework → Тигриця's Journey: adaptation plan
+# SDD framework → Tygrytsa's Journey: adaptation plan
 
 Status: **draft, waiting for roderg's OK** · 2026-11-26
 Source framework: `genkovich/sdd` v2.4.1, currently copied at the root of `arbuz/` (commit `84bb22c`).

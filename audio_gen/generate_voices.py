@@ -26,8 +26,11 @@ OUT = ROOT / "audio/voice"
 MODELS = ROOT / "audio_gen/models"
 
 EN_VOICE = "bf_emma"  # British English, warm and clear
-EN_SPEED = 0.85  # a bit slower for a three-year-old
+EN_SPEED = 0.75  # slower for a three-year-old (playtests: 0.85 too fast, 0.65 a bit too slow)
 UK_SPEAKER = 0  # "lada"
+UK_LENGTH_SCALE = 1.12  # >1 = slower
+# When a voice setting changes, every file of that language is rendered again.
+STAMPS = {"en": f"kokoro:{EN_VOICE}:{EN_SPEED}", "uk": f"piper:{UK_SPEAKER}:{UK_LENGTH_SCALE}"}
 
 
 def article(word: str) -> str:
@@ -85,7 +88,9 @@ def render_uk(piper_voice, text: str):
 
     buf = io.BytesIO()
     with wave.open(buf, "wb") as w:
-        piper_voice.synthesize_wav(text.lower(), w, syn_config=SynthesisConfig(speaker_id=UK_SPEAKER))
+        piper_voice.synthesize_wav(
+            text.lower(), w, syn_config=SynthesisConfig(speaker_id=UK_SPEAKER, length_scale=UK_LENGTH_SCALE)
+        )
     buf.seek(0)
     with wave.open(buf, "rb") as r:
         rate = r.getframerate()
@@ -101,12 +106,25 @@ def main() -> int:
     todo = []
     for lang, items in texts.items():
         (OUT / lang).mkdir(parents=True, exist_ok=True)
+        stamp = OUT / lang / "voice-settings.txt"
+        if not stamp.exists() or stamp.read_text().strip() != STAMPS[lang]:
+            print(f"{lang}: voice settings changed -> render all again")
+            if not args.dry_run:
+                for old in (OUT / lang).glob("*.ogg"):
+                    old.unlink()
+                    old.with_name(old.name + ".import").unlink(missing_ok=True)
+                stamp.write_text(STAMPS[lang] + "\n")
         wanted = {voice_name(lang, t) for t in items}
+        # Godot's import sidecars of files that no longer exist.
+        for orphan in (OUT / lang).glob("*.ogg.import"):
+            if not orphan.with_suffix("").exists() and not args.dry_run:
+                orphan.unlink()
         for stale in (OUT / lang).glob("*.ogg"):
             if stale.name not in wanted:
                 print(f"remove {lang}/{stale.name}")
                 if not args.dry_run:
                     stale.unlink()
+                    stale.with_name(stale.name + ".import").unlink(missing_ok=True)
         for t in sorted(items):
             if not (OUT / lang / voice_name(lang, t)).exists():
                 todo.append((lang, t))

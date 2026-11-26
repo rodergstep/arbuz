@@ -13,7 +13,7 @@ C4Context
     Person(child, "Child", "plays, 3+, pre-reader")
     Person(parent, "Parent", "co-plays, opens settings")
 
-    System(game, "Тигриця's Journey", "<the part this feature adds>")
+    System(game, "Tygrytsa's Journey", "<the part this feature adds>")
     System_Ext(fs, "user:// storage", "saves, playtest logs")
     System_Ext(voice, "Voice tool (Piper)", "generates voice files offline")
 
