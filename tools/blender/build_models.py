@@ -128,49 +128,77 @@ def export(name):
 
 
 def build_tygrytsa():
-    """Tygrytsa: an original, round, cheerful tigress in a vyshyvanka. About 1.15 m tall."""
+    """Tygrytsa: an original, round, cheerful tigress in a vyshyvanka. About 1.25 m tall.
+
+    Toddler-friendly proportions: a big round head with large shiny eyes, fluffy white cheeks,
+    stripes on her head, back, arms and legs, a ringed tail, and an embroidered shirt with a
+    red-and-black diamond band at the hem, the collar and the cuffs. Joints: LegL/LegR (hips),
+    ArmL/ArmR (shoulders), Head (neck), Tail (tail base).
+    """
     reset()
     o, c, d = mat("fur", ORANGE), mat("cream", CREAM), mat("stripe", DARK)
     s, e = mat("shirt", SHIRT), mat("embroidery", EMBROIDERY)
+    ed, pink = mat("embroidery_dark", EMBROIDERY_DARK), mat("nose", PINK)
+    white = mat("eye_white", (1.0, 1.0, 1.0, 1))
     root = empty("Tygrytsa", (0, 0, 0))
-    # Legs (hip joints) under a round body
-    limb("LegL", (-0.13, 0, 0.32), 0.24, 0.085, o, root, c)
-    limb("LegR", (0.13, 0, 0.32), 0.24, 0.085, o, root, c)
+    # Legs (hip joints): short and sturdy, a stripe each, round cream paws.
+    for side, x in (("L", -0.12), ("R", 0.12)):
+        leg = limb("Leg" + side, (x, 0, 0.3), 0.2, 0.09, o, root, c)
+        box("LegStripe" + side, (x, 0.0, 0.2), (0.19, 0.19, 0.035), d, leg, 0.01)
+        sphere("Paw" + side, (x, 0.05, 0.06), (0.11, 0.14, 0.07), c, leg, 12)
     body = empty("Body", (0, 0, 0.3), root)
-    sphere("Belly", (0, 0, 0.45), (0.3, 0.27, 0.27), o, body)
-    sphere("Tummy", (0, 0.12, 0.42), (0.18, 0.16, 0.18), c, body)
-    # Vyshyvanka: white shirt over the chest, red embroidery at the collar, down the front, cuffs
-    sphere("Shirt", (0, 0, 0.62), (0.31, 0.28, 0.24), s, body)
-    bpy.ops.mesh.primitive_torus_add(location=(0, 0, 0.78), major_radius=0.17, minor_radius=0.035)
+    # A round tummy under the shirt.
+    sphere("Belly", (0, 0, 0.42), (0.27, 0.25, 0.22), o, body)
+    sphere("Shirt", (0, 0, 0.55), (0.28, 0.26, 0.24), s, body)
+    # Embroidered band at the hem: alternating red and black diamonds all the way round.
+    for i in range(14):
+        a = math.tau * i / 14
+        box("Hem%d" % i, (math.sin(a) * 0.27, math.cos(a) * 0.25, 0.42), (0.05, 0.02, 0.05), e if i % 2 == 0 else ed, body, 0.0, (0, math.radians(45), -a))
+    bpy.ops.mesh.primitive_torus_add(location=(0, 0, 0.76), major_radius=0.14, minor_radius=0.03)
     finish(bpy.context.active_object, "Collar", e, body)
-    for i, z in enumerate((0.74, 0.66, 0.58, 0.5)):
-        box("Diamond%d" % i, (0, 0.27, z), (0.06, 0.03, 0.06), e if i % 2 == 0 else mat("embroidery_dark", EMBROIDERY_DARK), body, 0.0, (0, math.radians(45), 0))
-    for x in (-0.22, 0.22):
-        box("Stripe%+.0f" % (x * 10), (x * 1.25, 0.02, 0.4), (0.04, 0.12, 0.05), d, body, 0.01)
-    # Arms (shoulder joints) with shirt sleeves and embroidered cuffs
-    for side, x in (("L", -0.3), ("R", 0.3)):
-        arm = limb("Arm" + side, (x, 0, 0.75), 0.3, 0.07, s, root, o)
-        bpy.ops.mesh.primitive_torus_add(location=(x, 0, 0.53), major_radius=0.075, minor_radius=0.022)
+    for i, z in enumerate((0.71, 0.64, 0.57, 0.5)):
+        box("Diamond%d" % i, (0, 0.255, z), (0.05, 0.025, 0.05), e if i % 2 == 0 else ed, body, 0.0, (0, math.radians(45), 0))
+    for i, z in enumerate((0.5, 0.62)):
+        box("BackStripe%d" % i, (0, -0.25, z), (0.16, 0.03, 0.035), d, body, 0.01)
+    # Arms (shoulder joints): shirt sleeves with embroidered cuffs, striped fur hands.
+    for side, x in (("L", -0.27), ("R", 0.27)):
+        arm = limb("Arm" + side, (x, 0, 0.72), 0.27, 0.07, s, root, o)
+        bpy.ops.mesh.primitive_torus_add(location=(x, 0, 0.53), major_radius=0.072, minor_radius=0.022)
         finish(bpy.context.active_object, "Cuff" + side, e, arm)
-    # Head
-    head = empty("Head", (0, 0, 0.98), root)
-    sphere("Skull", (0, 0, 1.02), (0.3, 0.27, 0.27), o, head, 24)
-    sphere("Muzzle", (0, 0.2, 0.95), (0.16, 0.11, 0.1), c, head)
-    sphere("Nose", (0, 0.31, 0.99), (0.045, 0.03, 0.035), mat("nose", PINK), head, 12)
-    for x in (-0.11, 0.11):
-        sphere("Eye%+.0f" % (x * 100), (x, 0.24, 1.08), (0.045, 0.03, 0.055), d, head, 12)
-        sphere("Shine%+.0f" % (x * 100), (x + 0.012, 0.268, 1.1), (0.014,) * 3, c, head, 8)
-        sphere("Cheek%+.0f" % (x * 100), (x * 1.7, 0.16, 0.95), (0.08, 0.06, 0.07), c, head)
-        ear = sphere("Ear%+.0f" % (x * 100), (x * 1.7, 0, 1.27), (0.09, 0.05, 0.09), o, head, 14)
-        sphere("EarIn%+.0f" % (x * 100), (x * 1.7, 0.03, 1.27), (0.05, 0.02, 0.05), c, ear, 10)
-    for i, x in enumerate((-0.07, 0.0, 0.07)):
-        box("HeadStripe%d" % i, (x, 0.12, 1.25), (0.025, 0.08, 0.09 if i == 1 else 0.06), d, head, 0.008)
-    # Tail: a curve of three pieces from the tail base, dark tip
-    tail = empty("Tail", (0, -0.27, 0.42), root)
-    for i in range(3):
-        z = 0.42 + 0.09 * i
-        y = -0.3 - 0.1 * i
-        cylinder("Tail%d" % i, (0, y, z), 0.045, 0.16, o if i < 2 else d, tail, (math.radians(-55 + 15 * i), 0, 0), 12)
+        box("HandStripe" + side, (x, 0.0, 0.47), (0.13, 0.13, 0.025), d, arm, 0.01)
+    # Head: big and round (toddler proportions).
+    head = empty("Head", (0, 0, 0.82), root)
+    sphere("Skull", (0, 0, 1.0), (0.34, 0.31, 0.3), o, head, 28)
+    for x in (-1, 1):
+        sphere("Cheek%+d" % x, (x * 0.16, 0.2, 0.9), (0.13, 0.1, 0.1), c, head, 16)
+        sphere("CheekTuft%+d" % x, (x * 0.31, 0.05, 0.9), (0.07, 0.06, 0.05), c, head, 10)
+    sphere("Muzzle", (0, 0.25, 0.92), (0.12, 0.08, 0.08), c, head, 16)
+    sphere("Nose", (0, 0.32, 0.96), (0.05, 0.03, 0.035), pink, head, 12)
+    sphere("Mouth", (0, 0.31, 0.87), (0.03, 0.01, 0.012), d, head, 8)
+    # Big eyes: white, a dark iris, two shines.
+    for x in (-0.12, 0.12):
+        sphere("EyeWhite%+.0f" % (x * 100), (x, 0.25, 1.05), (0.075, 0.04, 0.085), white, head, 16)
+        sphere("Eye%+.0f" % (x * 100), (x, 0.285, 1.04), (0.055, 0.02, 0.065), d, head, 14)
+        sphere("Shine%+.0f" % (x * 100), (x + 0.02, 0.305, 1.07), (0.018,) * 3, white, head, 8)
+        sphere("Shine2%+.0f" % (x * 100), (x - 0.015, 0.303, 1.02), (0.009,) * 3, white, head, 6)
+        box("Brow%+.0f" % (x * 100), (x, 0.27, 1.16), (0.07, 0.02, 0.018), d, head, 0.005, (0, math.radians(-12 if x < 0 else 12), 0))
+    # Round ears with pink inside.
+    for x in (-0.22, 0.22):
+        ear = sphere("Ear%+.0f" % (x * 100), (x, 0.0, 1.27), (0.1, 0.06, 0.1), o, head, 16)
+        sphere("EarIn%+.0f" % (x * 100), (x, 0.035, 1.27), (0.06, 0.02, 0.06), pink, ear, 10)
+    # Forehead stripes and side stripes.
+    for i, x in enumerate((-0.08, 0.0, 0.08)):
+        box("HeadStripe%d" % i, (x, 0.2, 1.24), (0.028, 0.08, 0.1 if i == 1 else 0.07), d, head, 0.008, (math.radians(-35), 0, 0))
+    for x in (-1, 1):
+        for k in range(2):
+            box("SideStripe%+d%d" % (x, k), (x * 0.32, 0.0, 1.0 + k * 0.08), (0.03, 0.12, 0.03), d, head, 0.008, (0, 0, math.radians(20 * x)))
+    # Tail: a curve of four pieces from the tail base, dark rings, dark tip.
+    tail = empty("Tail", (0, -0.24, 0.4), root)
+    for i in range(4):
+        z = 0.4 + 0.08 * i
+        y = -0.28 - 0.09 * i
+        cylinder("Tail%d" % i, (0, y, z), 0.045, 0.14, o if i % 2 == 0 else d, tail, (math.radians(-60 + 18 * i), 0, 0), 12)
+    sphere("TailTip", (0, -0.62, 0.72), (0.055,) * 3, d, tail, 10)
     export("tygrytsa")
 
 
