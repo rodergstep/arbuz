@@ -34,6 +34,7 @@ inspector.
 | `talk_id` | StringName | TALK_TO: which conversation the scene plays (`baker_intro`, `baker_thanks`) |
 | `word` | StringName | COLLECT: the word of the things to find (one at each spot in `spots`) |
 | `count` | int | COLLECT: how many (= number of spots) |
+| `homes` | Array[Vector3] | COLLECT: where each found thing goes and stays (animals to the farm); empty = it flies away |
 | `find_line` / `found_line` | String | COLLECT: line keys (with `{word}`) for asking and for a single find; empty = chapter 1 defaults |
 
 Line keys refer to `content/voice/lines.csv` (`docs/contracts/voice-lines.md`).
