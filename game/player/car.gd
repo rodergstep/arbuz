@@ -17,6 +17,8 @@ const GRAVITY: float = 20.0
 const WALL_NORMAL_MAX_Y: float = 0.5
 
 var driving: bool = false
+## Which toy car: car_hatchback, car_jeep or car_van (assets/models).
+var model_name: String = "car_hatchback"
 
 var _speed: float = 0.0
 var _target: Vector3 = Vector3.ZERO
@@ -37,17 +39,7 @@ func _ready() -> void:
 	add_child(shape)
 	_body = Node3D.new()
 	add_child(_body)
-	_body.add_child(Blocks.box_mesh(Vector3(1.8, 0.8, 3.0), Color(0.95, 0.45, 0.35), Vector3(0, 0.6, 0)))
-	_body.add_child(Blocks.box_mesh(Vector3(1.5, 0.6, 1.6), Color(0.8, 0.9, 1.0), Vector3(0, 1.3, 0.2)))
-	for x: float in [-0.95, 0.95]:
-		for z: float in [-1.0, 1.0]:
-			var wheel: CylinderMesh = CylinderMesh.new()
-			wheel.top_radius = 0.35
-			wheel.bottom_radius = 0.35
-			wheel.height = 0.3
-			var w: MeshInstance3D = Blocks.mesh(wheel, Color(0.2, 0.2, 0.22), Vector3(x, 0.35, z))
-			w.rotation.z = PI / 2.0
-			_body.add_child(w)
+	_body.add_child(ModelPainter.load_model(model_name))
 	# Pick area so a click on the car is recognised.
 	var area: Area3D = Area3D.new()
 	area.collision_layer = Blocks.LAYER_PICKABLE

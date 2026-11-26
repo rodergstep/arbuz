@@ -26,32 +26,30 @@ var _best_distance: float = INF
 var _level: int = 0
 var _pointer: Node3D
 var _body: Node3D
+var _model: Node3D
+var _arm_l: Node3D
+var _arm_r: Node3D
+var _leg_l: Node3D
+var _leg_r: Node3D
+var _tail: Node3D
+var _head: Node3D
+var _walk_phase: float = 0.0
+var _point_time: float = 0.0
 
 
 func _ready() -> void:
 	_body = Node3D.new()
 	add_child(_body)
-	var capsule: CapsuleMesh = CapsuleMesh.new()
-	capsule.radius = 0.35
-	capsule.height = 1.1
-	_body.add_child(Blocks.mesh(capsule, Color(1.0, 0.6, 0.15), Vector3(0, 0.55, 0)))
-	for x: float in [-0.18, 0.18]:
-		var ear: SphereMesh = SphereMesh.new()
-		ear.radius = 0.1
-		ear.height = 0.2
-		_body.add_child(Blocks.mesh(ear, Color(1.0, 0.6, 0.15), Vector3(x, 1.15, 0)))
-	for y: float in [0.4, 0.65, 0.9]:
-		var stripe: TorusMesh = TorusMesh.new()
-		stripe.inner_radius = 0.33
-		stripe.outer_radius = 0.38
-		_body.add_child(Blocks.mesh(stripe, Color(0.15, 0.1, 0.1), Vector3(0, y, 0)))
-	var shirt: CylinderMesh = CylinderMesh.new()
-	shirt.top_radius = 0.37
-	shirt.bottom_radius = 0.37
-	shirt.height = 0.12
-	_body.add_child(Blocks.mesh(shirt, Color(0.95, 0.95, 0.9), Vector3(0, 0.75, 0)))
+	_model = ModelPainter.load_model("tygrytsa")
+	_body.add_child(_model)
+	_arm_l = _model.find_child("ArmL", true, false) as Node3D
+	_arm_r = _model.find_child("ArmR", true, false) as Node3D
+	_leg_l = _model.find_child("LegL", true, false) as Node3D
+	_leg_r = _model.find_child("LegR", true, false) as Node3D
+	_tail = _model.find_child("Tail", true, false) as Node3D
+	_head = _model.find_child("Head", true, false) as Node3D
 	_pointer = Node3D.new()
-	_pointer.position.y = 1.6
+	_pointer.position.y = 1.7
 	var cone: CylinderMesh = CylinderMesh.new()
 	cone.top_radius = 0.0
 	cone.bottom_radius = 0.18
@@ -89,9 +87,11 @@ func _process(delta: float) -> void:
 	var speed: float = FOLLOW_SPEED * (2.0 if _level >= 2 else 1.0)
 	var to: Vector3 = target - global_position
 	to.y = 0.0
-	if to.length() > 0.3:
+	var moving: bool = to.length() > 0.3
+	if moving:
 		global_position += to.limit_length(speed * delta * maxf(1.0, to.length() / 4.0))
 		_body.rotation.y = lerp_angle(_body.rotation.y, atan2(-to.x, -to.z), minf(1.0, 8.0 * delta))
+	_animate(delta, moving)
 	_pointer.visible = goal != null
 	if goal == null:
 		return
@@ -119,7 +119,30 @@ func _track_progress(delta: float, leader: Vector3) -> void:
 		_give_hint(2)
 
 
+## Simple procedural animation on the model's joints: walk (legs, arms, bob), a happy tail,
+## and pointing with the right arm while she gives a hint.
+func _animate(delta: float, moving: bool) -> void:
+	if _model == null:
+		return
+	_walk_phase += delta * (9.0 if moving else 2.0)
+	var swing: float = sin(_walk_phase) * (0.6 if moving else 0.0)
+	if _leg_l != null:
+		_leg_l.rotation.x = swing
+		_leg_r.rotation.x = -swing
+	if _arm_l != null:
+		_arm_l.rotation.x = -swing * 0.8
+		var point: float = -2.2 if _point_time > 0.0 else swing * 0.8
+		_arm_r.rotation.x = lerpf(_arm_r.rotation.x, point, minf(1.0, 10.0 * delta))
+	if _tail != null:
+		_tail.rotation.z = sin(Time.get_ticks_msec() / 260.0) * 0.35
+	if _head != null:
+		_head.rotation.z = sin(_walk_phase * 0.5) * (0.06 if moving else 0.03)
+	_model.position.y = absf(sin(_walk_phase)) * (0.06 if moving else 0.0)
+	_point_time = maxf(0.0, _point_time - delta)
+
+
 func _give_hint(level: int) -> void:
+	_point_time = 3.0
 	_level = level
 	if goal_marker != null:
 		goal_marker.set_brightness(level)
