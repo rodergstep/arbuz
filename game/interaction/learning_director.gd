@@ -49,8 +49,14 @@ func was_taught(word_id: StringName) -> bool:
 
 ## A passing moment: may be declined. Returns true when the card opened.
 func offer(word_id: StringName, focus: Vector3, view_from: Vector3) -> bool:
-	if not _may_offer(word_id) or not _open(word_id, focus, view_from):
+	if not _may_offer(word_id):
 		return false
+	# Only moments that open on their own count against the new-word pacing cap.
+	var was_new: bool = _is_new(word_id)
+	if not _open(word_id, focus, view_from):
+		return false
+	if was_new:
+		_new_this_session += 1
 	_auto_counts[word_id] = _auto_counts.get(word_id, 0) + 1
 	return true
 
@@ -78,8 +84,6 @@ func _open(word_id: StringName, focus: Vector3, view_from: Vector3) -> bool:
 	var entry: WordEntry = WordDB.get_word(word_id)
 	if entry == null:
 		return false
-	if _is_new(word_id):
-		_new_this_session += 1
 	_last_shown_ms[word_id] = Time.get_ticks_msec()
 	if not _taught.has(word_id):
 		_taught.append(word_id)
