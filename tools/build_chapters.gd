@@ -33,7 +33,6 @@ func _initialize() -> void:
 	var prologue: ChapterData = ChapterData.new()
 	prologue.id = &"prologue"
 	prologue.done_key = "chapter:prologue"
-	prologue.next_chapter = "res://content/chapters/greybox_loop.tres"
 	prologue.steps = [
 		_step(QuestStep.Kind.WALK_TO, [Vector3(-9, 0, 12)], "line:walk_tutorial", "hint:walk"),
 		_step(QuestStep.Kind.TALK_TO, [Vector3(-15, 0, 17)], "line:to_postman", "hint:to_postman"),
@@ -43,7 +42,26 @@ func _initialize() -> void:
 	]
 	var err2: Error = ResourceSaver.save(prologue, "res://content/chapters/prologue.tres")
 	print("prologue.tres: ", error_string(err2))
-	quit(0 if err == OK and err2 == OK else 1)
+	# England practice loop (until Chapter 1): drive round the town, the bakery door, a find.
+	var england: ChapterData = ChapterData.new()
+	england.id = &"england_practice"
+	england.loop = true
+	england.loop_line = "line:again"
+	england.steps = [
+		_step(QuestStep.Kind.GET_IN_CAR, [], "", "hint:to_car", "line:here_car"),
+		_step(
+			QuestStep.Kind.DRIVE_TO,
+			[Vector3(24, 0, -14), Vector3(24, 0, 16), Vector3(-24, 0, 16)],
+			"line:drive",
+			"hint:drive"
+		),
+		_step(QuestStep.Kind.WALK_TO, [Vector3(-9.4, 0, -2.9)], "line:to_door", "hint:to_door"),
+		_step(QuestStep.Kind.OPEN_DOOR, [], "", ""),
+		_step(QuestStep.Kind.FIND_OBJECT, [], "", ""),
+	]
+	var err3: Error = ResourceSaver.save(england, "res://content/chapters/england_practice.tres")
+	print("england_practice.tres: ", error_string(err3))
+	quit(0 if err == OK and err2 == OK and err3 == OK else 1)
 
 
 func _step(
