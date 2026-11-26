@@ -67,6 +67,9 @@ their contracts are written by `/contracts` when they do.
 |---|---|---|---|---|
 | EventLog | `game/core/event_log.gd` | append timestamped JSON lines for playtests (Phase 0 stub, Phase 1 full) | `event_logged(kind: StringName)` | `docs/contracts/autoloads.md#eventlog` |
 | GameState | `game/core/game_state.gd` | example autoload of the skeleton; later the in-memory session state | `state_changed(key: StringName)` | `docs/contracts/autoloads.md#gamestate` |
+| Speech | `game/core/speech.gd` | Phase 1 placeholder voices via OS text-to-speech (`say(text, lang)`); replaced by AudioManager | — | — |
+| Sfx | `game/core/sfx.gd` | Phase 1 placeholder sound effects synthesized in code (`play(kind)`) | — | — |
+| PhantomCameraManager | `addons/phantom_camera/…/phantom_camera_manager.gd` | required by Phantom Camera | — | addon |
 | Settings *(planned, Ph 2)* | `game/core/settings.gd` | volume, session length, language, parent options | `setting_changed(key: StringName)` | — |
 | SaveSystem *(planned, Ph 2)* | `game/core/save_system.gd` | versioned JSON per profile, autosave, migrations | `saved()`, `loaded(profile_id: String)` | `docs/contracts/save-format.md` |
 | AudioManager *(planned, Ph 2)* | `game/core/audio_manager.gd` | voice by line id, music ducking, no overlap | `line_finished(line_id: StringName)` | — |

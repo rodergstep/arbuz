@@ -1,0 +1,115 @@
+{
+  "slug": "greybox",
+  "tasks": [
+    {
+      "id": "T1",
+      "title": "Village blockout with navigation, hero walking and the follow camera",
+      "layer": "scene",
+      "deps": [],
+      "acs": [
+        "AC-01"
+      ],
+      "dod": "In the game the hero walks to a clicked spot around a house, follows a held cursor, and walks with the arrows.",
+      "files_hint": [
+        "game/world/greybox/",
+        "game/player/hero.gd",
+        "game/player/pointer_input.gd"
+      ],
+      "file": "docs/features/greybox/tasks/t1.md",
+      "status": "done"
+    },
+    {
+      "id": "T2",
+      "title": "Box car: enter/exit, forgiving driving, bounce, horn, camera blend",
+      "layer": "scene",
+      "deps": [
+        "T1"
+      ],
+      "acs": [
+        "AC-02"
+      ],
+      "dod": "In the game the hero gets in by clicking the car, drives to a clicked spot, bounces off a house with a boing, honks, and gets out with Space.",
+      "files_hint": [
+        "game/player/car.gd",
+        "game/world/greybox/greybox_village.gd"
+      ],
+      "file": "docs/features/greybox/tasks/t2.md",
+      "status": "done"
+    },
+    {
+      "id": "T3",
+      "title": "Тигриця placeholder, glowing marker and the idle hint",
+      "layer": "scene",
+      "deps": [
+        "T1"
+      ],
+      "acs": [
+        "AC-03"
+      ],
+      "dod": "Standing still 15 s near the start gives a voiced hint and a brighter marker; 10 s later she runs to it.",
+      "files_hint": [
+        "game/companion/companion.gd",
+        "game/interaction/goal_marker.gd"
+      ],
+      "file": "docs/features/greybox/tasks/t3.md",
+      "status": "done"
+    },
+    {
+      "id": "T4",
+      "title": "Speaking objects with word labels through system text-to-speech",
+      "layer": "scene",
+      "deps": [
+        "T1"
+      ],
+      "acs": [
+        "AC-04"
+      ],
+      "dod": "Clicking the duck says «качка» then «duck» and shows «качка · duck» for a moment.",
+      "files_hint": [
+        "game/interaction/clickable.gd",
+        "game/core/speech.gd",
+        "game/core/sfx.gd"
+      ],
+      "file": "docs/features/greybox/tasks/t4.md",
+      "status": "done"
+    },
+    {
+      "id": "T5",
+      "title": "Password door with three speaking cards and the fallback",
+      "layer": "scene",
+      "deps": [
+        "T1"
+      ],
+      "acs": [
+        "AC-05"
+      ],
+      "dod": "At the door two wrong picks make the right card glow and the door open; the next visit asks a new word.",
+      "files_hint": [
+        "game/interaction/password_door.gd",
+        "game/interaction/password_card.gd"
+      ],
+      "file": "docs/features/greybox/tasks/t5.md",
+      "status": "done"
+    },
+    {
+      "id": "T6",
+      "title": "Event log events and the pause overlay",
+      "layer": "core",
+      "deps": [
+        "T2",
+        "T5"
+      ],
+      "acs": [
+        "AC-06",
+        "AC-07"
+      ],
+      "dod": "After a short play the session .jsonl lists clicks, idle, hint, card_pick, car_enter and bump; Esc pauses and a click resumes.",
+      "files_hint": [
+        "game/core/event_log.gd",
+        "game/ui/pause_overlay.gd"
+      ],
+      "file": "docs/features/greybox/tasks/t6.md",
+      "status": "done"
+    }
+  ]
+}

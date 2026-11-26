@@ -24,6 +24,10 @@ func _init() -> void:
 	_set_action(&"use", [_key(KEY_SPACE), _key(KEY_ENTER), _button(JOY_BUTTON_A)])
 	_set_action(&"horn", [_key(KEY_H), _button(JOY_BUTTON_X), _button(JOY_BUTTON_Y)])
 	_set_action(&"pause", [_key(KEY_ESCAPE), _key(KEY_P), _button(JOY_BUTTON_START)])
+	# Dialogic advances its text with this action; the addon expects it to exist.
+	var click: InputEventMouseButton = InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	_set_action(&"dialogic_default_action", [_key(KEY_SPACE), _key(KEY_ENTER), click, _button(JOY_BUTTON_A)])
 	var err: Error = ProjectSettings.save()
 	print("input map saved: %s" % error_string(err))
 	quit(0 if err == OK else 1)

@@ -20,12 +20,12 @@ Our son plays the whole England arc, from the Ukrainian prologue to the festival
 | # | Step | Source | Size | Status |
 |---|---|---|:---:|---|
 | 1 | Project skeleton: Godot project boots, tests run, builds export, gamepad check scene | `development-plan.md` §Phase 0 — Setup | M | building |
-| 2 | He walks the greybox village: click to go, hold to follow, arrows, stick, with the follow camera | `development-plan.md` §Phase 1 — Greybox prototype | M | idea |
-| 3 | He drives a box car: get in and out, forgiving driving, soft bounce, horn, camera blend | `development-plan.md` §Phase 1 — Greybox prototype | M | idea |
-| 4 | Тигриця placeholder follows him and points the way; glowing marker; idle nudge after ~15 s | `development-plan.md` §Phase 1 — Greybox prototype | M | idea |
-| 5 | Clicking an object says its name (OS text-to-speech) and shows the word briefly | `development-plan.md` §Phase 1 — Greybox prototype | S | idea |
-| 6 | Greybox password door: three speaking cards, gentle wrong-pick response, opens after 2 wrong picks | `game-spec.md` §Password doors | M | idea |
-| 7 | Playtest event log records every click, idle pause and card pick, ready to review next to OBS | `development-plan.md` §Phase 1 — Greybox prototype | S | idea |
+| 2 | He walks the greybox village: click to go, hold to follow, arrows, stick, with the follow camera | `development-plan.md` §Phase 1 — Greybox prototype | M | building |
+| 3 | He drives a box car: get in and out, forgiving driving, soft bounce, horn, camera blend | `development-plan.md` §Phase 1 — Greybox prototype | M | building |
+| 4 | Тигриця placeholder follows him and points the way; glowing marker; idle nudge after ~15 s | `development-plan.md` §Phase 1 — Greybox prototype | M | building |
+| 5 | Clicking an object says its name (OS text-to-speech) and shows the word briefly | `development-plan.md` §Phase 1 — Greybox prototype | S | building |
+| 6 | Greybox password door: three speaking cards, gentle wrong-pick response, opens after 2 wrong picks | `game-spec.md` §Password doors | M | building |
+| 7 | Playtest event log records every click, idle pause and card pick, ready to review next to OBS | `development-plan.md` §Phase 1 — Greybox prototype | S | building |
 | 8 | Words come from the word database with locally generated voices, played by the audio manager | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | idea |
 | 9 | Progress is autosaved per profile and survives closing the game at any moment | `development-plan.md` §Phase 2 — Core systems and content pipeline | L | idea |
 | 10 | Doors and tasks bring back the words he struggles with (learning tracker, box-based repetition) | `game-spec.md` §Learning design | M | idea |

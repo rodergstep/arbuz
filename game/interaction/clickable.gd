@@ -1,0 +1,67 @@
+class_name Clickable
+extends Area3D
+## A thing that says its name when clicked: Ukrainian first, then English, with the written
+## word shown briefly above it. Scenes report the click; the word logic stays here for Phase 1
+## and moves to InteractionSystem with the word database in Phase 2.
+
+signal clicked(word_id: StringName)
+
+const LABEL_SECONDS: float = 2.5
+
+@export var word_id: StringName
+@export var word_uk: String
+@export var word_en: String
+
+var visual: Node3D
+var _label: Label3D
+var _label_timer: float = 0.0
+var _height: float = 2.0
+
+
+## Builds the pick area around the given visual; height places the word label.
+func setup(id: StringName, uk: String, en: String, art: Node3D, pick_size: Vector3) -> void:
+	word_id = id
+	word_uk = uk
+	word_en = en
+	visual = art
+	_height = pick_size.y + 0.6
+	add_child(art)
+	collision_layer = Blocks.LAYER_PICKABLE
+	collision_mask = 0
+	var shape: CollisionShape3D = CollisionShape3D.new()
+	var box: BoxShape3D = BoxShape3D.new()
+	box.size = pick_size
+	shape.shape = box
+	shape.position.y = pick_size.y / 2.0
+	add_child(shape)
+
+
+func activate() -> void:
+	Sfx.play(&"pop")
+	Speech.say(word_uk, Speech.LANG_UK, true)
+	Speech.say(word_en, Speech.LANG_EN)
+	EventLog.log_event(&"object_clicked", {"word_id": String(word_id)})
+	clicked.emit(word_id)
+	_show_label()
+	if visual != null:
+		var tween: Tween = create_tween()
+		tween.tween_property(visual, "scale", Vector3(1.15, 0.85, 1.15), 0.08)
+		tween.tween_property(visual, "scale", Vector3.ONE, 0.3).set_trans(Tween.TRANS_ELASTIC).set_ease(
+			Tween.EASE_OUT
+		)
+
+
+func _show_label() -> void:
+	if _label == null:
+		_label = Blocks.label("", _height, 72)
+		add_child(_label)
+	_label.text = "%s · %s" % [word_uk, word_en]
+	_label.visible = true
+	_label_timer = LABEL_SECONDS
+
+
+func _process(delta: float) -> void:
+	if _label_timer > 0.0:
+		_label_timer -= delta
+		if _label_timer <= 0.0:
+			_label.visible = false
