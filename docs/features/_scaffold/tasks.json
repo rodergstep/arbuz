@@ -13,7 +13,7 @@
         "project.godot",
         "icon.svg"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "S2",
@@ -25,7 +25,7 @@
         ".gitattributes",
         ".gitignore"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "S3",
@@ -39,7 +39,7 @@
         "addons/",
         "project.godot"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "S4",
@@ -54,7 +54,7 @@
         "tests/core/test_game_state.gd",
         "project.godot"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "S5",
@@ -69,7 +69,7 @@
         ".gutconfig.json",
         "tests/"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "S6",
@@ -82,7 +82,7 @@
       "files_hint": [
         "gdlintrc"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "S7",
@@ -95,7 +95,7 @@
       "files_hint": [
         "project.godot"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "S8",
@@ -108,7 +108,7 @@
       "files_hint": [
         "export_presets.cfg"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "S9",
@@ -122,7 +122,7 @@
       "files_hint": [
         "game/dev/gamepad_check/"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "S10",
@@ -137,7 +137,7 @@
         "game/core/event_log.gd",
         "tests/core/test_event_log.gd"
       ],
-      "status": "todo"
+      "status": "done"
     },
     {
       "id": "S11",
@@ -152,7 +152,7 @@
       "files_hint": [
         "CLAUDE.md"
       ],
-      "status": "todo"
+      "status": "done"
     }
   ]
 }

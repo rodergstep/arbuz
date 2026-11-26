@@ -1,0 +1,9 @@
+# gdtoolkit 4 config. Lint runs on game/ and tests/; addons/ are vendored and never linted.
+excluded_directories: !!set
+  .git: null
+  .godot: null
+  addons: null
+  build: null
+max-line-length: 110
+max-file-lines: 1000
+function-arguments-number: 8

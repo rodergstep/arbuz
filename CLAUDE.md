@@ -52,19 +52,20 @@ Rules for agents working in this repo:
 
 ## Commands
 
-Prefer the values in `docs/architecture-map.md` once `/survey` has written them. Defaults:
+Canonical values live in `docs/architecture-map.md` (frontmatter). `godot` is not on PATH on the M4, so commands use the full binary path; gdtoolkit lives in `~/Library/Python/3.13/bin`.
 
 ```bash
-# unit + integration tests (GUT, headless)
-godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
+# unit + integration tests (GUT, headless, config in .gutconfig.json)
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json
 # import / script check
-godot --headless --path . --import --quit
-# lint and format check
-gdlint . && gdformat --check .
-# macOS build
-godot --headless --path . --export-release "macOS" build/macos/arbuz.zip
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --import --quit
+# lint and format check (addons/ excluded)
+gdlint game tests tools && gdformat -l 110 --check game tests tools
+# builds
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release "macOS" build/macos/arbuz.zip
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release "Windows" build/windows/arbuz.exe
+# regenerate the input map in project.godot
+/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --script res://tools/setup_input_map.gd
 # validate the workflow files after editing .claude/
 python3 scripts/validate_workflow.py
 ```
-
-If `godot` is not on PATH, use `/Applications/Godot.app/Contents/MacOS/Godot` or set `godot_bin` with `/config`.
