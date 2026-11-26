@@ -1,0 +1,69 @@
+# arbuz: Тигриця's Journey
+
+An offline educational game for a three-year-old, built in **Godot 4.7** with **GDScript** and tested with **GUT**. Developed on an Apple Silicon Mac; must run well on an **Intel MacBook** (the child's machine).
+
+## Non-negotiable product rules
+
+These come before any feature request. If a request conflicts with one, say so and ask.
+
+- **No reading required.** Every instruction is voiced. Text is decoration for the parent, never the only cue.
+- **No fail states.** A wrong answer gets a soft response and another try. No lives, no timers that punish, no lost progress.
+- **Big targets, simple input.** Tap/click only by default; no drags, double taps or precise timing unless the spec says so.
+- **Hint ladder.** After 8 s idle: repeat the instruction. +8 s: glow the target. +8 s: HintHand. Then auto-help.
+- **Colour is never the only cue.** Always pair it with a shape or pattern.
+- **Child safety and privacy.** No network, analytics, ads, links or purchases. Parent-only things sit behind the ParentGate. Never record or store the child's voice, photo or name unless a spec explicitly says so.
+- **Gentle sessions.** 15-minute default session timer, pause always available, nothing loud or flashing.
+- **Performance budget.** ≥30 fps and load ≤10 s on the Intel MacBook.
+- **Saves are sacred.** The save format is versioned JSON with a migration chain; old saves must always load.
+
+## How work is done here
+
+All non-trivial work goes through the spec-driven workflow in `.claude/`. Read [`docs/workflow.md`](docs/workflow.md) for the one-page guide. In short:
+
+```
+/interview → /specify → /clarify → /ux-flows → /design → /contracts → /tasks → /plan-tests → /implement → /review → /ship → /playtest
+```
+
+`/classify-size <slug>` picks the route (`quick` / `standard` / `full`), which decides which stages run. Small fixes go through `/fix`. Stages are separate sessions: run `/clear` between them; each stage re-reads its inputs from disk.
+
+Rules for agents working in this repo:
+
+- **Tests first.** Production code is written only against a failing GUT test, by a different agent than the one that wrote the test. Never edit a test to make it pass.
+- **Follow the map.** `docs/architecture-map.md` holds the conventions and pattern few-shots; `docs/design-system.md` holds the UI components and tokens. A new UI component needs a justification and the parent's approval in `docs/design-system.md` before it is built.
+- **Contracts are documented.** Save format, word DB, content Resources, autoload APIs and tool CLIs live in `docs/contracts/`. Change the contract with the code, never only the code.
+- **Commit per task** with `SDD-Task:` and `SDD-AC:` trailers, on a feature branch. Never push or merge without the parent's go-ahead.
+- **Documents in English.** Talk to the parent in the language they write in. Child-facing words are Ukrainian first, English second.
+
+## Where things live
+
+| Path | What |
+|---|---|
+| `docs/game-spec.md`, `docs/development-plan.md` | the game's vision and phased plan (when present) |
+| `docs/architecture-map.md` | stack, autoloads, folders, conventions, patterns, perf budget (`/survey`) |
+| `docs/design-system.md` | art direction, tokens, components, hint ladder, input rules (`/design-system`) |
+| `docs/contracts/` | living contracts (merged from features at ship) |
+| `docs/adr/` | accepted architecture decisions |
+| `docs/features/<slug>/` | per-feature artifacts; after ship only `spec.md`, `sad.md` (and `ux-flows.md`) remain |
+| `docs/playtests/` | play-session plans and debriefs |
+| `docs/roadmap.md` | living decomposition and build order (`/roadmap`) |
+| `CONTEXT.md` | glossary, English term + Ukrainian word (`/glossary`) |
+| `.claude/skills/`, `.claude/agents/` | the workflow itself |
+
+## Commands
+
+Prefer the values in `docs/architecture-map.md` once `/survey` has written them. Defaults:
+
+```bash
+# unit + integration tests (GUT, headless)
+godot --headless --path . -s addons/gut/gut_cmdln.gd -gdir=res://tests -ginclude_subdirs -gexit
+# import / script check
+godot --headless --path . --import --quit
+# lint and format check
+gdlint . && gdformat --check .
+# macOS build
+godot --headless --path . --export-release "macOS" build/macos/arbuz.zip
+# validate the workflow files after editing .claude/
+python3 scripts/validate_workflow.py
+```
+
+If `godot` is not on PATH, use `/Applications/Godot.app/Contents/MacOS/Godot` or set `godot_bin` with `/config`.
