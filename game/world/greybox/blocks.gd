@@ -19,7 +19,20 @@ static func material(color: Color, emission: float = 0.0) -> StandardMaterial3D:
 	return mat
 
 
-static func mesh(primitive: PrimitiveMesh, color: Color, pos: Vector3 = Vector3.ZERO) -> MeshInstance3D:
+## A mesh in the painted look (toon shading, coloured shadows, painted gradient).
+static func mesh(
+	primitive: PrimitiveMesh, color: Color, pos: Vector3 = Vector3.ZERO, sway: float = 0.0
+) -> MeshInstance3D:
+	primitive.material = PaintedMaterials.make(color, sway)
+	var inst: MeshInstance3D = MeshInstance3D.new()
+	inst.mesh = primitive
+	inst.position = pos
+	return inst
+
+
+## A mesh with a plain StandardMaterial3D, for things that animate their material (markers,
+## glows, cards).
+static func flat_mesh(primitive: PrimitiveMesh, color: Color, pos: Vector3 = Vector3.ZERO) -> MeshInstance3D:
 	primitive.material = material(color)
 	var inst: MeshInstance3D = MeshInstance3D.new()
 	inst.mesh = primitive
@@ -31,6 +44,12 @@ static func box_mesh(size: Vector3, color: Color, pos: Vector3 = Vector3.ZERO) -
 	var box: BoxMesh = BoxMesh.new()
 	box.size = size
 	return mesh(box, color, pos)
+
+
+static func flat_box_mesh(size: Vector3, color: Color, pos: Vector3 = Vector3.ZERO) -> MeshInstance3D:
+	var box: BoxMesh = BoxMesh.new()
+	box.size = size
+	return flat_mesh(box, color, pos)
 
 
 ## A solid box the hero and the car collide with; part of the navigation mesh when it is a

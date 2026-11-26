@@ -226,6 +226,8 @@ Not built yet. `/design-system` writes `docs/design-system.md`; the code lands i
 
 - Floor machine: Intel MacBook, 8 GB, integrated GPU, Compatibility renderer → ≥30 fps, load ≤10 s.
 - Art (Miyazaki-inspired, original): toon shading with coloured shadows and rim light, hand-painted gradient textures shared across models, painted sky with drifting cloud layers, wind sway as a vertex shader on instanced grass at low density. All shader-based; no SSAO, SSR, glow-heavy or other post-processing chains; few real-time shadows (one directional light, short distance).
+- Implemented look (Phase 3 start): one shared toon shader `game/art/painted.gdshader` via `PaintedMaterials.make(color, sway, variation)` (materials cached per colour); painted sky `game/art/painted_sky.gdshader` with radiance computed rarely (`Sky.PROCESS_MODE_QUALITY`, 32 px) because ambient light comes from a colour; grass is one `MultiMeshInstance3D` (`WindGrass`, ~2,500 tufts × 18 vertices, no shadows); trees and flowers sway with the same shader. Markers, glows and cards keep `StandardMaterial3D` (`Blocks.flat_mesh`).
+- `PerfMonitor` logs `perf {fps_avg, fps_min}` to the playtest log every 30 s; F3 shows an fps counter. Gate check: run on the Intel MacBook and read the log.
 - Concrete numbers (draw calls, texture memory, triangle counts) are set at Gate 3 on the prologue village and recorded here.
 
 ## Constraints & known debt
