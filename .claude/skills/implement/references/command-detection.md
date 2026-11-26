@@ -1,7 +1,7 @@
 # Command detection (step 3)
 
-Resolve five commands: **unit**, **integration**, **lint**, **vet** (headless parse/import
-check) and **export**. First hit wins per command; print the resolved set.
+Resolve the commands: **vet** (headless parse/import check, the smoke check), and the optional
+**lint**, **tests** (GUT, only if `tests/` has any) and **export**. First hit wins per command; print the resolved set.
 
 ## Cascade (first match wins)
 
@@ -16,7 +16,7 @@ check) and **export**. First hit wins per command; print the resolved set.
      (if `.gutconfig.json` exists, `-gconfig=res://.gutconfig.json` replaces the `-g*` dir flags).
      To run one file: add `-gselect=<file_name.gd>`; one test: `-gunit_test_name=<test_name>`.
    - **lint**: `gdlint <dirs>` and `gdformat --check <dirs>` from `gdtoolkit`, over
-     `autoload scenes ui data tests` (only those that exist).
+     `game tests tools` (only those that exist).
    - **vet**: `<godot> --headless --path . --import --quit` — fails on script parse errors and
      broken resources. (Check the exit code and grep the output for `SCRIPT ERROR` / `Parse Error`.)
    - **export**: `<godot> --headless --path . --export-release "<preset>" <out path>` with the
@@ -36,7 +36,7 @@ detected commands:
   export  = godot --headless --path . --export-release "macOS" build/macos/arbuz.zip
 ```
 
-Missing lint/vet tool → skip that gate with a one-line warning. Missing GUT runner → stop.
+Missing lint tool or GUT runner → skip it with a one-line warning. Missing Godot → stop.
 Detection is read-only: never install tools without asking.
 
 ## Notes

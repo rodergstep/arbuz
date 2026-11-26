@@ -22,10 +22,10 @@
 
 ## Verification
 
-- GUT unit / integration / contract: <counts, green>
-- Import check + gdlint: <result>
+- Headless import: <clean | errors>
 - macOS export: <built at build/macos/... | not verified: reason>
-- Playthrough / windowed run: <what was exercised | what could not run>
+- Windowed run: <ran 30 s, log clean | could not run: reason>
+- To check when playing: <what to try>
 
 ## Saves and content
 

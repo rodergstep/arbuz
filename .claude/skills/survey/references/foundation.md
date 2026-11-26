@@ -30,16 +30,16 @@ made by the Development Plan; the session **confirms** them and asks only what i
 
 ## Scaffold `tasks.json` (→ `docs/features/_scaffold/tasks.json`)
 
-Each task's DoD includes the **skeleton smoke test**: the project imports headless, GUT runs an
-empty suite and exits 0, lint runs, and a macOS export builds.
+Each task's DoD includes the **skeleton smoke test**: the project imports headless with no script
+errors and a macOS export builds. GUT is vendored for the rare test worth writing; it is not a gate.
 
 | id | title | files_hint |
 |---|---|---|
 | S1 | `project.godot` with Compatibility renderer, window/stretch settings for 1280×720 and touch | `project.godot` |
 | S2 | `.gitignore` (`.godot/`, `build/`, `*.import` rules per Godot docs), `.gitattributes` with LFS rules | `.gitignore`, `.gitattributes` |
 | S3 | Install addons (GUT, Dialogic 2, Phantom Camera, Beehave) and enable them | `addons/`, `project.godot` |
-| S4 | Folder skeleton + one example autoload (`GameState`) with a typed signal and a GUT test | `autoload/`, `tests/` |
-| S5 | GUT config (`.gutconfig.json`) and the headless test command; a failing-then-passing example test | `.gutconfig.json`, `tests/` |
+| S4 | Folder skeleton + one example autoload (`GameState`) with a typed signal | `autoload/`, `tests/` |
+| S5 | GUT config (`.gutconfig.json`) and the headless test command (optional, not a gate) | `.gutconfig.json`, `tests/` |
 | S6 | `gdtoolkit` config (`gdlintrc`) and lint command | `gdlintrc` |
 | S7 | macOS export preset + export command | `export_presets.cfg` |
 | S8 | Gamepad check scene: shows every button/stick press, tests rumble | `scenes/dev/gamepad_check/` |

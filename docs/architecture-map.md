@@ -112,7 +112,7 @@ Greenfield: no code to cite yet. Each rule names the file that will be its first
 - **Saves only through SaveSystem**, versioned, with migrations (ADR-0003, `docs/contracts/save-format.md`).
 - **Errors never reach the child:** `push_warning` + EventLog + a safe fallback; never `assert` in shipping paths. *(first: `game/core/event_log.gd`)*
 - **Scene files:** small scenes, compose in code where reasonable; never hand-edit large `.tscn`; keep `uid://` references intact.
-- **Tests:** GUT, `extends GutTest`, `test_<behaviour>()` names, one file per script at the mirrored path, fixtures under `tests/fixtures/`; tests never touch the real `user://saves` (use a temp dir). *(first: `tests/core/test_game_state.gd`)*
+- **Tests are optional** (speed first; the playtest is the real test). When one is worth it, mainly a fixture save after a save-format change: GUT, `extends GutTest`, `test_<behaviour>()` names, one file per script at the mirrored path, fixtures under `tests/fixtures/`; tests never touch the real `user://saves` (use a temp dir). *(first: `tests/core/test_game_state.gd`)*
 - **No network code at all.** No `HTTPRequest`, no sockets, no OS.shell_open of URLs (CLAUDE.md child-safety rule).
 
 ## Pattern few-shots (copy these shapes)

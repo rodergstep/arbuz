@@ -23,8 +23,7 @@ One artifact, two parts:
    with the design-system components it uses and the voice/sound for each state.
 
 `design` reads it as evidence; `tasks` cites `SCR-NN` + state ids; `implement` builds to the
-states; `review` checks the built scene against them; `plan-tests` turns each flow into a
-scripted playthrough.
+states; `review` and the playtest check the built scene against them.
 
 Question phrasing → [`../_shared/ask-style.md`](../_shared/ask-style.md); confirm each diagram in
 prose, never as raw Mermaid → [`../_shared/diagram-presentation.md`](../_shared/diagram-presentation.md);

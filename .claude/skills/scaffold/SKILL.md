@@ -9,8 +9,7 @@ description: >
   Phantom Camera, Beehave), the folder skeleton with an example autoload and test, lint, macOS
   export, the gamepad check scene and the playtest event log. Triggers on "scaffold the skeleton",
   "set up the Godot project", "phase 0", "/scaffold", "матеріалізуй скелет", "фаза 0". Runs the
-  scaffold tasks inline, anchored on the smoke test (headless import + GUT exits 0 + lint + macOS
-  export), commits, and hands off to /specify. Hard-refuses without the greenfield map + plan.
+  scaffold tasks inline, anchored on the smoke test (headless import + macOS export), commits, and hands off to /specify. Hard-refuses without the greenfield map + plan.
 ---
 
 # Skill: scaffold
@@ -24,10 +23,9 @@ per-feature flow (`specify → … → implement`) builds into it. This skill ex
 handoff is a real gate, not a wave of the hand: `_scaffold` is **not a feature** (no `.size`, no
 `.route`, no ACs), so it never enters `implement`'s engine or its task engine.
 
-**The skeleton smoke test is the TDD anchor** (canonical here). Scaffold tasks have no feature ACs,
-so red→green anchors on the structural smoke test: **RED** = the project does not import headless /
-GUT doesn't run / lint or export fails; **GREEN** = headless import + GUT exits 0 + lint runs + a
-macOS export builds. That keeps the discipline meaningful for structural work — no per-folder TDD theatre.
+**The skeleton smoke test is the anchor** (canonical here): the project imports headless with no
+script errors and a macOS export builds. GUT is vendored so a test can be added when one is
+cheaper than checking by hand, but tests are not part of the gate. No per-folder test theatre.
 
 ## Owner
 
@@ -65,15 +63,14 @@ The parent (who also runs the build on the Intel MacBook for Gate 0); Claude mat
    files its `files_hint` names, to the map's conventions; verify its `dod`; record it done. A task
    that genuinely doesn't apply (e.g. the gamepad check scene before the gamepad arrives) is **explicitly dropped
    with a stated reason** — never silently skipped.
-4. **Drive the smoke test green.** Write the smoke test as part of the harness task, then run the
-   full anchor with the map's machine-key commands: headless import + GUT (exits 0) + lint + the macOS
-   export. Iterate until GREEN — a red skeleton is not done.
+4. **Drive the smoke test green.** Run the
+   anchor with the map's machine-key commands: headless import + the macOS export. Iterate until GREEN — a red skeleton is not done.
 5. **Reconcile the map's machine keys.** If the commands that actually worked differ from the map's
    frontmatter (`test_cmd` / `lint_cmd` / `vet_cmd` / `export_cmd`), **update the map** —
    `implement`'s command-detection cascade reads these keys; stale keys poison every later feature.
 6. **Structural self-check** — per [`../_shared/self-check.md`](../_shared/self-check.md), **before
    any commit**: verify **4 items**: (1) the smoke test was actually executed and is green (import +
-   GUT + lint + export — command output in hand, not assumed); (2) every S-task is
+   export — command output in hand, not assumed); (2) every S-task is
    done or explicitly dropped with a reason; (3) the map's machine keys match the commands that just
    ran (updated if they diverged); (4) every file the S-tasks' `files_hint` names exists on disk and
    is not gitignored. Fix + re-check ≤2 cycles; surface anything unresolved — an unresolved item
@@ -91,14 +88,14 @@ The parent (who also runs the build on the Intel MacBook for Gate 0); Claude mat
 
 - Every S-task from `docs/features/_scaffold/tasks.json` is materialized (or explicitly dropped
   with a reason), to the conventions the map fixes.
-- The skeleton smoke test is **green**: headless import, GUT exits 0, lint runs, a macOS export builds.
+- The skeleton smoke test is **green**: headless import with no script errors, a macOS export builds.
 - Gate 0 is the human's: the build opens on the Intel MacBook and the gamepad check scene registers every button.
 - The map's machine keys reflect the commands that actually work; the skeleton is committed.
 
 ## Anti-patterns
 
 - **Orchestrating structural tasks** through the feature engine. Sequential inline is the design.
-- **Per-folder TDD theatre.** The smoke test is the one anchor; writing a failing test per directory
+- **Per-folder test theatre.** The smoke test is the one anchor; writing a failing test per directory
   is ceremony without information.
 - **Re-deciding the foundation.** Stack/structure/convention choices live in the map + its ADRs
   (`survey`'s session); scaffold materializes, it never re-litigates. A gap in the map goes back to

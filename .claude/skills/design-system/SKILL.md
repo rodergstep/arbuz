@@ -44,7 +44,7 @@ thing). Mock-ups, if wanted, are screenshots of the real scene.
    component / rebuild. Never overwrite silently.
 2. **Scan the code side.** Dispatch `explorer` (`subagent_type: "explorer"`) for the Theme files,
    component scenes and any hard-coded colours, fonts or sizes in `ui/` and `scenes/` (each with
-   `file:line`). Hard-coded values become cleanup items for the refactorer.
+   `file:line`). Hard-coded values become cleanup items for a later task.
 3. **Fill or update the canon** from [`./templates/design-system.md`](./templates/design-system.md),
    one section at a time, each confirmed with the human and written to disk at once. Defaults in
    the template are **starting values to be confirmed at the Gate 1 playtest**, not facts; when the

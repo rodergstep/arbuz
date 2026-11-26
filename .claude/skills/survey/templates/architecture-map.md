@@ -82,7 +82,7 @@ flowchart TB
 ## Pattern few-shots (copy these shapes)
 
 <!-- instruction: 3–5 SHORT real excerpts (≤25 lines each) from the repo, each with its path. These are what
-implement/refactorer imitate. Greenfield: write them as the target shape and mark "(target)". -->
+implement imitates. Greenfield: write them as the target shape and mark "(target)". -->
 
 ### A core system (autoload)
 
