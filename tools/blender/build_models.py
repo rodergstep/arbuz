@@ -128,49 +128,77 @@ def export(name):
 
 
 def build_tygrytsa():
-    """Tygrytsa: an original, round, cheerful tigress in a vyshyvanka. About 1.15 m tall."""
+    """Tygrytsa: an original, round, cheerful tigress in a vyshyvanka. About 1.25 m tall.
+
+    Toddler-friendly proportions: a big round head with large shiny eyes, fluffy white cheeks,
+    stripes on her head, back, arms and legs, a ringed tail, and an embroidered shirt with a
+    red-and-black diamond band at the hem, the collar and the cuffs. Joints: LegL/LegR (hips),
+    ArmL/ArmR (shoulders), Head (neck), Tail (tail base).
+    """
     reset()
     o, c, d = mat("fur", ORANGE), mat("cream", CREAM), mat("stripe", DARK)
     s, e = mat("shirt", SHIRT), mat("embroidery", EMBROIDERY)
+    ed, pink = mat("embroidery_dark", EMBROIDERY_DARK), mat("nose", PINK)
+    white = mat("eye_white", (1.0, 1.0, 1.0, 1))
     root = empty("Tygrytsa", (0, 0, 0))
-    # Legs (hip joints) under a round body
-    limb("LegL", (-0.13, 0, 0.32), 0.24, 0.085, o, root, c)
-    limb("LegR", (0.13, 0, 0.32), 0.24, 0.085, o, root, c)
+    # Legs (hip joints): short and sturdy, a stripe each, round cream paws.
+    for side, x in (("L", -0.12), ("R", 0.12)):
+        leg = limb("Leg" + side, (x, 0, 0.3), 0.2, 0.09, o, root, c)
+        box("LegStripe" + side, (x, 0.0, 0.2), (0.19, 0.19, 0.035), d, leg, 0.01)
+        sphere("Paw" + side, (x, 0.05, 0.06), (0.11, 0.14, 0.07), c, leg, 12)
     body = empty("Body", (0, 0, 0.3), root)
-    sphere("Belly", (0, 0, 0.45), (0.3, 0.27, 0.27), o, body)
-    sphere("Tummy", (0, 0.12, 0.42), (0.18, 0.16, 0.18), c, body)
-    # Vyshyvanka: white shirt over the chest, red embroidery at the collar, down the front, cuffs
-    sphere("Shirt", (0, 0, 0.62), (0.31, 0.28, 0.24), s, body)
-    bpy.ops.mesh.primitive_torus_add(location=(0, 0, 0.78), major_radius=0.17, minor_radius=0.035)
+    # A round tummy under the shirt.
+    sphere("Belly", (0, 0, 0.42), (0.27, 0.25, 0.22), o, body)
+    sphere("Shirt", (0, 0, 0.55), (0.28, 0.26, 0.24), s, body)
+    # Embroidered band at the hem: alternating red and black diamonds all the way round.
+    for i in range(14):
+        a = math.tau * i / 14
+        box("Hem%d" % i, (math.sin(a) * 0.27, math.cos(a) * 0.25, 0.42), (0.05, 0.02, 0.05), e if i % 2 == 0 else ed, body, 0.0, (0, math.radians(45), -a))
+    bpy.ops.mesh.primitive_torus_add(location=(0, 0, 0.76), major_radius=0.14, minor_radius=0.03)
     finish(bpy.context.active_object, "Collar", e, body)
-    for i, z in enumerate((0.74, 0.66, 0.58, 0.5)):
-        box("Diamond%d" % i, (0, 0.27, z), (0.06, 0.03, 0.06), e if i % 2 == 0 else mat("embroidery_dark", EMBROIDERY_DARK), body, 0.0, (0, math.radians(45), 0))
-    for x in (-0.22, 0.22):
-        box("Stripe%+.0f" % (x * 10), (x * 1.25, 0.02, 0.4), (0.04, 0.12, 0.05), d, body, 0.01)
-    # Arms (shoulder joints) with shirt sleeves and embroidered cuffs
-    for side, x in (("L", -0.3), ("R", 0.3)):
-        arm = limb("Arm" + side, (x, 0, 0.75), 0.3, 0.07, s, root, o)
-        bpy.ops.mesh.primitive_torus_add(location=(x, 0, 0.53), major_radius=0.075, minor_radius=0.022)
+    for i, z in enumerate((0.71, 0.64, 0.57, 0.5)):
+        box("Diamond%d" % i, (0, 0.255, z), (0.05, 0.025, 0.05), e if i % 2 == 0 else ed, body, 0.0, (0, math.radians(45), 0))
+    for i, z in enumerate((0.5, 0.62)):
+        box("BackStripe%d" % i, (0, -0.25, z), (0.16, 0.03, 0.035), d, body, 0.01)
+    # Arms (shoulder joints): shirt sleeves with embroidered cuffs, striped fur hands.
+    for side, x in (("L", -0.27), ("R", 0.27)):
+        arm = limb("Arm" + side, (x, 0, 0.72), 0.27, 0.07, s, root, o)
+        bpy.ops.mesh.primitive_torus_add(location=(x, 0, 0.53), major_radius=0.072, minor_radius=0.022)
         finish(bpy.context.active_object, "Cuff" + side, e, arm)
-    # Head
-    head = empty("Head", (0, 0, 0.98), root)
-    sphere("Skull", (0, 0, 1.02), (0.3, 0.27, 0.27), o, head, 24)
-    sphere("Muzzle", (0, 0.2, 0.95), (0.16, 0.11, 0.1), c, head)
-    sphere("Nose", (0, 0.31, 0.99), (0.045, 0.03, 0.035), mat("nose", PINK), head, 12)
-    for x in (-0.11, 0.11):
-        sphere("Eye%+.0f" % (x * 100), (x, 0.24, 1.08), (0.045, 0.03, 0.055), d, head, 12)
-        sphere("Shine%+.0f" % (x * 100), (x + 0.012, 0.268, 1.1), (0.014,) * 3, c, head, 8)
-        sphere("Cheek%+.0f" % (x * 100), (x * 1.7, 0.16, 0.95), (0.08, 0.06, 0.07), c, head)
-        ear = sphere("Ear%+.0f" % (x * 100), (x * 1.7, 0, 1.27), (0.09, 0.05, 0.09), o, head, 14)
-        sphere("EarIn%+.0f" % (x * 100), (x * 1.7, 0.03, 1.27), (0.05, 0.02, 0.05), c, ear, 10)
-    for i, x in enumerate((-0.07, 0.0, 0.07)):
-        box("HeadStripe%d" % i, (x, 0.12, 1.25), (0.025, 0.08, 0.09 if i == 1 else 0.06), d, head, 0.008)
-    # Tail: a curve of three pieces from the tail base, dark tip
-    tail = empty("Tail", (0, -0.27, 0.42), root)
-    for i in range(3):
-        z = 0.42 + 0.09 * i
-        y = -0.3 - 0.1 * i
-        cylinder("Tail%d" % i, (0, y, z), 0.045, 0.16, o if i < 2 else d, tail, (math.radians(-55 + 15 * i), 0, 0), 12)
+        box("HandStripe" + side, (x, 0.0, 0.47), (0.13, 0.13, 0.025), d, arm, 0.01)
+    # Head: big and round (toddler proportions).
+    head = empty("Head", (0, 0, 0.82), root)
+    sphere("Skull", (0, 0, 1.0), (0.34, 0.31, 0.3), o, head, 28)
+    for x in (-1, 1):
+        sphere("Cheek%+d" % x, (x * 0.16, 0.2, 0.9), (0.13, 0.1, 0.1), c, head, 16)
+        sphere("CheekTuft%+d" % x, (x * 0.31, 0.05, 0.9), (0.07, 0.06, 0.05), c, head, 10)
+    sphere("Muzzle", (0, 0.25, 0.92), (0.12, 0.08, 0.08), c, head, 16)
+    sphere("Nose", (0, 0.32, 0.96), (0.05, 0.03, 0.035), pink, head, 12)
+    sphere("Mouth", (0, 0.31, 0.87), (0.03, 0.01, 0.012), d, head, 8)
+    # Big eyes: white, a dark iris, two shines.
+    for x in (-0.12, 0.12):
+        sphere("EyeWhite%+.0f" % (x * 100), (x, 0.25, 1.05), (0.075, 0.04, 0.085), white, head, 16)
+        sphere("Eye%+.0f" % (x * 100), (x, 0.285, 1.04), (0.055, 0.02, 0.065), d, head, 14)
+        sphere("Shine%+.0f" % (x * 100), (x + 0.02, 0.305, 1.07), (0.018,) * 3, white, head, 8)
+        sphere("Shine2%+.0f" % (x * 100), (x - 0.015, 0.303, 1.02), (0.009,) * 3, white, head, 6)
+        box("Brow%+.0f" % (x * 100), (x, 0.27, 1.16), (0.07, 0.02, 0.018), d, head, 0.005, (0, math.radians(-12 if x < 0 else 12), 0))
+    # Round ears with pink inside.
+    for x in (-0.22, 0.22):
+        ear = sphere("Ear%+.0f" % (x * 100), (x, 0.0, 1.27), (0.1, 0.06, 0.1), o, head, 16)
+        sphere("EarIn%+.0f" % (x * 100), (x, 0.035, 1.27), (0.06, 0.02, 0.06), pink, ear, 10)
+    # Forehead stripes and side stripes.
+    for i, x in enumerate((-0.08, 0.0, 0.08)):
+        box("HeadStripe%d" % i, (x, 0.2, 1.24), (0.028, 0.08, 0.1 if i == 1 else 0.07), d, head, 0.008, (math.radians(-35), 0, 0))
+    for x in (-1, 1):
+        for k in range(2):
+            box("SideStripe%+d%d" % (x, k), (x * 0.32, 0.0, 1.0 + k * 0.08), (0.03, 0.12, 0.03), d, head, 0.008, (0, 0, math.radians(20 * x)))
+    # Tail: a curve of four pieces from the tail base, dark rings, dark tip.
+    tail = empty("Tail", (0, -0.24, 0.4), root)
+    for i in range(4):
+        z = 0.4 + 0.08 * i
+        y = -0.28 - 0.09 * i
+        cylinder("Tail%d" % i, (0, y, z), 0.045, 0.14, o if i % 2 == 0 else d, tail, (math.radians(-60 + 18 * i), 0, 0), 12)
+    sphere("TailTip", (0, -0.62, 0.72), (0.055,) * 3, d, tail, 10)
     export("tygrytsa")
 
 
@@ -635,30 +663,384 @@ def build_clock_maker():
     export("clock_maker")
 
 
-build_tygrytsa()
-build_hatchback()
-build_jeep()
-build_van()
-build_hata()
-build_tree()
-build_sunflower()
-build_fence()
-build_well()
-build_postman()
-build_ferry()
-build_english_house()
-build_shop("bakery", (0.96, 0.66, 0.30, 1))
-build_shop("cafe", (0.45, 0.68, 0.55, 1))
-build_shop("toy_shop", (0.55, 0.45, 0.82, 1))
-build_clock_tower()
-build_bus_stop()
-build_barn()
-build_lamp()
-build_baker()
-build_toy_maker()
-build_cow()
-build_sheep()
-build_pig()
-build_duck()
-build_farmer()
-build_clock_maker()
+
+# --- Ukraine: the village's own things ---------------------------------------------------
+
+BLOSSOM = (0.98, 0.86, 0.90, 1)
+CHERRY = (0.80, 0.10, 0.18, 1)
+WHEAT = (0.93, 0.76, 0.36, 1)
+HAY = (0.86, 0.70, 0.36, 1)
+POPLAR = (0.30, 0.55, 0.28, 1)
+WILLOW = (0.50, 0.70, 0.36, 1)
+CLAY = (0.78, 0.44, 0.26, 1)
+PUMPKIN = (0.95, 0.55, 0.15, 1)
+STORK_BEAK = (0.92, 0.35, 0.18, 1)
+UA_BLUE = (0.25, 0.50, 0.85, 1)
+UA_YELLOW = (0.98, 0.80, 0.20, 1)
+
+
+def build_poplar():
+    """A tall, narrow Ukrainian poplar (tополя): a slim green flame. About 8 m."""
+    reset()
+    root = empty("Poplar", (0, 0, 0))
+    cylinder("Trunk", (0, 0, 0.8), 0.18, 1.6, mat("wood", WOOD), root, verts=8)
+    for i, (z, r) in enumerate(((2.6, 0.95), (4.0, 0.9), (5.3, 0.75), (6.4, 0.55), (7.3, 0.35))):
+        sphere("Leaves%d" % i, (0.05 * (i % 2), 0, z), (r, r, r * 1.35), mat("poplar", POPLAR), root, 14)
+    export("poplar")
+
+
+def build_cherry_tree():
+    """A cherry tree in an orchard (вишня): a soft crown of white-pink blossom with red cherries."""
+    reset()
+    root = empty("CherryTree", (0, 0, 0))
+    cylinder("Trunk", (0, 0, 0.8), 0.16, 1.6, mat("wood", WOOD), root, verts=8)
+    for x, y, z in ((-0.4, 0.1, 1.7), (0.35, 0.3, 1.8)):
+        cylinder("Branch%+.0f" % (x * 10), (x * 0.5, y * 0.5, z - 0.2), 0.07, 0.8, mat("wood", WOOD), root, (math.radians(25 * (1 if y > 0 else -1)), math.radians(35 * (1 if x > 0 else -1)), 0), 6)
+    for x, y, z, r in ((0, 0, 2.4, 1.0), (0.75, 0.2, 2.1, 0.75), (-0.7, -0.2, 2.15, 0.8), (0.1, -0.55, 2.9, 0.65), (-0.2, 0.55, 2.8, 0.6)):
+        sphere("Blossom%+.0f%+.0f" % (x * 10, y * 10), (x, y, z), (r, r, r * 0.85), mat("blossom", BLOSSOM), root, 14)
+    for i in range(10):
+        a = math.tau * i / 10
+        sphere("Cherry%d" % i, (math.cos(a) * 0.95, math.sin(a) * 0.95, 2.0 + 0.3 * math.sin(i * 1.7)), (0.08,) * 3, mat("cherry", CHERRY), root, 8)
+    export("cherry_tree")
+
+
+def build_willow():
+    """A weeping willow by the river (верба): a wide crown hanging in long drapes."""
+    reset()
+    root = empty("Willow", (0, 0, 0))
+    cylinder("Trunk", (0, 0, 1.1), 0.28, 2.2, mat("wood", WOOD), root, verts=10)
+    sphere("Crown", (0, 0, 3.2), (1.8, 1.8, 1.1), mat("willow", WILLOW), root, 16)
+    for i in range(10):
+        a = math.tau * i / 10
+        sphere("Drape%d" % i, (math.cos(a) * 1.55, math.sin(a) * 1.55, 2.1), (0.42, 0.42, 1.15), mat("willow", WILLOW), root, 10)
+    export("willow")
+
+
+def build_haystack():
+    """A round haystack (копиця) with a little stick on top."""
+    reset()
+    root = empty("Haystack", (0, 0, 0))
+    sphere("Hay", (0, 0, 0.9), (1.05, 1.05, 1.2), mat("hay", HAY), root, 16)
+    bpy.ops.mesh.primitive_cone_add(vertices=14, radius1=0.75, radius2=0.1, depth=0.8, location=(0, 0, 2.0))
+    finish(bpy.context.active_object, "Top", mat("hay", HAY), root)
+    cylinder("Stick", (0, 0, 2.5), 0.03, 0.6, mat("wood", WOOD), root, verts=6)
+    export("haystack")
+
+
+def build_stork_nest():
+    """A stork in its nest on top of a tall pole (лелека): a lucky sign over a Ukrainian village."""
+    reset()
+    root = empty("StorkNest", (0, 0, 0))
+    cylinder("Pole", (0, 0, 2.5), 0.12, 5.0, mat("wood", WOOD), root, verts=8)
+    bpy.ops.mesh.primitive_torus_add(location=(0, 0, 5.1), major_radius=0.55, minor_radius=0.2)
+    finish(bpy.context.active_object, "Nest", mat("nest", (0.55, 0.42, 0.28, 1)), root)
+    white, black = mat("stork_white", (0.98, 0.98, 0.97, 1)), mat("stork_black", (0.15, 0.15, 0.17, 1))
+    sphere("Body", (0, 0, 5.45), (0.25, 0.42, 0.25), white, root, 14)
+    sphere("Wings", (0, -0.15, 5.47), (0.27, 0.3, 0.18), black, root, 12)
+    cylinder("Neck", (0, 0.3, 5.75), 0.06, 0.45, white, root, (math.radians(-20), 0, 0), 8)
+    sphere("Head", (0, 0.36, 6.0), (0.1,) * 3, white, root, 10)
+    bpy.ops.mesh.primitive_cone_add(vertices=8, radius1=0.04, radius2=0.005, depth=0.4, location=(0, 0.6, 5.95), rotation=(math.radians(-100), 0, 0))
+    finish(bpy.context.active_object, "Beak", mat("stork_beak", STORK_BEAK), root)
+    for x in (-0.045, 0.045):
+        sphere("Eye%+.0f" % (x * 100), (x, 0.43, 6.03), (0.018,) * 3, black, root, 6)
+    export("stork_nest")
+
+
+def build_zhuravel():
+    """A well sweep (журавель): a post with a long see-saw pole and a bucket over a log well."""
+    reset()
+    root = empty("Zhuravel", (0, 0, 0))
+    for i in range(4):
+        box("Log%d" % i, (0, 0, 0.15 + i * 0.22), (1.3, 1.3, 0.2), mat("log", (0.62, 0.45, 0.30, 1)), root, 0.06)
+    cylinder("Water", (0, 0, 0.9), 0.5, 0.04, mat("water", (0.35, 0.6, 0.85, 1)), root, verts=12)
+    cylinder("Post", (-2.2, 0, 1.6), 0.12, 3.2, mat("wood", WOOD), root, verts=8)
+    cylinder("Sweep", (-1.2, 0, 3.6), 0.06, 5.2, mat("wood", WOOD), root, (0, math.radians(68), 0), 8)
+    box("Weight", (-3.4, 0, 3.0), (0.4, 0.3, 0.3), mat("stone", STONE), root, 0.05)
+    cylinder("Rope", (0.0, 0, 2.55), 0.015, 2.1, mat("rope", (0.8, 0.72, 0.55, 1)), root, verts=6)
+    cylinder("Bucket", (0.0, 0, 1.45), 0.16, 0.26, mat("bucket", (0.55, 0.38, 0.24, 1)), root, verts=12)
+    export("zhuravel")
+
+
+def build_pumpkin():
+    """A round orange pumpkin (гарбуз) with ribs and a stem."""
+    reset()
+    root = empty("Pumpkin", (0, 0, 0))
+    for i in range(8):
+        a = math.tau * i / 8
+        sphere("Rib%d" % i, (math.cos(a) * 0.14, math.sin(a) * 0.14, 0.28), (0.2, 0.2, 0.26), mat("pumpkin", PUMPKIN), root, 12)
+    cylinder("Stem", (0, 0, 0.58), 0.04, 0.16, mat("stem", STEM), root, verts=6)
+    export("pumpkin")
+
+
+def build_wheat():
+    """A clump of ripe wheat stalks with heavy ears; planted by the hundred in fields."""
+    reset()
+    root = empty("Wheat", (0, 0, 0))
+    for i in range(7):
+        a = math.tau * i / 7
+        r = 0.12 if i else 0.0
+        x, y = math.cos(a) * r, math.sin(a) * r
+        h = 0.9 + 0.12 * ((i * 37) % 3)
+        cylinder("Stalk%d" % i, (x, y, h / 2), 0.012, h, mat("wheat", WHEAT), root, verts=5)
+        sphere("Ear%d" % i, (x, y, h + 0.08), (0.035, 0.035, 0.11), mat("wheat_ear", (0.88, 0.66, 0.28, 1)), root, 6)
+    export("wheat")
+
+
+def build_gate():
+    """A painted wooden yard gate (хвіртка) in blue and yellow, with a little roof."""
+    reset()
+    root = empty("Gate", (0, 0, 0))
+    for x in (-0.9, 0.9):
+        box("Post%+.0f" % x, (x, 0, 0.9), (0.18, 0.18, 1.8), mat("wood", WOOD), root, 0.03)
+    for i in range(7):
+        box("Plank%d" % i, (-0.66 + i * 0.22, 0, 0.6), (0.16, 0.06, 0.9), mat("ua_blue" if i % 2 == 0 else "ua_yellow", UA_BLUE if i % 2 == 0 else UA_YELLOW), root, 0.02)
+    box("Rail", (0, 0, 1.05), (1.7, 0.08, 0.08), mat("wood", WOOD), root, 0.01)
+    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=1.4, radius2=0.05, depth=0.5, location=(0, 0, 2.05), rotation=(0, 0, math.radians(45)))
+    o = bpy.context.active_object
+    o.scale = (1.0, 0.35, 1.0)
+    finish(o, "Roof", mat("thatch", THATCH), root, bevel=0.03)
+    export("gate")
+
+
+def build_pot_fence():
+    """A wicker fence section with clay pots hung upside down on its posts (глечики на тину)."""
+    reset()
+    root = empty("PotFence", (0, 0, 0))
+    for x in (-1.0, -0.5, 0.0, 0.5, 1.0):
+        cylinder("Post%+.0f" % (x * 10), (x, 0, 0.5), 0.04, 1.05, mat("wood", WOOD), root, verts=8)
+    for z in (0.25, 0.45, 0.65):
+        bpy.ops.mesh.primitive_cylinder_add(vertices=8, radius=0.035, depth=2.1, location=(0, 0, z), rotation=(0, math.radians(90), 0))
+        finish(bpy.context.active_object, "Weave%.0f" % (z * 100), mat("wicker", (0.70, 0.55, 0.36, 1)), root, bevel=0.0)
+    for x in (-1.0, 0.0, 1.0):
+        sphere("Pot%+.0f" % x, (x, 0, 1.12), (0.13, 0.13, 0.15), mat("clay", CLAY), root, 12)
+        cylinder("Neck%+.0f" % x, (x, 0, 0.98), 0.07, 0.08, mat("clay", CLAY), root, verts=10)
+    export("pot_fence")
+
+
+# --- England: the town's own things ------------------------------------------------------
+
+OAK = (0.24, 0.48, 0.26, 1)
+HEDGE = (0.22, 0.45, 0.24, 1)
+PILLAR_RED = (0.82, 0.12, 0.14, 1)
+CREAM_STUCCO = (0.95, 0.90, 0.78, 1)
+IRON = (0.12, 0.12, 0.14, 1)
+
+
+def build_oak():
+    """A big English oak: a wide, dark, lumpy crown on a thick trunk. About 7 m."""
+    reset()
+    root = empty("Oak", (0, 0, 0))
+    cylinder("Trunk", (0, 0, 1.3), 0.38, 2.6, mat("wood", WOOD), root, verts=10)
+    for x, y, z, r in ((0, 0, 3.9, 1.9), (1.5, 0.4, 3.3, 1.3), (-1.5, -0.3, 3.4, 1.35), (0.4, -1.4, 3.5, 1.2), (-0.3, 1.4, 3.6, 1.2), (0.2, 0.1, 5.1, 1.2)):
+        sphere("Leaves%+.0f%+.0f" % (x * 10, y * 10), (x, y, z), (r, r, r * 0.85), mat("oak", OAK), root, 14)
+    export("oak")
+
+
+def build_hedge():
+    """A trimmed box hedge, 2 m long, rounded on top."""
+    reset()
+    root = empty("Hedge", (0, 0, 0))
+    box("Hedge", (0, 0, 0.55), (2.0, 0.8, 1.1), mat("hedge", HEDGE), root, 0.25)
+    export("hedge")
+
+
+def build_phone_box():
+    """A red telephone box with a domed roof and many little window panes."""
+    reset()
+    root = empty("PhoneBox", (0, 0, 0))
+    red = mat("pillar_red", PILLAR_RED)
+    box("Base", (0, 0, 0.08), (1.1, 1.1, 0.16), red, root, 0.02)
+    box("Box", (0, 0, 1.3), (1.0, 1.0, 2.3), red, root, 0.04)
+    for (dx, dy, rz) in ((0, 0.51, 0), (0, -0.51, 0), (0.51, 0, 90), (-0.51, 0, 90)):
+        for row in range(5):
+            for col in range(3):
+                x = dx + (col - 1) * 0.22 * (0 if dx else 1)
+                y = dy + (col - 1) * 0.22 * (1 if dx else 0)
+                box("Pane%d%d%+.0f%+.0f" % (row, col, dx * 10, dy * 10), (x, y, 0.75 + row * 0.27), (0.18 if not dx else 0.03, 0.03 if not dx else 0.18, 0.2), mat("glass", GLASS), root, 0.0)
+        box("Sign%+.0f%+.0f" % (dx * 10, dy * 10), (dx * 1.02, dy * 1.02, 2.3), (0.7 if not dx else 0.03, 0.03 if not dx else 0.7, 0.16), mat("trim", TRIM), root, 0.0)
+    sphere("Dome", (0, 0, 2.48), (0.6, 0.6, 0.22), red, root, 16)
+    export("phone_box")
+
+
+def build_post_box():
+    """A red pillar post box with a black base and a dark letter slot."""
+    reset()
+    root = empty("PostBox", (0, 0, 0))
+    red = mat("pillar_red", PILLAR_RED)
+    cylinder("Base", (0, 0, 0.1), 0.34, 0.2, mat("iron", IRON), root, verts=18)
+    cylinder("Body", (0, 0, 0.75), 0.3, 1.1, red, root, verts=18)
+    sphere("Cap", (0, 0, 1.32), (0.34, 0.34, 0.16), red, root, 18)
+    box("Slot", (0, 0.29, 1.1), (0.3, 0.04, 0.06), mat("iron", IRON), root, 0.0)
+    box("Plate", (0, 0.29, 0.8), (0.24, 0.03, 0.2), mat("trim", TRIM), root, 0.0)
+    export("post_box")
+
+
+def build_double_decker():
+    """A red double-decker bus: two rows of windows, black wheels. About 8 m long."""
+    reset()
+    root = empty("DoubleDecker", (0, 0, 0))
+    red = mat("bus_red", (0.85, 0.16, 0.16, 1))
+    box("Body", (0, 0, 2.2), (2.4, 7.6, 3.6), red, root, 0.25)
+    box("Band", (0, 0, 2.1), (2.44, 7.64, 0.18), mat("trim", TRIM), root, 0.02)
+    for x in (-1.21, 1.21):
+        for row, z in enumerate((1.5, 3.1)):
+            for i in range(6):
+                box("Win%+.0f%d%d" % (x, row, i), (x, -3.0 + i * 1.15, z), (0.04, 0.9, 0.7), mat("glass", GLASS), root, 0.02)
+    for z in (1.6, 3.1):
+        box("Front%.0f" % z, (0, 3.81, z), (2.0, 0.04, 0.8), mat("glass", GLASS), root, 0.02)
+    box("Destination", (0, 3.82, 3.75), (1.2, 0.04, 0.28), mat("dest", (0.15, 0.15, 0.15, 1)), root, 0.0)
+    for x, y in ((-1.1, 2.6), (1.1, 2.6), (-1.1, -2.6), (1.1, -2.6)):
+        wheel("Wheel%+.0f%+.0f" % (x, y), (x, y, 0.5), 0.5, 0.35, root)
+    lights(root, 3.82, 0.8, 0.8)
+    export("double_decker")
+
+
+def build_bench():
+    """A park bench: wooden slats on black iron legs."""
+    reset()
+    root = empty("Bench", (0, 0, 0))
+    for x in (-0.8, 0.8):
+        box("Leg%+.0f" % x, (x, 0, 0.35), (0.08, 0.5, 0.7), mat("iron", IRON), root, 0.02)
+        box("Arm%+.0f" % x, (x, 0, 0.75), (0.08, 0.5, 0.06), mat("iron", IRON), root, 0.02)
+    for i in range(3):
+        box("Seat%d" % i, (0, -0.15 + i * 0.15, 0.48), (1.8, 0.12, 0.05), mat("wood", WOOD), root, 0.01)
+    for i in range(2):
+        box("Back%d" % i, (0, -0.27, 0.7 + i * 0.18), (1.8, 0.05, 0.12), mat("wood", WOOD), root, 0.01)
+    export("bench")
+
+
+def build_iron_fence():
+    """Black iron railings with spear tips, 2 m long."""
+    reset()
+    root = empty("IronFence", (0, 0, 0))
+    iron = mat("iron", IRON)
+    for i in range(11):
+        x = -1.0 + i * 0.2
+        cylinder("Bar%d" % i, (x, 0, 0.5), 0.02, 1.0, iron, root, verts=6)
+        bpy.ops.mesh.primitive_cone_add(vertices=6, radius1=0.045, radius2=0.0, depth=0.12, location=(x, 0, 1.06))
+        finish(bpy.context.active_object, "Tip%d" % i, mat("gold", (0.85, 0.7, 0.3, 1)), root)
+    for z in (0.15, 0.85):
+        box("Rail%.0f" % (z * 10), (0, 0, z), (2.05, 0.04, 0.05), iron, root, 0.0)
+    export("iron_fence")
+
+
+def build_terrace():
+    """A row of three joined English terrace houses in different colours, with bay windows."""
+    reset()
+    root = empty("Terrace", (0, 0, 0))
+    walls = (BRICK, CREAM_STUCCO, (0.60, 0.42, 0.36, 1))
+    doors = ((0.22, 0.36, 0.62, 1), (0.20, 0.45, 0.30, 1), (0.75, 0.20, 0.22, 1))
+    for i in range(3):
+        x = -4.0 + i * 4.0
+        box("Wall%d" % i, (x, 0, 2.3), (4.0, 4.4, 4.6), mat("terrace_wall%d" % i, walls[i]), root, 0.04)
+        box("Door%d" % i, (x + 1.1, 2.22, 1.0), (0.9, 0.08, 2.0), mat("terrace_door%d" % i, doors[i]), root, 0.03)
+        box("Bay%d" % i, (x - 0.7, 2.4, 1.2), (1.8, 0.5, 1.8), mat("terrace_wall%d" % i, walls[i]), root, 0.04)
+        box("BayGlass%d" % i, (x - 0.7, 2.66, 1.3), (1.5, 0.04, 1.2), mat("glass", GLASS), root, 0.01)
+        box("BayRoof%d" % i, (x - 0.7, 2.4, 2.2), (2.0, 0.7, 0.15), mat("slate", SLATE), root, 0.02)
+        for wx in (-0.9, 0.9):
+            box("Frame%d%+.0f" % (i, wx), (x + wx, 2.21, 3.4), (0.8, 0.06, 1.0), mat("trim", TRIM), root, 0.02)
+            box("Pane%d%+.0f" % (i, wx), (x + wx, 2.23, 3.4), (0.62, 0.05, 0.8), mat("glass", GLASS), root, 0.01)
+        box("Chimney%d" % i, (x + 1.2, -0.4, 6.4), (0.6, 0.6, 1.2), mat("brick", BRICK), root, 0.03)
+        for k in (-0.12, 0.12):
+            cylinder("Pot%d%+.0f" % (i, k * 100), (x + 1.2 + k, -0.4, 7.1), 0.08, 0.25, mat("clay", CLAY), root, verts=8)
+    for sy in (-1, 1):
+        box("RoofSide%+d" % sy, (0, sy * 1.15, 5.15), (12.3, 2.6, 0.18), mat("slate", SLATE), root, 0.04, (math.radians(-35 * sy), 0, 0))
+    export("terrace")
+
+
+def build_poppies():
+    """A wild meadow patch: red poppies and blue cornflowers among a few green leaves."""
+    reset()
+    root = empty("Poppies", (0, 0, 0))
+    spots = ((0, 0), (0.35, 0.15), (-0.3, 0.25), (0.15, -0.35), (-0.25, -0.25), (0.45, -0.2), (-0.5, 0.0))
+    for i, (x, y) in enumerate(spots):
+        h = 0.45 + 0.08 * (i % 3)
+        cylinder("Stem%d" % i, (x, y, h / 2), 0.012, h, mat("stem", STEM), root, verts=5)
+        colour = (0.30, 0.45, 0.90, 1) if i % 3 == 2 else (0.90, 0.16, 0.14, 1)
+        sphere("Bloom%d" % i, (x, y, h + 0.03), (0.09, 0.09, 0.05), mat("bloom%d" % (i % 3 == 2), colour), root, 10)
+        sphere("Middle%d" % i, (x, y, h + 0.07), (0.025,) * 3, mat("stripe", DARK), root, 6)
+    for i in range(4):
+        a = math.tau * i / 4
+        sphere("Leaf%d" % i, (math.cos(a) * 0.2, math.sin(a) * 0.2, 0.06), (0.16, 0.08, 0.05), mat("leaf", LEAF), root, 8)
+    export("poppies")
+
+
+def build_flower_bed():
+    """A neat English flower bed: a dark soil border with rows of tulips in pink, yellow and red."""
+    reset()
+    root = empty("FlowerBed", (0, 0, 0))
+    box("Soil", (0, 0, 0.08), (2.0, 0.9, 0.16), mat("soil", (0.40, 0.28, 0.20, 1)), root, 0.04)
+    colours = ((0.95, 0.45, 0.62, 1), (0.98, 0.82, 0.22, 1), (0.88, 0.18, 0.20, 1))
+    for i in range(6):
+        for j in range(2):
+            x, y = -0.75 + i * 0.3, -0.18 + j * 0.36
+            cylinder("Stem%d%d" % (i, j), (x, y, 0.3), 0.012, 0.3, mat("stem", STEM), root, verts=5)
+            sphere("Tulip%d%d" % (i, j), (x, y, 0.48), (0.06, 0.06, 0.09), mat("tulip%d" % ((i + j) % 3), colours[(i + j) % 3]), root, 8)
+    export("flower_bed")
+
+
+def build_bush():
+    """A round garden bush, three soft lumps."""
+    reset()
+    root = empty("Bush", (0, 0, 0))
+    for x, y, z, r in ((0, 0, 0.5, 0.6), (0.45, 0.1, 0.38, 0.42), (-0.42, -0.1, 0.4, 0.45)):
+        sphere("Lump%+.0f" % (x * 10), (x, y, z), (r, r, r * 0.85), mat("bush", (0.30, 0.56, 0.30, 1)), root, 12)
+    export("bush")
+
+
+BUILDERS = {
+    "tygrytsa": build_tygrytsa,
+    "hatchback": build_hatchback,
+    "jeep": build_jeep,
+    "van": build_van,
+    "hata": build_hata,
+    "tree": build_tree,
+    "sunflower": build_sunflower,
+    "fence": build_fence,
+    "well": build_well,
+    "postman": build_postman,
+    "ferry": build_ferry,
+    "english_house": build_english_house,
+    "bakery": lambda: build_shop("bakery", (0.96, 0.66, 0.30, 1)),
+    "cafe": lambda: build_shop("cafe", (0.45, 0.68, 0.55, 1)),
+    "toy_shop": lambda: build_shop("toy_shop", (0.55, 0.45, 0.82, 1)),
+    "clock_tower": build_clock_tower,
+    "bus_stop": build_bus_stop,
+    "barn": build_barn,
+    "lamp": build_lamp,
+    "baker": build_baker,
+    "toy_maker": build_toy_maker,
+    "cow": build_cow,
+    "sheep": build_sheep,
+    "pig": build_pig,
+    "duck": build_duck,
+    "farmer": build_farmer,
+    "clock_maker": build_clock_maker,
+    "poplar": build_poplar,
+    "cherry_tree": build_cherry_tree,
+    "willow": build_willow,
+    "haystack": build_haystack,
+    "stork_nest": build_stork_nest,
+    "zhuravel": build_zhuravel,
+    "pumpkin": build_pumpkin,
+    "wheat": build_wheat,
+    "gate": build_gate,
+    "pot_fence": build_pot_fence,
+    "oak": build_oak,
+    "hedge": build_hedge,
+    "phone_box": build_phone_box,
+    "post_box": build_post_box,
+    "double_decker": build_double_decker,
+    "bench": build_bench,
+    "iron_fence": build_iron_fence,
+    "terrace": build_terrace,
+    "poppies": build_poppies,
+    "flower_bed": build_flower_bed,
+    "bush": build_bush,
+}
+
+# BUILD_ONLY="poplar oak" builds just those (all when unset).
+_only = os.environ.get("BUILD_ONLY", "").split()
+for _name, _build in BUILDERS.items():
+    if not _only or _name in _only:
+        _build()
