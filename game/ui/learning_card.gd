@@ -135,6 +135,8 @@ func close() -> void:
 	is_open = false
 	_run += 1
 	Speech.stop()
+	VoiceListener.cancel()
+	_mic.visible = false
 	visible = false
 	_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	EventLog.log_event(&"learning_moment_closed", {"word_id": String(_entry.id), "skipped": _skipped})

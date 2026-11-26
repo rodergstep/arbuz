@@ -15,6 +15,8 @@ var _capture: AudioEffectCapture
 var _listening: bool = false
 var _heard_for: float = 0.0
 var _heard: bool = false
+## Each listen() gets a new id; cancel() or a newer listen() ends the older one.
+var _session: int = 0
 
 
 func _ready() -> void:
@@ -45,6 +47,8 @@ func listen(seconds: float) -> bool:
 	if not available():
 		await get_tree().create_timer(seconds, true).timeout
 		return false
+	_session += 1
+	var session: int = _session
 	_heard = false
 	_heard_for = 0.0
 	_capture.clear_buffer()
@@ -52,15 +56,29 @@ func listen(seconds: float) -> bool:
 	_player.play()
 	_listening = true
 	var waited: float = 0.0
-	while waited < seconds and not _heard:
+	while waited < seconds and not _heard and session == _session:
 		await get_tree().create_timer(0.05, true).timeout
 		waited += 0.05
+	if session != _session:
+		return false
+	var heard: bool = _heard
+	_stop_mic()
+	EventLog.log_event(&"say_it_listen", {"heard": heard, "after_s": snappedf(waited, 0.1)})
+	return heard
+
+
+## Stops listening at once (the card was closed); the pending listen() returns false.
+func cancel() -> void:
+	if _listening:
+		_session += 1
+		_stop_mic()
+
+
+func _stop_mic() -> void:
 	_listening = false
 	_player.stop()
 	_player.stream = null
 	level_changed.emit(0.0)
-	EventLog.log_event(&"say_it_listen", {"heard": _heard, "after_s": snappedf(waited, 0.1)})
-	return _heard
 
 
 func _process(delta: float) -> void:
