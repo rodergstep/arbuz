@@ -35,6 +35,8 @@ static var _loaded: bool = false
 var _actors: Array[Dictionary] = []
 var _time: float = 0.0
 var _has_bridge: bool = false
+## Moving water highlights: [node, speed, from, to] along the water's flow.
+var _ripples: Array[Array] = []
 
 
 ## True when this sentence has a scene.
@@ -65,6 +67,7 @@ func show_sentence(sentence: String, camera: Camera3D) -> void:
 		remove_child(child)
 		child.queue_free()
 	_actors.clear()
+	_ripples.clear()
 	_time = 0.0
 	var row: PackedStringArray = _scenes.get(sentence.strip_edges(), PackedStringArray())
 	if row.is_empty():
@@ -77,13 +80,25 @@ func show_sentence(sentence: String, camera: Camera3D) -> void:
 		if parts.size() >= 4:
 			_add_actor(parts)
 	var zoom: float = float(row[3]) if row.size() > 3 and not row[3].strip_edges().is_empty() else 1.0
-	camera.look_at_from_position(CAMERA_OFFSET * zoom, LOOK_AT * zoom)
+	match ground:
+		"sky":
+			# Looking up into the sky: it fills the picture.
+			camera.look_at_from_position(Vector3(0, 0.6, 7.0) * zoom, Vector3(0, 3.6, 0) * zoom)
+		"lawn":
+			# Down in the grass, as a child would look at it.
+			camera.look_at_from_position(Vector3(0, 0.7, 3.0) * zoom, Vector3(0, 0.25, 0) * zoom)
+		_:
+			camera.look_at_from_position(CAMERA_OFFSET * zoom, LOOK_AT * zoom)
 
 
 func _process(delta: float) -> void:
 	_time += delta
 	for actor: Dictionary in _actors:
 		_animate(actor)
+	for ripple: Array in _ripples:
+		var node: Node3D = ripple[0]
+		var k: float = fmod(_time * float(ripple[1]) + node.get_meta("offset", 0.0), 1.0)
+		node.position = (ripple[2] as Vector3).lerp(ripple[3], k)
 
 
 # --- grounds -------------------------------------------------------------------------
@@ -138,6 +153,10 @@ func _build_ground(kind: String) -> void:
 			floor_color = Color(0.62, 0.6, 0.58)
 		"sea":
 			floor_color = Color(0.86, 0.74, 0.5)
+		"sky":
+			# A deep, clear blue sky (the painted sky's top colour, bright and saturated).
+			env.background_mode = Environment.BG_COLOR
+			env.background_color = Color(0.24, 0.55, 0.98)
 	var world_env: WorldEnvironment = WorldEnvironment.new()
 	world_env.environment = env
 	add_child(world_env)
@@ -150,6 +169,10 @@ func _build_ground(kind: String) -> void:
 	match kind:
 		"river":
 			add_child(Blocks.box_mesh(Vector3(3.0, 0.1, 18), WATER, Vector3(0, -0.02, 0)))
+			# The water flows: light ripples drift down the river.
+			for i: int in 14:
+				var x: float = randf_range(-1.2, 1.2)
+				_add_ripple(Vector3(x, 0.05, -9), Vector3(x, 0.05, 9), 0.07, i / 14.0, 0.5)
 		"road":
 			add_child(Blocks.box_mesh(Vector3(18, 0.04, 1.9), Color(0.5, 0.5, 0.52), Vector3(0, 0.0, 0)))
 			for i: int in 9:
@@ -160,6 +183,21 @@ func _build_ground(kind: String) -> void:
 				)
 		"sea":
 			add_child(Blocks.box_mesh(Vector3(18, 0.1, 9), WATER, Vector3(0, -0.02, -2.0)))
+			# Little waves roll in towards the beach.
+			for i: int in 18:
+				var x: float = randf_range(-8, 8)
+				_add_ripple(Vector3(x, 0.05, -6.3), Vector3(x, 0.05, 2.2), 0.09, i / 18.0, 1.2)
+		"lawn":
+			# A close carpet of grass blades.
+			for i: int in 160:
+				var blade: MeshInstance3D = Blocks.box_mesh(
+					Vector3(0.03, randf_range(0.25, 0.5), 0.03),
+					Color(0.30, 0.62, 0.24).darkened(randf_range(0.0, 0.3)),
+					Vector3(randf_range(-3, 3), 0.15, randf_range(-2.5, 1.8))
+				)
+				blade.rotation = Vector3(randf_range(-0.3, 0.3), 0, randf_range(-0.3, 0.3))
+				add_child(blade)
+				_actors.append({"node": blade, "action": "sway", "start": blade.position, "walker": false})
 		"grass", "farm", "night":
 			for i: int in 10:
 				var tuft: MeshInstance3D = Blocks.box_mesh(
@@ -173,6 +211,15 @@ func _build_ground(kind: String) -> void:
 		var fence: Node3D = Props.make(&"fence")
 		fence.position = Vector3(0, 0, -3.0)
 		add_child(fence)
+
+
+## A pale ripple line that slides from `from` to `to` over and over.
+func _add_ripple(from: Vector3, to: Vector3, speed: float, offset: float, width: float) -> void:
+	var line: MeshInstance3D = Blocks.flat_mesh(BoxMesh.new(), Color(0.85, 0.94, 1.0))
+	(line.mesh as BoxMesh).size = Vector3(width, 0.02, 0.08)
+	line.set_meta("offset", offset)
+	add_child(line)
+	_ripples.append([line, speed, from, to])
 
 
 # --- actors --------------------------------------------------------------------------
@@ -205,8 +252,19 @@ func _add_actor(parts: PackedStringArray) -> void:
 		bubble.no_depth_test = false
 		node.add_child(bubble)
 		actor["bubble"] = bubble
-	if action == "float":
+	if action == "float" or action == "drift":
 		actor["height"] = float(extra[0]) if not extra.is_empty() else 3.0
+	if action == "drift" and thing == "cloud":
+		node.scale = Vector3.ONE * 2.2
+	if action == "steam":
+		for i: int in 3:
+			var puff: MeshInstance3D = Blocks.flat_mesh(SphereMesh.new(), Color(1, 1, 1))
+			var puff_mat: StandardMaterial3D = puff.mesh.material
+			puff_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			puff.scale = Vector3.ONE * 0.18
+			puff.set_meta("offset", i / 3.0)
+			node.add_child(puff)
+		actor["puffs"] = true
 	if action == "glow":
 		var light: OmniLight3D = OmniLight3D.new()
 		light.light_color = Color(1.0, 0.85, 0.55)
@@ -255,6 +313,21 @@ func _animate(actor: Dictionary) -> void:
 			var k: float = fmod(t, 5.0) / 5.0
 			node.position.y = k * 4.0
 			node.position.x = actor["start"].x + sin(t * 1.5) * 0.3
+		"sway":
+			node.rotation.z = sin(t * 1.8 + node.position.x * 2.0) * 0.18
+		"drift":
+			# Clouds sail slowly across the sky and come round again.
+			var dx: float = fmod(actor["start"].x + 8.0 + t * 0.6, 16.0) - 8.0
+			node.position = Vector3(dx, actor["height"] + sin(t * 0.8 + dx) * 0.1, actor["start"].z)
+		"steam":
+			# Warm: soft steam puffs rise and fade.
+			for child: Node in node.get_children():
+				if child is MeshInstance3D and child.has_meta("offset"):
+					var puff: MeshInstance3D = child
+					var k: float = fmod(t * 0.5 + float(puff.get_meta("offset")), 1.0)
+					puff.position = Vector3(sin(k * 6.0) * 0.1, 0.6 + k * 1.2, 0)
+					puff.scale = Vector3.ONE * (0.12 + k * 0.2)
+					(puff.mesh.material as StandardMaterial3D).albedo_color.a = 0.7 * (1.0 - k)
 		"spin":
 			node.rotation.y = t * 1.5
 		"float":

@@ -1,7 +1,7 @@
 sentence,ground,actors,zoom
 The car goes over the bridge.,river,bridge stand 0 0; car move -7 0 7 0 2.2,1.4
 We walk on the bridge.,river,bridge stand 0 0; tygrytsa move -5 0 5 0 1.1,1.2
-The river is blue.,river,duck swim 0 -4 0 3 0.8; tree stand -3.5 -2; flower stand 2.6 1,1.1
+The river is blue.,river,duck swim 0 -4 0 3 0.8; tree stand -3.5 -2; flower stand 2.6 1,1
 The duck swims in the river.,river,duck swim 0 -4 0 3 0.8,1
 The car drives on the road.,road,car move -8 0 8 0 2.2; tree stand -2.5 -2.5; tree stand 3 -3,1.4
 The road goes around the village.,road,hata stand -3.5 -4; hata stand 3.5 -4; car move -8 0 8 0 2.2,1.7
@@ -48,7 +48,7 @@ We go to the shop.,town,shop stand 0 -3; tygrytsa arrive 3 2.5 0.5 0 1,1.7
 The shop is open.,town,shop stand 0 -2,1.7
 The bakery smells nice.,town,bakery stand 0 -2.5; bread float 1.8 1 0.6,1.7
 We buy bread at the bakery.,town,bakery stand 0 -3; baker stand -1.2 0.5; bread stand 0.5 0.8,1.6
-The sea is blue.,sea,boat swim -6 -2 6 -2 0.7; sun float 3 -4 3.6,1.6
+The sea is blue.,sea,boat swim -6 -3 6 -3 0.7; sun float 3 -5 3.6,1.4
 The ferry goes on the sea.,sea,ferry move -10 -2 10 -2 1.6,2.4
 The boat is on the sea.,sea,boat swim -5 -1.5 5 -1.5 0.8,1.2
 A little boat.,sea,boat swim -3 -1 3 -1 0.5,0.8
@@ -65,18 +65,18 @@ Happy cake!,kitchen,cake grow 0 0,0.6
 We bake a big cake.,kitchen,baker stand -1 0; cake grow 1 0.3,1
 The baker makes bread.,kitchen,baker stand -1.2 0; bread count 1 0.4 2,1
 The baker is happy.,town,baker wave 0 0,1
-The bread is warm.,kitchen,bread stand 0 0,0.5
+The bread is warm.,kitchen,bread steam 0 0,0.5
 We eat bread.,kitchen,tygrytsa stand -0.7 0; bread eat 0.5 0.5,0.8
 The milk is white.,kitchen,milk spin 0 0,0.5
 I drink milk.,kitchen,tygrytsa stand -0.6 0; milk eat 0.5 0.5,0.8
 Milk for the cake.,kitchen,milk stand -0.6 0; cake stand 0.6 0,0.7
 The balloon is red.,grass,balloon_red stand 0 0,1
 A red apple.,grass,apple spin 0 0,0.5
-The sky is blue.,grass,cloud float -2.2 -2 3.4; cloud float 2.4 -3 4; bird float 0 -1 2.8; sun float 3.5 -4 4.6,1.4
+The sky is blue.,sky,cloud drift -5 -4 4.2; cloud drift 1 -5 5.2; cloud drift 5 -3 3.6; bird drift -2 -1 3.0,1
 A blue balloon.,grass,balloon_blue stand 0 0,1
-The sun is yellow.,grass,sun float 0 0 1.6,1
+The sun is yellow.,sky,sun float 0 -2 3.8; cloud drift -4 -4 4.6; cloud drift 3 -5 5.4,1
 A yellow balloon.,grass,balloon_yellow stand 0 0,1
-The grass is green.,grass,flower stand -2 0.5; flower stand 2.2 -0.5; bird stand 0 1,0.9
+The grass is green.,lawn,bird stand 0.6 -0.4,1
 A green balloon.,grass,balloon_green stand 0 0,1
 The balloon flies up.,grass,balloon_red fly 0 0,1.3
 A big balloon.,grass,balloon_blue grow 0 0,1
