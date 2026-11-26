@@ -68,6 +68,29 @@ static func solid_box(parent: Node3D, pos: Vector3, size: Vector3, color: Color)
 	return body
 
 
+## A painted prop from assets/models as one merged mesh (see ModelPainter.merged_mesh).
+static func prop(
+	model_name: String,
+	pos: Vector3,
+	yaw_deg: float = 0.0,
+	scale_by: Vector3 = Vector3.ONE,
+	sway_colors: Array[Color] = []
+) -> MeshInstance3D:
+	var inst: MeshInstance3D = MeshInstance3D.new()
+	inst.mesh = ModelPainter.merged_mesh(model_name, sway_colors)
+	inst.position = pos
+	inst.rotation_degrees.y = yaw_deg
+	inst.scale = scale_by
+	return inst
+
+
+## A collision-only box (its painted look comes from a model placed on top).
+static func hidden_solid(parent: Node3D, pos: Vector3, size: Vector3) -> StaticBody3D:
+	var body: StaticBody3D = solid_box(parent, pos, size, Color.WHITE)
+	(body.get_child(1) as MeshInstance3D).visible = false
+	return body
+
+
 static func house(parent: Node3D, pos: Vector3, size: Vector3, wall: Color, roof: Color) -> StaticBody3D:
 	var body: StaticBody3D = solid_box(parent, pos + Vector3(0, size.y / 2.0, 0), size, wall)
 	var prism: PrismMesh = PrismMesh.new()

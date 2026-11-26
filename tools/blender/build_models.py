@@ -233,7 +233,101 @@ def build_van():
     export("car_van")
 
 
+WALL = (0.97, 0.95, 0.90, 1)
+THATCH = (0.80, 0.63, 0.34, 1)
+SHUTTER = (0.36, 0.58, 0.82, 1)
+WOOD = (0.55, 0.38, 0.24, 1)
+LEAF = (0.32, 0.60, 0.34, 1)
+PETAL = (1.0, 0.80, 0.18, 1)
+SEEDS = (0.40, 0.25, 0.14, 1)
+STEM = (0.38, 0.62, 0.30, 1)
+FLOWER_RED = (0.88, 0.30, 0.32, 1)
+STONE = (0.72, 0.70, 0.66, 1)
+
+
+def build_hata():
+    """A Ukrainian hata: white walls, a soft thatched roof, blue shutters, flower boxes. 5 x 4.5 m."""
+    reset()
+    root = empty("Hata", (0, 0, 0))
+    box("Walls", (0, 0, 1.4), (5.0, 4.4, 2.8), mat("wall", WALL), root, 0.12)
+    box("Plinth", (0, 0, 0.12), (5.2, 4.6, 0.24), mat("plinth", (0.55, 0.42, 0.34, 1)), root, 0.05)
+    # Thatched roof: a deep rounded hip, overhanging
+    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=4.3, radius2=0.6, depth=2.2, location=(0, 0, 3.85), rotation=(0, 0, math.radians(45)))
+    roof = bpy.context.active_object
+    roof.scale = (1.0, 0.92, 1.0)
+    finish(roof, "Roof", mat("thatch", THATCH), root, smooth=True, bevel=0.25)
+    # Door (front faces +Y = Godot -Z) and windows with blue shutters and flower boxes
+    box("Door", (0, 2.21, 1.0), (0.9, 0.08, 1.9), mat("wood", WOOD), root, 0.04)
+    for x in (-1.6, 1.6):
+        box("Window%+.0f" % x, (x, 2.21, 1.6), (0.8, 0.06, 0.8), mat("glass", GLASS), root, 0.03)
+        for sx in (-0.55, 0.55):
+            box("Shutter%+.0f%+.0f" % (x, sx), (x + sx, 2.23, 1.6), (0.3, 0.06, 0.85), mat("shutter", SHUTTER), root, 0.03)
+        box("FlowerBox%+.0f" % x, (x, 2.33, 1.12), (0.9, 0.22, 0.18), mat("wood", WOOD), root, 0.03)
+        for i, fx in enumerate((-0.3, 0.0, 0.3)):
+            sphere("Flower%+.0f%d" % (x, i), (x + fx, 2.36, 1.28), (0.09,) * 3, mat("flower_red", FLOWER_RED) if i != 1 else mat("petal", PETAL), root, 10)
+    box("Chimney", (1.2, -0.8, 4.4), (0.5, 0.5, 1.1), mat("wall", WALL), root, 0.05)
+    export("hata")
+
+
+def build_tree():
+    """A round, soft tree: three leafy balls on a short trunk. About 4.5 m."""
+    reset()
+    root = empty("Tree", (0, 0, 0))
+    cylinder("Trunk", (0, 0, 1.0), 0.22, 2.0, mat("wood", WOOD), root, verts=10)
+    crown = empty("Crown", (0, 0, 2.2), root)
+    for x, y, z, r in ((0, 0, 3.0, 1.3), (0.8, 0.3, 2.6, 0.9), (-0.7, -0.4, 2.7, 0.95), (0.1, -0.6, 3.6, 0.8)):
+        sphere("Leaves%+.0f%+.0f" % (x * 10, y * 10), (x, y, z), (r, r, r * 0.92), mat("leaf", LEAF), crown, 16)
+    export("tree")
+
+
+def build_sunflower():
+    """A tall sunflower with a big face. About 1.9 m."""
+    reset()
+    root = empty("Sunflower", (0, 0, 0))
+    cylinder("Stem", (0, 0, 0.9), 0.04, 1.8, mat("stem", STEM), root, verts=8)
+    for z, side in ((0.7, 1), (1.15, -1)):
+        sphere("Leaf%d" % side, (0.18 * side, 0, z), (0.2, 0.06, 0.09), mat("stem", STEM), root, 10)
+    head = empty("Head", (0, 0.05, 1.85), root)
+    cylinder("Face", (0, 0.06, 1.85), 0.2, 0.06, mat("seeds", SEEDS), head, (math.radians(90), 0, 0), 16)
+    for i in range(12):
+        a = math.tau * i / 12
+        sphere("Petal%d" % i, (math.cos(a) * 0.28, 0.04, 1.85 + math.sin(a) * 0.28), (0.1, 0.03, 0.06), mat("petal", PETAL), head, 8)
+        bpy.context.active_object.rotation_euler = (0, -a, 0)
+    export("sunflower")
+
+
+def build_fence():
+    """A wicker fence (tyn) section, 2 m long, 0.9 m tall."""
+    reset()
+    root = empty("Fence", (0, 0, 0))
+    for x in (-1.0, -0.5, 0.0, 0.5, 1.0):
+        cylinder("Post%+.0f" % (x * 10), (x, 0, 0.45), 0.04, 0.95, mat("wood", WOOD), root, verts=8)
+    for z in (0.25, 0.45, 0.65):
+        bpy.ops.mesh.primitive_cylinder_add(vertices=8, radius=0.035, depth=2.1, location=(0, 0, z), rotation=(0, math.radians(90), 0))
+        finish(bpy.context.active_object, "Weave%.0f" % (z * 100), mat("wicker", (0.70, 0.55, 0.36, 1)), root, bevel=0.0)
+    export("fence")
+
+
+def build_well():
+    """A village well with a little roof and a bucket."""
+    reset()
+    root = empty("Well", (0, 0, 0))
+    cylinder("Ring", (0, 0, 0.4), 0.7, 0.8, mat("stone", STONE), root, verts=16)
+    cylinder("Water", (0, 0, 0.75), 0.6, 0.05, mat("water", (0.35, 0.6, 0.85, 1)), root, verts=16)
+    for x in (-0.65, 0.65):
+        box("Post%+.0f" % x, (x, 0, 1.2), (0.12, 0.12, 1.6), mat("wood", WOOD), root, 0.02)
+    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=1.1, radius2=0.05, depth=0.7, location=(0, 0, 2.2), rotation=(0, 0, math.radians(45)))
+    finish(bpy.context.active_object, "Roof", mat("thatch", THATCH), root, bevel=0.05)
+    cylinder("Bucket", (0, 0, 1.25), 0.14, 0.22, mat("wood", WOOD), root, verts=12)
+    export("well")
+
+
 build_tygrytsa()
 build_hatchback()
 build_jeep()
 build_van()
+build_hata()
+build_tree()
+build_sunflower()
+build_fence()
+build_well()
