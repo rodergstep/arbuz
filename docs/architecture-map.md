@@ -8,7 +8,7 @@ reflects_commit: "331cadc"
 godot_version: "4.7.2.stable"
 renderer: "gl_compatibility"
 test_cmd: "/Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json"
-lint_cmd: "gdlint game tests && gdformat --check game tests"
+lint_cmd: "gdlint game tests tools && gdformat -l 110 --check game tests tools"
 vet_cmd: "/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --import --quit"
 export_cmd: "/Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release \"macOS\" build/macos/arbuz.zip"
 save_format_version: ""  # no SaveSystem yet; ADR-0003 fixes the first version at 1 when it lands (Phase 2)
@@ -209,7 +209,7 @@ func test_set_value_emits_state_changed_once() -> void:
 
 Not built yet. `/design-system` writes `docs/design-system.md`; the code lands in:
 
-- Theme: `game/ui/theme/arbuz_theme.tres` (set as the project's default theme)
+- Theme: `game/ui/theme/main_theme.tres` (set as the project's default theme)
 - Components: `game/ui/components/<name>.tscn`
 
 ## Where things live / closest precedents
@@ -229,4 +229,7 @@ Not built yet. `/design-system` writes `docs/design-system.md`; the code lands i
 - GUT 9.7: doubles return typed defaults, not `null` (Godot 4.7 return-type checks).
 - macOS gamepad over Bluetooth may differ from USB and the 2.4G dongle; Gate 0 tests all three with the Machenike G5 Pro, USB is the guaranteed fallback.
 - macOS export is unsigned and not notarized (local play only); first launch on the Intel MacBook needs right-click → Open.
+- Phase 0: the main scene is the gamepad check (`game/dev/gamepad_check/`), so Gate 0 builds show it; it moves to the title screen when one exists, and `game/dev/` is then excluded from release exports.
+- Exports exclude `tests/`, `tools/`, `audio_gen/`, `docs/`, `addons/gut/` and `addons/phantom_camera/examples/` (the examples produce export errors and are dead weight).
+- Format with `gdformat -l 110` so it agrees with `gdlintrc`'s `max-line-length: 110`.
 - `godot` is not on PATH on the M4; commands use `/Applications/Godot.app/Contents/MacOS/Godot` (also set as `godot_bin` in `.claude/sdd.local.md`).
