@@ -26,6 +26,7 @@ general/text_to_speech=true
 
 EventLog="*res://game/core/event_log.gd"
 GameState="*res://game/core/game_state.gd"
+SaveSystem="*res://game/core/save_system.gd"
 WordDB="*res://game/core/word_db.gd"
 Speech="*res://game/core/speech.gd"
 Sfx="*res://game/core/sfx.gd"

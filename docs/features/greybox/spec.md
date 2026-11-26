@@ -45,8 +45,11 @@ updated_at: "2026-11-26"
   accelerates to full speed in about a second and only
   bounces when it hits something upright (a house, the fence, the river bank), never the ground.
 
-- **AC-10 English immersion.** Every spoken line is English (instructions, hints, praise,
-  the door); short phrases, repeated. No Ukrainian speech in the child's path.
+- **AC-10 English immersion, Ukrainian the first time.** Every spoken line is English
+  (instructions, hints, praise, the door, the cards); short phrases, repeated. The intro and the
+  first time he meets a line or a word are said in Ukrainian first (the card also shows the
+  Ukrainian word that one time); after that, English only. First meetings persist in the save
+  (`user://saves/default.json`), so a second session is English only for everything met.
 
 ## 8. Open questions
 

@@ -1,8 +1,9 @@
 class_name LearningCard
 extends CanvasLayer
-## A learning moment, in English only: a big card with a live picture of the real thing in the
-## world and the English word, spoken twice, then short English sentences that use the word,
-## each shown while it is spoken. Tap, click or Space skips. The game waits behind it.
+## A learning moment, in English (Ukrainian only the first time he meets the word): a big card
+## with a live picture of the real thing in the world and the English word, spoken twice, then
+## short English sentences that use the word, each shown while it is spoken. Tap, click or
+## Space skips. The game waits behind it.
 
 signal closed(word_id: StringName, skipped: bool)
 
@@ -19,6 +20,8 @@ var _panel: PanelContainer
 var _viewport: SubViewport
 var _camera: Camera3D
 var _word_en: Label
+var _word_uk: Label
+var _first_time: bool = false
 var _sentence: Label
 var _entry: WordEntry
 var _opened_ms: int = 0
@@ -75,6 +78,8 @@ func _ready() -> void:
 	row.add_child(words)
 	_word_en = _label(UiTokens.SIZE_TITLE, UiTokens.ACCENT_SKY)
 	words.add_child(_word_en)
+	_word_uk = _label(UiTokens.SIZE_SUBTITLE, UiTokens.INK)
+	words.add_child(_word_uk)
 	_sentence = _label(UiTokens.SIZE_BODY, UiTokens.INK)
 	_sentence.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_sentence.custom_minimum_size = Vector2(480, 120)
@@ -96,6 +101,11 @@ func open(entry: WordEntry, focus: Vector3, view_from: Vector3) -> void:
 	_camera.look_at(focus + Vector3(0, 0.8, 0))
 	_camera.current = true
 	_word_en.text = entry.en
+	var key: String = "word:%s" % entry.id
+	_first_time = not SaveSystem.has_encountered(key)
+	SaveSystem.mark_encountered(key)
+	_word_uk.text = entry.uk
+	_word_uk.visible = _first_time
 	_sentence.text = ""
 	visible = true
 	_panel.scale = Vector2(0.8, 0.8)
@@ -136,6 +146,9 @@ func _input(event: InputEvent) -> void:
 
 
 func _play(run: int) -> void:
+	# The first time he meets a word: Ukrainian first (and the Ukrainian word on the card).
+	if _first_time:
+		await _line("Це %s!" % _entry.uk, Speech.LANG_UK, run)
 	await _line("This is %s." % _with_article(_entry.en), Speech.LANG_EN, run)
 	await _line(_entry.en, Speech.LANG_EN, run)
 	await _line(_entry.en, Speech.LANG_EN, run)

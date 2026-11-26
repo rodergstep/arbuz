@@ -10,6 +10,10 @@ var _village: Node
 
 func _initialize() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SHOTS_DIR))
+	# Never touch the real save: a dev run must not use up his first meetings.
+	var save: Node = root.get_node("SaveSystem")
+	save.set("save_dir", "user://dev_saves")
+	save.call("load_profile")
 	var scene: PackedScene = load(ProjectSettings.get_setting("application/run/main_scene"))
 	_village = scene.instantiate()
 	root.add_child(_village)

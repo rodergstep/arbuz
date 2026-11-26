@@ -93,7 +93,7 @@ func ask(answer: WordEntry, others: Array[WordEntry], focus: Vector3, view_from:
 		Tween.EASE_OUT
 	)
 	_show_picture(focus, view_from)
-	Speech.say(question_line(), Speech.LANG_EN, true)
+	Speech.say_first("door:question", "Що це? Послухай картки!", question_line(), true)
 	EventLog.log_event(&"door_question", {"word": String(answer.id)})
 	cards_shown.emit()
 
@@ -128,7 +128,7 @@ func pick(card: PasswordCard) -> void:
 		Sfx.play(&"chime")
 		card.celebrate()
 		Speech.say("Yes! %s! Well done!" % _cap(card.word_en), Speech.LANG_EN, true)
-		Speech.say("The door is opening!", Speech.LANG_EN)
+		Speech.say_first("door:opening", "Двері відчиняються!", "The door is opening!")
 		_open_door()
 		return
 	_wrong += 1
@@ -138,11 +138,12 @@ func pick(card: PasswordCard) -> void:
 	if _wrong >= MAX_WRONG:
 		var answer: PasswordCard = _answer_card()
 		answer.glow()
-		Speech.say("Look! This card is glowing! %s!" % _cap(answer.word_en), Speech.LANG_EN)
+		Speech.say_first("door:glow", "Дивись! Ця картка світиться!", "Look! This card is glowing!")
+		Speech.say("%s!" % _cap(answer.word_en), Speech.LANG_EN)
 		Speech.say("This is a %s. Well done! The door is opening!" % answer.word_en, Speech.LANG_EN)
 		_open_door()
 	else:
-		Speech.say("Try again! Where is the %s?" % _answer.en, Speech.LANG_EN)
+		Speech.say_first("door:retry", "Спробуймо ще!", "Try again! Where is the %s?" % _answer.en)
 
 
 func _on_hero_entered(_body: Node3D) -> void:

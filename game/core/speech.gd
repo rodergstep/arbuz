@@ -36,6 +36,18 @@ func say(text: String, lang: StringName = LANG_EN, interrupt: bool = false) -> v
 	DisplayServer.tts_speak(text, _voices[lang], VOLUME, 1.0, RATE, 0, interrupt)
 
 
+## English immersion with a Ukrainian first meeting: the first time he hears a line (key), it is
+## said in Ukrainian and then English; every time after, English only. Returns true the first time.
+func say_first(key: String, uk: String, en: String, interrupt: bool = false) -> bool:
+	if SaveSystem.has_encountered(key):
+		say(en, LANG_EN, interrupt)
+		return false
+	say(uk, LANG_UK, interrupt)
+	say(en, LANG_EN)
+	SaveSystem.mark_encountered(key)
+	return true
+
+
 func can_speak(lang: StringName) -> bool:
 	return _enabled and _voices.has(lang)
 

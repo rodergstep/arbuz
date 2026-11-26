@@ -57,7 +57,7 @@ func picture_view() -> Vector3:
 
 
 func say_name() -> void:
-	Speech.say("This is a %s. %s!" % [word_en, word_en], Speech.LANG_EN, true)
+	Speech.say_first("word:%s" % word_id, "Це %s!" % word_uk, "This is a %s. %s!" % [word_en, word_en], true)
 
 
 func _show_label() -> void:
