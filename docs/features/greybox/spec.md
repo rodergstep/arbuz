@@ -63,8 +63,10 @@ updated_at: "2026-11-26"
   sound (loudness only; nothing is recorded, stored or sent; pronunciation never judged), asking
   again every 5 s ("Your turn! Say: bridge!", every third time saying the word first). Then a chime
   and "Yes! Bridge! You said it! Great job!", and the sentences. He cannot skip a card; a parent
-  can close it with the parent gate (Ctrl + Shift + P held). With the microphone off or blocked,
-  the card praises after one wait so he never gets stuck.
+  can close it with the parent gate (Ctrl + Shift + P held). With the microphone off, the card praises
+  after one wait. A blocked microphone (only exact digital silence) can't be told apart from a
+  quiet child on a noise-gated mic in one try, so it counts as blocked after 3 silent tries in a
+  row (~15 s with re-prompts); then cards praise after one wait, so he never gets stuck.
 - **AC-13 Natural voice, calm pace.** Voices are rendered at natural speed (Kokoro 0.95); the calm
   pace comes from 0.45 s pauses between sentences and 0.5 s between lines, never from stretching.
 
