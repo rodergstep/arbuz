@@ -2,7 +2,8 @@ class_name LearningCard
 extends CanvasLayer
 ## A learning moment, in English (Ukrainian only the first time he meets the word): a big card
 ## with a live picture of the real thing in the world and the English word, then asks him to say it, then
-## short English sentences that use the word, each shown while it is spoken. Tap, click or
+## short English sentences that use the word, each acted out as a little scene in the picture
+## while it is spoken (CardStage; the live picture stays when a sentence has no scene). Tap, click or
 ## Space skips. The game waits behind it.
 
 signal closed(word_id: StringName, skipped: bool)
@@ -26,6 +27,7 @@ var _sentence: Label
 var _entry: WordEntry
 var _skipped: bool = false
 var _run: int = 0
+var _stage: CardStage
 
 
 func _ready() -> void:
@@ -133,6 +135,7 @@ func close() -> void:
 	VoiceListener.cancel()
 	_mic.shown = false
 	visible = false
+	_leave_stage()
 	_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	EventLog.log_event(&"learning_moment_closed", {"word_id": String(_entry.id), "skipped": _skipped})
 	closed.emit(_entry.id, _skipped)
@@ -171,7 +174,11 @@ func _play(run: int) -> void:
 		if run != _run:
 			return
 		_sentence.text = sentence
+		_act_out(sentence)
 		await _line(sentence, Speech.LANG_EN, run)
+		if run == _run and _stage != null:
+			# Let the little scene play on for a moment after the words.
+			await get_tree().create_timer(1.5, true).timeout
 	if run == _run:
 		await get_tree().create_timer(1.2, true).timeout
 	if run == _run:
@@ -194,6 +201,25 @@ func _line(text: String, lang: StringName, run: int) -> void:
 		await get_tree().create_timer(0.2, true).timeout
 	if run == _run:
 		await get_tree().create_timer(LINE_PAUSE, true).timeout
+
+
+## Shows the sentence happening in the picture, in the stage's own little world.
+func _act_out(sentence: String) -> void:
+	if not CardStage.has_scene(sentence):
+		return
+	if _stage == null:
+		_viewport.world_3d = World3D.new()
+		_stage = CardStage.new()
+		_viewport.add_child(_stage)
+	_stage.show_sentence(sentence, _camera)
+
+
+func _leave_stage() -> void:
+	if _stage == null:
+		return
+	_viewport.remove_child(_stage)
+	_stage.queue_free()
+	_stage = null
 
 
 func _celebrate() -> void:

@@ -1,0 +1,106 @@
+sentence,ground,actors,zoom
+The car goes over the bridge.,river,bridge stand 0 0; car move -7 0 7 0 2.2,1.4
+We walk on the bridge.,river,bridge stand 0 0; tygrytsa move -5 0 5 0 1.1,1.2
+The river is blue.,river,duck swim 0 -4 0 3 0.8; tree stand -3.5 -2; flower stand 2.6 1,1.1
+The duck swims in the river.,river,duck swim 0 -4 0 3 0.8,1
+The car drives on the road.,road,car move -8 0 8 0 2.2; tree stand -2.5 -2.5; tree stand 3 -3,1.4
+The road goes around the village.,road,hata stand -3.5 -4; hata stand 3.5 -4; car move -8 0 8 0 2.2,1.7
+This is a big house.,grass,house grow 0 -1.5,1.6
+I live in a house.,grass,house stand 0 -2.5; tygrytsa arrive 3 2 0.3 0 1,1.5
+The tree is tall.,grass,tree grow 0 -0.5,1.5
+The tree is green.,grass,tree stand -1.8 -0.5; tree stand 1.8 -1.2; bird float 0 0.5 2.8,1.5
+This is my car.,grass,car stand 1 0; tygrytsa wave -1.8 1,1.3
+The car goes fast.,road,car move -9 0 9 0 6,1.4
+The flower is yellow.,grass,flower grow 0 0,0.8
+I smell the flower.,grass,flower stand 0.6 0; tygrytsa stand -0.6 0.3,0.9
+The sunflower is big and yellow.,grass,sunflower grow 0 0,1.2
+The sunflower looks at the sun.,grass,sunflower stand 0 0; sun float -2.8 -1.5 3.6,1.4
+The ball is red.,grass,ball spin 0 0,0.7
+I kick the ball.,grass,tygrytsa stand -2 0; ball kick -1.3 0 3.5 0 2,1.1
+The duck says quack.,grass,duck say 0 0 Quack!,0.8
+The dog says woof.,grass,dog say 0 0 Woof!,0.8
+The dog is my friend.,grass,dog stand 0.9 0; tygrytsa wave -0.9 0,0.9
+The fence is around the village.,grass,fence stand -2.2 0; fence stand 0 0; fence stand 2.2 0; hata stand 0 -3.5,1.5
+The car stops at the fence.,grass,fence stand 0 0; car arrive 0 -8 0 -1.8 2.5,1.4
+"Open the door, please.",grass,door open 0 0; tygrytsa stand -1.7 0.8,1.1
+The door is open.,grass,door open 0 0,1
+The lion says roar.,grass,lion say 0 0 Roar!,1
+The lion is big.,grass,lion grow 0 0,1.1
+The cat says meow.,grass,cat say 0 0 Meow!,0.7
+The cat is soft.,grass,cat stand 0 0,0.6
+The apple is red.,grass,apple spin 0 0,0.5
+I eat an apple.,grass,tygrytsa stand -0.7 0; apple eat 0.5 0.5,0.8
+Hello! How are you?,grass,tygrytsa wave -1 0; postman wave 1 0,1.1
+Say hello to the postman.,grass,postman say 0 0 Hello!,1
+Bye bye!,grass,tygrytsa wave 0 0,0.9
+Say bye to the village.,grass,tygrytsa wave 0 1; hata stand -3 -2.5; hata stand 3 -3,1.7
+Here is a letter for you.,grass,letter float 0 0 0.8,0.5
+The postman brings a letter.,grass,house stand 1.8 -2.5; postman arrive -5 0.5 -0.3 0.5 1.2,1.4
+The postman has a big bag.,grass,postman stand 0 0,0.8
+The postman says hello.,grass,postman say 0 0 Hello!,1
+The car goes on the ferry.,sea,ferry stand 0 -2; car arrive 8 2.5 0 -1.6 2,2.2
+The ferry goes to England.,sea,ferry move -10 -2 10 -2 1.6,2.4
+The clock says tick tock.,grass,clock tick 0 0,0.8
+The clock is on the tower.,town,clock_tower stand 0 -2,3.6
+The bus is red.,road,bus stand 0 0,1.2
+We wait for the bus.,road,bus_stop stand 2.5 -1.8; tygrytsa stand 1.3 -1.2; bus arrive -10 0 -1.8 0 3,1.6
+We go to the shop.,town,shop stand 0 -3; tygrytsa arrive 3 2.5 0.5 0 1,1.7
+The shop is open.,town,shop stand 0 -2,1.7
+The bakery smells nice.,town,bakery stand 0 -2.5; bread float 1.8 1 0.6,1.7
+We buy bread at the bakery.,town,bakery stand 0 -3; baker stand -1.2 0.5; bread stand 0.5 0.8,1.6
+The sea is blue.,sea,boat swim -6 -2 6 -2 0.7; sun float 3 -4 3.6,1.6
+The ferry goes on the sea.,sea,ferry move -10 -2 10 -2 1.6,2.4
+The boat is on the sea.,sea,boat swim -5 -1.5 5 -1.5 0.8,1.2
+A little boat.,sea,boat swim -3 -1 3 -1 0.5,0.8
+The lamp is tall.,town,lamp grow 0 0,1.3
+The lamp gives light at night.,night,lamp glow 0 0; moon float 2.5 -2 4,1.4
+Cows live on the farm.,farm,barn stand -2.5 -4; cow move -3.5 1 3.5 1 0.6,1.9
+We go to the farm.,farm,barn stand 0 -4; car arrive 8 1.5 1.5 1.5 2.2,1.9
+The egg is white.,kitchen,egg spin 0 0,0.5
+The hen has an egg.,farm,hen stand -0.6 0; egg count 0.7 0.3 1,0.8
+Flour is white and soft.,kitchen,flour stand 0 0,0.6
+We need flour for the cake.,kitchen,flour stand -1 0; cake count 1 0 1,0.8
+The cake is sweet.,kitchen,cake spin 0 0,0.6
+Happy cake!,kitchen,cake grow 0 0,0.6
+We bake a big cake.,kitchen,baker stand -1 0; cake grow 1 0.3,1
+The baker makes bread.,kitchen,baker stand -1.2 0; bread count 1 0.4 2,1
+The baker is happy.,town,baker wave 0 0,1
+The bread is warm.,kitchen,bread stand 0 0,0.5
+We eat bread.,kitchen,tygrytsa stand -0.7 0; bread eat 0.5 0.5,0.8
+The milk is white.,kitchen,milk spin 0 0,0.5
+I drink milk.,kitchen,tygrytsa stand -0.6 0; milk eat 0.5 0.5,0.8
+Milk for the cake.,kitchen,milk stand -0.6 0; cake stand 0.6 0,0.7
+The balloon is red.,grass,balloon_red stand 0 0,1
+A red apple.,grass,apple spin 0 0,0.5
+The sky is blue.,grass,cloud float -2.2 -2 3.4; cloud float 2.4 -3 4; bird float 0 -1 2.8; sun float 3.5 -4 4.6,1.4
+A blue balloon.,grass,balloon_blue stand 0 0,1
+The sun is yellow.,grass,sun float 0 0 1.6,1
+A yellow balloon.,grass,balloon_yellow stand 0 0,1
+The grass is green.,grass,flower stand -2 0.5; flower stand 2.2 -0.5; bird stand 0 1,0.9
+A green balloon.,grass,balloon_green stand 0 0,1
+The balloon flies up.,grass,balloon_red fly 0 0,1.3
+A big balloon.,grass,balloon_blue grow 0 0,1
+The toy maker makes toys.,town,toymaker stand -1 0; toy count 1 0.4 2,1
+The toy maker is happy.,town,toymaker wave 0 0,1
+The cow says moo.,farm,cow say 0 0 Moo!,1
+The cow gives milk.,farm,cow stand -1 0; milk count 1.3 0.6 1,1
+The sheep says baa.,farm,sheep say 0 0 Baa!,0.9
+The sheep is soft and white.,farm,sheep stand 0 0,0.8
+The pig says oink.,farm,pig say 0 0 Oink!,0.9
+The pig is pink.,farm,pig stand 0 0,0.8
+The farmer has a big hat.,farm,farmer stand 0 0,0.9
+The farmer loves his animals.,farm,farmer wave 0 0; cow stand -2.2 0; sheep stand 2.2 0; duck stand 1.2 1.3,1.4
+One clock.,grass,clock tick 0 0,0.8
+One big balloon.,grass,balloon_yellow grow 0 0,1
+Two balloons.,grass,balloon_red count 0 0 2,1
+Two eggs for the cake.,kitchen,egg count 0 0 2,0.7
+Three apples.,grass,apple count 0 0 3,0.8
+"One, two, three!",grass,ball count 0 0 3,0.9
+Four legs on a cow.,farm,cow move -3 0.5 3 0.5 0.6,1
+"One, two, three, four!",grass,duck count 0 0 4,1.2
+Five little ducks.,grass,duck count 0 0 5,1.4
+"One, two, three, four, five!",grass,apple count 0 0 5,1.2
+The clock maker fixes clocks.,town,clockmaker stand -1 0; clock tick 1 0.3,1
+The clock maker says tick tock.,town,clockmaker say 0 0 Tick tock!,1
+It is a party!,grass,tygrytsa wave 0 0; balloon_red stand -2 -1; balloon_blue stand 2 -1; balloon_yellow stand -1 -2; cake stand 1.2 1,1.3
+A party with balloons and cake.,grass,cake stand 0 0.5; balloon_green fly -2 -1; balloon_red fly 2 -1,1.2
