@@ -15,7 +15,10 @@ const BALLOON_COLORS: Dictionary[StringName, Color] = {
 }
 
 var word_id: StringName
+## Where it goes when collected (an animal trots home to the farm); unset = it flies away.
+var home: Vector3 = Vector3.INF
 var _art: Node3D
+var _ring: MeshInstance3D
 var _collected: bool = false
 var _time: float = 0.0
 
@@ -42,6 +45,7 @@ func setup(id: StringName) -> void:
 	ring_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	ring_mat.albedo_color.a = 0.35
 	add_child(ring)
+	_ring = ring
 
 
 func is_collected() -> bool:
@@ -54,6 +58,15 @@ func collect() -> void:
 	_collected = true
 	Sfx.play(&"pop")
 	collected.emit(self)
+	if home != Vector3.INF:
+		# Animals go back home and stay there.
+		_ring.visible = false
+		collision_layer = 0
+		var to: Vector3 = home - global_position
+		_art.rotation.y = atan2(-to.x, -to.z)
+		var walk: Tween = create_tween()
+		walk.tween_property(self, "global_position", home, clampf(to.length() / 4.0, 1.5, 8.0))
+		return
 	var tween: Tween = create_tween()
 	tween.tween_property(_art, "position:y", 2.2, 0.5).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(_art, "scale", Vector3.ONE * 0.2, 0.5)
@@ -61,9 +74,11 @@ func collect() -> void:
 
 
 func _process(delta: float) -> void:
-	if _collected:
-		return
 	_time += delta
+	if _collected:
+		if home != Vector3.INF:
+			_art.position.y = absf(sin(_time * 8.0)) * 0.12
+		return
 	_art.position.y = 0.1 + absf(sin(_time * 2.0)) * 0.15
 	_art.rotation.y += delta * 0.8
 
@@ -154,6 +169,8 @@ func _make_art(id: StringName) -> Node3D:
 			)
 		&"red", &"blue", &"yellow", &"green":
 			_make_balloon(root, id)
+		&"cow", &"sheep", &"pig", &"duck":
+			root.add_child(ModelPainter.load_model(String(id)))
 		_:
 			var ball: SphereMesh = SphereMesh.new()
 			ball.radius = 0.3

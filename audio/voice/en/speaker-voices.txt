@@ -1,1 +1,1 @@
-baker=bf_isabella,postman=bm_george,toymaker=bf_lily
+baker=bf_isabella,farmer=bm_daniel,postman=bm_george,toymaker=bf_lily

@@ -527,6 +527,90 @@ def build_toy_maker():
     export("toy_maker")
 
 
+def quadruped(root, body_col, head_col, body_scale, head_loc, leg_h, leg_col, leg_r=0.07):
+    """A round toy animal on four short legs; the body is centred over the legs."""
+    sphere("Body", (0, 0, leg_h + body_scale[2] * 0.8), body_scale, body_col, root, 18)
+    for x in (-body_scale[0] * 0.6, body_scale[0] * 0.6):
+        for y in (-body_scale[1] * 0.55, body_scale[1] * 0.55):
+            cylinder("Leg%+.0f%+.0f" % (x * 10, y * 10), (x, y, leg_h / 2), leg_r, leg_h, leg_col, root, verts=8)
+    sphere("HeadA", head_loc, (0.22, 0.24, 0.22), head_col, root, 16)
+
+
+def eyes(root, head_loc, spread=0.09, forward=0.2):
+    for x in (-spread, spread):
+        sphere("EyeA%+.0f" % (x * 100), (head_loc[0] + x, head_loc[1] + forward, head_loc[2] + 0.06), (0.03,) * 3, mat("eye", DARK), root, 8)
+
+
+def build_cow():
+    reset()
+    root = empty("Cow", (0, 0, 0))
+    white, black = mat("cow_white", (0.97, 0.96, 0.93, 1)), mat("cow_black", (0.15, 0.13, 0.13, 1))
+    quadruped(root, white, white, (0.42, 0.65, 0.36), (0, 0.72, 0.95), 0.4, black, 0.08)
+    for x, y in ((0.2, 0.1), (-0.25, -0.25), (0.05, -0.4)):
+        sphere("Spot%+.0f%+.0f" % (x * 10, y * 10), (x, y, 1.02), (0.16, 0.16, 0.04), black, root, 10)
+    sphere("Snout", (0, 0.92, 0.88), (0.15, 0.08, 0.1), mat("snout_pink", (0.95, 0.70, 0.72, 1)), root, 12)
+    for x in (-0.13, 0.13):
+        cylinder("Horn%+.0f" % (x * 100), (x, 0.7, 1.17), 0.025, 0.12, mat("horn", (0.95, 0.88, 0.7, 1)), root, verts=6)
+    eyes(root, (0, 0.72, 0.95))
+    export("cow")
+
+
+def build_sheep():
+    reset()
+    root = empty("Sheep", (0, 0, 0))
+    wool, face = mat("wool", (0.98, 0.97, 0.94, 1)), mat("sheep_face", (0.25, 0.22, 0.22, 1))
+    quadruped(root, wool, face, (0.36, 0.5, 0.32), (0, 0.55, 0.8), 0.32, face, 0.06)
+    for x, y in ((0.2, 0.2), (-0.2, 0.1), (0.1, -0.25), (-0.15, -0.3), (0, 0.05)):
+        sphere("Puff%+.0f%+.0f" % (x * 10, y * 10), (x, y, 0.82), (0.17,) * 3, wool, root, 10)
+    eyes(root, (0, 0.55, 0.8), 0.08, 0.2)
+    export("sheep")
+
+
+def build_pig():
+    reset()
+    root = empty("Pig", (0, 0, 0))
+    pink = mat("pig_pink", (0.97, 0.70, 0.74, 1))
+    quadruped(root, pink, pink, (0.36, 0.5, 0.3), (0, 0.5, 0.62), 0.22, pink, 0.06)
+    cylinder("PigSnout", (0, 0.72, 0.6), 0.08, 0.06, mat("snout", (0.92, 0.55, 0.62, 1)), root, (math.radians(90), 0, 0), 12)
+    for x in (-0.13, 0.13):
+        sphere("PigEar%+.0f" % (x * 100), (x, 0.5, 0.82), (0.07, 0.03, 0.06), pink, root, 8)
+    eyes(root, (0, 0.5, 0.62), 0.08, 0.19)
+    export("pig")
+
+
+def build_duck():
+    reset()
+    root = empty("Duck", (0, 0, 0))
+    yellow = mat("duck_yellow", (0.99, 0.86, 0.30, 1))
+    sphere("DuckBody", (0, 0, 0.3), (0.28, 0.36, 0.24), yellow, root, 16)
+    sphere("DuckHead", (0, 0.25, 0.62), (0.17,) * 3, yellow, root, 14)
+    sphere("Beak", (0, 0.43, 0.6), (0.08, 0.07, 0.03), mat("beak", (0.98, 0.55, 0.18, 1)), root, 10)
+    eyes(root, (0, 0.25, 0.62), 0.07, 0.14)
+    export("duck")
+
+
+def build_farmer():
+    """The farmer: green overalls, a checked shirt colour, a straw hat. 1.75 m."""
+    reset()
+    root = empty("Farmer", (0, 0, 0))
+    overalls, shirt, skin = mat("overalls", (0.30, 0.48, 0.38, 1)), mat("shirt", (0.85, 0.35, 0.30, 1)), mat("skin", (0.92, 0.74, 0.62, 1))
+    limb("LegL", (-0.12, 0, 0.72), 0.65, 0.09, overalls, root, mat("boot", (0.35, 0.25, 0.2, 1)))
+    limb("LegR", (0.12, 0, 0.72), 0.65, 0.09, overalls, root, mat("boot", (0.35, 0.25, 0.2, 1)))
+    body = empty("Body", (0, 0, 0.72), root)
+    sphere("Shirt", (0, 0, 1.1), (0.31, 0.24, 0.36), shirt, body)
+    box("Bib", (0, 0.2, 1.0), (0.36, 0.06, 0.4), overalls, body, 0.03)
+    for side, x in (("L", -0.33), ("R", 0.33)):
+        limb("Arm" + side, (x, 0, 1.36), 0.5, 0.08, shirt, root, skin)
+    head = empty("Head", (0, 0, 1.58), root)
+    sphere("Face", (0, 0, 1.62), (0.2, 0.19, 0.22), skin, head, 20)
+    for x in (-0.07, 0.07):
+        sphere("EyeF%+.0f" % (x * 100), (x, 0.17, 1.67), (0.025, 0.015, 0.03), mat("eye", DARK), head, 8)
+    sphere("SmileF", (0, 0.17, 1.54), (0.06, 0.02, 0.015), mat("mouth", (0.75, 0.35, 0.35, 1)), head, 10)
+    cylinder("HatBrim", (0, 0, 1.8), 0.36, 0.03, mat("straw", (0.93, 0.80, 0.45, 1)), head, verts=20)
+    cylinder("HatTop", (0, 0, 1.88), 0.19, 0.16, mat("straw", (0.93, 0.80, 0.45, 1)), head, verts=16)
+    export("farmer")
+
+
 build_tygrytsa()
 build_hatchback()
 build_jeep()
@@ -548,3 +632,8 @@ build_barn()
 build_lamp()
 build_baker()
 build_toy_maker()
+build_cow()
+build_sheep()
+build_pig()
+build_duck()
+build_farmer()

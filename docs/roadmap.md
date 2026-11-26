@@ -42,7 +42,7 @@ Our son learns English words for the things around him, food, colours, animals a
 | 20 | Rewards: the map unlocks, souvenirs replay their word, the friends gallery fills | `game-spec.md` §Gameplay | M | idea |
 | 21 | Parent progress view: words heard, recognized, and struggled with | `game-spec.md` §Parent features and profiles | M | idea |
 | 22 | Chapter 2: the toy maker's balloons, colours with shapes and patterns, park and harbour | `development-plan.md` §Phase 5 — England chapters 2–4 and the finale | L | building |
-| 23 | Chapter 3: the escaped farm animals, their sounds and names | `development-plan.md` §Phase 5 — England chapters 2–4 and the finale | L | idea |
+| 23 | Chapter 3: the escaped farm animals, their sounds and names | `development-plan.md` §Phase 5 — England chapters 2–4 and the finale | L | building |
 | 24 | Chapter 4: the stopped clock tower, numbers 1–10 | `development-plan.md` §Phase 5 — England chapters 2–4 and the finale | L | idea |
 | 25 | Finale: the festival with every friend he helped | `game-spec.md` §Story | M | idea |
 | 26 | Town life → see [Not yet specified](#not-yet-specified) | `game-spec.md` §Gameplay | fog | idea |

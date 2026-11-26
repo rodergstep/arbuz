@@ -11,6 +11,9 @@ const CHAPTER1_DONE: String = "chapter:bakery"
 const CHAPTER2_PATH: String = "res://content/chapters/chapter2_balloons.tres"
 const CHAPTER2_DONE: String = "chapter:balloons"
 const TOY_MAKER_POS: Vector3 = Vector3(-30, 0, 11)
+const CHAPTER3_PATH: String = "res://content/chapters/chapter3_animals.tres"
+const CHAPTER3_DONE: String = "chapter:animals"
+const FARMER_POS: Vector3 = Vector3(24, 0, 25)
 const BAKER_POS: Vector3 = Vector3(-5.5, 0, -8.5)
 const SEA_Z: float = -31.0
 const BAKERY_POS: Vector3 = Vector3(-8, 0, -12)
@@ -20,6 +23,31 @@ const CLOCK_POS: Vector3 = Vector3(0, 0, 4)
 const BUS_STOP_POS: Vector3 = Vector3(27.5, 0, -2)
 const BARN_POS: Vector3 = Vector3(31, 0, 30)
 const FERRY_BERTH: Vector3 = Vector3(-4, 0, -34)
+## Chapter conversations by talk id: who speaks, their lines (catalogue keys), whether he says
+## a word back (microphone, never judged), an optional learning card and a cheer.
+const TALKS: Dictionary = {
+	&"baker_intro":
+	{"who": "baker", "lines": ["ch1:baker_hello", "ch1:baker_help", "ch1:help_baker"], "say_back": &"hello"},
+	&"baker_thanks":
+	{
+		"who": "baker",
+		"lines": ["ch1:baker_thanks", "ch1:baker_cake"],
+		"card": &"cake",
+		"after": ["ch1:hooray"]
+	},
+	&"toy_intro":
+	{"who": "toy_maker", "lines": ["ch2:toy_hello", "ch2:toy_help", "ch2:help_toy"], "say_back": &"hello"},
+	&"toy_thanks":
+	{"who": "toy_maker", "lines": ["ch2:toy_thanks"], "card": &"balloon", "after": ["ch2:hooray"]},
+	&"farmer_intro":
+	{
+		"who": "farmer",
+		"lines": ["ch3:farmer_hello", "ch3:farmer_help", "ch3:help_farmer"],
+		"say_back": &"hello"
+	},
+	&"farmer_thanks":
+	{"who": "farmer", "lines": ["ch3:farmer_thanks"], "card": &"farm", "after": ["ch3:hooray"]},
+}
 const HOUSES: Array[Vector3] = [
 	Vector3(-14, 0, 30),
 	Vector3(-4, 0, 30),
@@ -42,6 +70,7 @@ const LAMPS: Array[Vector3] = [
 
 var baker: StoryNpc
 var toy_maker: StoryNpc
+var farmer: StoryNpc
 var _collect_items: Array[CollectItem] = []
 var _collect_word: WordEntry
 var _collect_count: int = 0
@@ -87,41 +116,20 @@ func _first_chapter_path() -> String:
 		return CHAPTER1_PATH
 	if not SaveSystem.has_encountered(CHAPTER2_DONE):
 		return CHAPTER2_PATH
+	if not SaveSystem.has_encountered(CHAPTER3_DONE):
+		return CHAPTER3_PATH
 	return PRACTICE_PATH
 
 
 func _talking() -> bool:
-	return (baker != null and baker.is_talking()) or (toy_maker != null and toy_maker.is_talking())
+	for npc: StoryNpc in [baker, toy_maker, farmer]:
+		if npc != null and npc.is_talking():
+			return true
+	return false
 
 
-## Chapter conversations by talk id: who speaks, their lines (catalogue keys), whether he says a
-## word back (microphone, never judged), an optional learning card and a cheer.
 func _talk_script(talk_id: StringName) -> Dictionary:
-	match talk_id:
-		&"baker_intro":
-			return {
-				"who": "baker",
-				"lines": ["ch1:baker_hello", "ch1:baker_help", "ch1:help_baker"],
-				"say_back": &"hello"
-			}
-		&"baker_thanks":
-			return {
-				"who": "baker",
-				"lines": ["ch1:baker_thanks", "ch1:baker_cake"],
-				"card": &"cake",
-				"after": ["ch1:hooray"]
-			}
-		&"toy_intro":
-			return {
-				"who": "toy_maker",
-				"lines": ["ch2:toy_hello", "ch2:toy_help", "ch2:help_toy"],
-				"say_back": &"hello"
-			}
-		&"toy_thanks":
-			return {
-				"who": "toy_maker", "lines": ["ch2:toy_thanks"], "card": &"balloon", "after": ["ch2:hooray"]
-			}
-	return {}
+	return TALKS.get(talk_id, {})
 
 
 func start_talk(talk_id: StringName = &"") -> void:
@@ -129,7 +137,8 @@ func start_talk(talk_id: StringName = &"") -> void:
 	if talk.is_empty():
 		quest.notify_talk_done()
 		return
-	var npc: StoryNpc = baker if talk["who"] == "baker" else toy_maker
+	var npcs: Dictionary[String, StoryNpc] = {"baker": baker, "toy_maker": toy_maker, "farmer": farmer}
+	var npc: StoryNpc = npcs[talk["who"]]
 	hero.stop()
 	hero.keyboard_enabled = false
 	set_hint(null, "")
@@ -170,9 +179,12 @@ func start_collect(step: QuestStep) -> void:
 	_collect_total = step.spots.size()
 	_collect_count = 0
 	_collect_items.clear()
-	for spot: Vector3 in step.spots:
+	for i: int in step.spots.size():
+		var spot: Vector3 = step.spots[i]
 		var item: CollectItem = CollectItem.new()
 		item.setup(step.word)
+		if i < step.homes.size():
+			item.home = step.homes[i]
 		add_child(item)
 		item.global_position = spot
 		_collect_items.append(item)
@@ -318,7 +330,6 @@ func _clickable_things() -> Array[Dictionary]:
 	return [
 		{"id": &"tree", "uk": "дерево", "en": "tree", "pos": Vector3(-20, 0, 2)},
 		{"id": &"ball", "uk": "м'яч", "en": "ball", "pos": Vector3(14, 0, 18)},
-		{"id": &"duck", "uk": "качка", "en": "duck", "pos": Vector3(14, 0, -29)},
 		{"id": &"dog", "uk": "собака", "en": "dog", "pos": Vector3(10, 0, 16)},
 		{"id": &"house", "uk": "будинок", "en": "house", "pos": HOUSES[5]},
 		{"id": &"flower", "uk": "квітка", "en": "flower", "pos": Vector3(-6, 0, 18)},
@@ -329,6 +340,7 @@ func _clickable_things() -> Array[Dictionary]:
 func _build_story_cast() -> void:
 	baker = _add_npc("baker", BAKER_POS)
 	toy_maker = _add_npc("toy_maker", TOY_MAKER_POS)
+	farmer = _add_npc("farmer", FARMER_POS)
 	# His turn to speak during a talk: the microphone sign at the bottom of the screen.
 	say_hud = CanvasLayer.new()
 	say_hud.layer = 4

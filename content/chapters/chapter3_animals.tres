@@ -1,0 +1,67 @@
+[gd_resource type="Resource" script_class="ChapterData" format=3]
+
+[ext_resource type="Script" path="res://game/core/chapter_data.gd" id="1_opdj3"]
+[ext_resource type="Script" path="res://game/core/quest_step.gd" id="2_5jd3o"]
+
+[sub_resource type="Resource" id="Resource_muo5f"]
+script = ExtResource("2_5jd3o")
+kind = 5
+spots = Array[Vector3]([Vector3(24, 0, 22.5)])
+start_line = "ch3:to_farmer"
+hint_line = "hint:to_farmer"
+talk_id = &"farmer_intro"
+
+[sub_resource type="Resource" id="Resource_sm722"]
+script = ExtResource("2_5jd3o")
+kind = 7
+spots = Array[Vector3]([Vector3(-18, 0, -27)])
+hint_line = "ch3:find_animal"
+word = &"cow"
+find_line = "ch3:find_animal"
+found_line = "ch3:found_cow"
+homes = Array[Vector3]([Vector3(28, 0, 21)])
+
+[sub_resource type="Resource" id="Resource_pioj8"]
+script = ExtResource("2_5jd3o")
+kind = 7
+spots = Array[Vector3]([Vector3(-34, 0, 28)])
+hint_line = "ch3:find_animal"
+word = &"sheep"
+find_line = "ch3:find_animal"
+found_line = "ch3:found_sheep"
+homes = Array[Vector3]([Vector3(30.5, 0, 21)])
+
+[sub_resource type="Resource" id="Resource_dubtn"]
+script = ExtResource("2_5jd3o")
+kind = 7
+spots = Array[Vector3]([Vector3(20, 0, -28.5)])
+hint_line = "ch3:find_animal"
+word = &"duck"
+find_line = "ch3:find_animal"
+found_line = "ch3:found_duck"
+homes = Array[Vector3]([Vector3(32.5, 0, 21)])
+
+[sub_resource type="Resource" id="Resource_44bh4"]
+script = ExtResource("2_5jd3o")
+kind = 7
+spots = Array[Vector3]([Vector3(8, 0, 12)])
+hint_line = "ch3:find_animal"
+word = &"pig"
+find_line = "ch3:find_animal"
+found_line = "ch3:found_pig"
+homes = Array[Vector3]([Vector3(34.5, 0, 21)])
+
+[sub_resource type="Resource" id="Resource_d6p02"]
+script = ExtResource("2_5jd3o")
+kind = 5
+spots = Array[Vector3]([Vector3(24, 0, 22.5)])
+start_line = "ch3:back_to_farmer"
+hint_line = "hint:to_farmer"
+talk_id = &"farmer_thanks"
+
+[resource]
+script = ExtResource("1_opdj3")
+id = &"chapter3_animals"
+steps = Array[ExtResource("2_5jd3o")]([SubResource("Resource_muo5f"), SubResource("Resource_sm722"), SubResource("Resource_pioj8"), SubResource("Resource_dubtn"), SubResource("Resource_44bh4"), SubResource("Resource_d6p02")])
+next_chapter = "res://content/chapters/england_practice.tres"
+done_key = "chapter:animals"

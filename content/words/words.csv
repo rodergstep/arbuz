@@ -40,3 +40,7 @@ yellow,colours,жовтий,yellow,amarillo,jaune,,"The sun is yellow.|A yellow 
 green,colours,зелений,green,verde,vert,,"The grass is green.|A green balloon.|The tree is green."
 balloon,toys,повітряна кулька,balloon,globo,ballon,,"The balloon flies up.|A big balloon.|Hold the balloon!"
 toymaker,people,іграшкарка,toy maker,juguetera,fabricante de jouets,,"The toy maker makes toys.|The toy maker is happy."
+cow,animals,корова,cow,vaca,vache,,"The cow says moo.|The cow gives milk.|A big black and white cow."
+sheep,animals,вівця,sheep,oveja,mouton,,"The sheep says baa.|The sheep is soft and white."
+pig,animals,свиня,pig,cerdo,cochon,,"The pig says oink.|The pig is pink."
+farmer,people,фермер,farmer,granjero,fermier,,"The farmer has a big hat.|The farmer loves his animals."
