@@ -63,5 +63,5 @@ talk_id = &"farmer_thanks"
 script = ExtResource("1_opdj3")
 id = &"chapter3_animals"
 steps = Array[ExtResource("2_5jd3o")]([SubResource("Resource_muo5f"), SubResource("Resource_sm722"), SubResource("Resource_pioj8"), SubResource("Resource_dubtn"), SubResource("Resource_44bh4"), SubResource("Resource_d6p02")])
-next_chapter = "res://content/chapters/england_practice.tres"
+next_chapter = "res://content/chapters/chapter4_clock.tres"
 done_key = "chapter:animals"

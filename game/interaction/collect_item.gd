@@ -5,6 +5,8 @@ extends Area3D
 
 signal collected(item: CollectItem)
 
+const NUMBERS: Dictionary[StringName, int] = {&"one": 1, &"two": 2, &"three": 3, &"four": 4, &"five": 5}
+
 ## A balloon in a colour word's colour, always with its own pattern too, so colour is never
 ## the only cue: red has dots, blue has stripes, yellow has plus signs, green has upright rings.
 const BALLOON_COLORS: Dictionary[StringName, Color] = {
@@ -130,6 +132,31 @@ func _make_balloon(root: Node3D, id: StringName) -> void:
 				root.add_child(band)
 
 
+## A big number tile from the clock: the digit, and the same number of dots under it, so he
+## sees how many as well as the symbol.
+func _make_number(root: Node3D, id: StringName) -> void:
+	var n: int = NUMBERS[id]
+	var tile: MeshInstance3D = Blocks.box_mesh(
+		Vector3(1.0, 1.2, 0.15), Color(0.98, 0.95, 0.86), Vector3(0, 1.0, 0)
+	)
+	root.add_child(tile)
+	for side: float in [1.0, -1.0]:
+		var digit: Label3D = Label3D.new()
+		digit.text = str(n)
+		digit.font_size = 220
+		digit.modulate = Color(0.23, 0.23, 0.22)
+		digit.outline_size = 0
+		digit.position = Vector3(0, 1.15, 0.08 * side)
+		digit.rotation.y = 0.0 if side > 0.0 else PI
+		root.add_child(digit)
+		for i: int in n:
+			var dot: SphereMesh = SphereMesh.new()
+			dot.radius = 0.06
+			dot.height = 0.12
+			var x: float = (i - (n - 1) / 2.0) * 0.17
+			root.add_child(Blocks.mesh(dot, Color(0.88, 0.40, 0.25), Vector3(x, 0.58, 0.09 * side)))
+
+
 func _make_art(id: StringName) -> Node3D:
 	var root: Node3D = Node3D.new()
 	match id:
@@ -169,6 +196,8 @@ func _make_art(id: StringName) -> Node3D:
 			)
 		&"red", &"blue", &"yellow", &"green":
 			_make_balloon(root, id)
+		&"one", &"two", &"three", &"four", &"five":
+			_make_number(root, id)
 		&"cow", &"sheep", &"pig", &"duck":
 			root.add_child(ModelPainter.load_model(String(id)))
 		_:

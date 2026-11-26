@@ -83,3 +83,14 @@ ch3:found_pig,,"Oink! Oink! The pig says oink! Pig! Go home, pig!"
 ch3:back_to_farmer,"Усі тварини вдома! Ходімо до фермера.","All the animals are home! Let's go to the farmer."
 ch3:farmer_thanks,,"Thank you! The cow, the sheep, the duck and the pig! All home!",farmer
 ch3:hooray,"Ура! Усі вдома!","Hooray! Moo, baa, quack, oink!"
+ch4:to_clock_maker,"Ходімо до годинникової вежі! Годинник зупинився.","Let's go to the clock tower! The clock stopped."
+hint:to_clock_maker,"Іди до великої годинникової вежі!","Go to the big clock tower!"
+ch4:clock_hello,,"Hello! Oh no! My clock stopped! The numbers fell off!",clockmaker
+ch4:clock_help,,"Can you find the numbers? One, two, three, four and five!",clockmaker
+ch4:help_clock,"Цифри впали! Знайдімо їх!","The numbers fell off! Let's find them!"
+ch4:find_number,"Знайди цифру {uk_word}!","Find number {word}!"
+ch4:found_number,,"Number {word}! {Word}! You found it!"
+ch4:back_to_clock_maker,"Несемо цифри годинникареві!","Let's bring the numbers to the clock maker!"
+ch4:clock_thanks,,"Thank you! One, two, three, four, five! Now let's count to ten together!",clockmaker
+ch4:count_ten,,"One! Two! Three! Four! Five! Six! Seven! Eight! Nine! Ten!",clockmaker
+ch4:clock_works,"Годинник знову йде! Тік-так!","The clock works again! Tick tock! Ding dong!"

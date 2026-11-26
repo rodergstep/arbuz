@@ -111,7 +111,7 @@ func _initialize() -> void:
 	var ch3: ChapterData = ChapterData.new()
 	ch3.id = &"chapter3_animals"
 	ch3.done_key = "chapter:animals"
-	ch3.next_chapter = "res://content/chapters/england_practice.tres"
+	ch3.next_chapter = "res://content/chapters/chapter4_clock.tres"
 	var farm_spot: Array[Vector3] = [Vector3(24, 0, 22.5)]
 	var meet: QuestStep = _step(QuestStep.Kind.TALK_TO, farm_spot, "ch3:to_farmer", "hint:to_farmer")
 	meet.talk_id = &"farmer_intro"
@@ -127,7 +127,42 @@ func _initialize() -> void:
 	]
 	var err6: Error = ResourceSaver.save(ch3, "res://content/chapters/chapter3_animals.tres")
 	print("chapter3_animals.tres: ", error_string(err6))
-	quit(0 if err == OK and err2 == OK and err3 == OK and err4 == OK and err5 == OK and err6 == OK else 1)
+	# Chapter 4: the clock tower stopped and its numbers fell off; find numbers one to five,
+	# then count to ten together and the clock works again.
+	var ch4: ChapterData = ChapterData.new()
+	ch4.id = &"chapter4_clock"
+	ch4.done_key = "chapter:clock"
+	ch4.next_chapter = "res://content/chapters/england_practice.tres"
+	var clock_spot: Array[Vector3] = [Vector3(3, 0, 9.5)]
+	var start: QuestStep = _step(
+		QuestStep.Kind.TALK_TO, clock_spot, "ch4:to_clock_maker", "hint:to_clock_maker"
+	)
+	start.talk_id = &"clock_intro"
+	var finish: QuestStep = _step(
+		QuestStep.Kind.TALK_TO, clock_spot, "ch4:back_to_clock_maker", "hint:to_clock_maker"
+	)
+	finish.talk_id = &"clock_thanks"
+	ch4.steps = [
+		start,
+		_number(&"one", Vector3(-10, 0, 14)),
+		_number(&"two", Vector3(14, 0, 4)),
+		_number(&"three", Vector3(-18, 0, -6)),
+		_number(&"four", Vector3(18, 0, -10)),
+		_number(&"five", Vector3(-4, 0, 22)),
+		finish,
+	]
+	var err7: Error = ResourceSaver.save(ch4, "res://content/chapters/chapter4_clock.tres")
+	print("chapter4_clock.tres: ", error_string(err7))
+	var all_ok: bool = [err, err2, err3, err4, err5, err6, err7].all(func(e: Error) -> bool: return e == OK)
+	quit(0 if all_ok else 1)
+
+
+func _number(number: StringName, spot: Vector3) -> QuestStep:
+	var s: QuestStep = _collect(number, [spot])
+	s.find_line = "ch4:find_number"
+	s.found_line = "ch4:found_number"
+	s.hint_line = "ch4:find_number"
+	return s
 
 
 func _animal(animal: StringName, spot: Vector3, home: Vector3) -> QuestStep:

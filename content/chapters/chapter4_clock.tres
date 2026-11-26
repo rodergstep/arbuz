@@ -1,0 +1,72 @@
+[gd_resource type="Resource" script_class="ChapterData" format=3]
+
+[ext_resource type="Script" path="res://game/core/chapter_data.gd" id="1_4guhl"]
+[ext_resource type="Script" path="res://game/core/quest_step.gd" id="2_ahhwv"]
+
+[sub_resource type="Resource" id="Resource_khrxm"]
+script = ExtResource("2_ahhwv")
+kind = 5
+spots = Array[Vector3]([Vector3(3, 0, 9.5)])
+start_line = "ch4:to_clock_maker"
+hint_line = "hint:to_clock_maker"
+talk_id = &"clock_intro"
+
+[sub_resource type="Resource" id="Resource_gtsoe"]
+script = ExtResource("2_ahhwv")
+kind = 7
+spots = Array[Vector3]([Vector3(-10, 0, 14)])
+hint_line = "ch4:find_number"
+word = &"one"
+find_line = "ch4:find_number"
+found_line = "ch4:found_number"
+
+[sub_resource type="Resource" id="Resource_atc7v"]
+script = ExtResource("2_ahhwv")
+kind = 7
+spots = Array[Vector3]([Vector3(14, 0, 4)])
+hint_line = "ch4:find_number"
+word = &"two"
+find_line = "ch4:find_number"
+found_line = "ch4:found_number"
+
+[sub_resource type="Resource" id="Resource_xjlws"]
+script = ExtResource("2_ahhwv")
+kind = 7
+spots = Array[Vector3]([Vector3(-18, 0, -6)])
+hint_line = "ch4:find_number"
+word = &"three"
+find_line = "ch4:find_number"
+found_line = "ch4:found_number"
+
+[sub_resource type="Resource" id="Resource_h4c0m"]
+script = ExtResource("2_ahhwv")
+kind = 7
+spots = Array[Vector3]([Vector3(18, 0, -10)])
+hint_line = "ch4:find_number"
+word = &"four"
+find_line = "ch4:find_number"
+found_line = "ch4:found_number"
+
+[sub_resource type="Resource" id="Resource_857ea"]
+script = ExtResource("2_ahhwv")
+kind = 7
+spots = Array[Vector3]([Vector3(-4, 0, 22)])
+hint_line = "ch4:find_number"
+word = &"five"
+find_line = "ch4:find_number"
+found_line = "ch4:found_number"
+
+[sub_resource type="Resource" id="Resource_box58"]
+script = ExtResource("2_ahhwv")
+kind = 5
+spots = Array[Vector3]([Vector3(3, 0, 9.5)])
+start_line = "ch4:back_to_clock_maker"
+hint_line = "hint:to_clock_maker"
+talk_id = &"clock_thanks"
+
+[resource]
+script = ExtResource("1_4guhl")
+id = &"chapter4_clock"
+steps = Array[ExtResource("2_ahhwv")]([SubResource("Resource_khrxm"), SubResource("Resource_gtsoe"), SubResource("Resource_atc7v"), SubResource("Resource_xjlws"), SubResource("Resource_h4c0m"), SubResource("Resource_857ea"), SubResource("Resource_box58")])
+next_chapter = "res://content/chapters/england_practice.tres"
+done_key = "chapter:clock"
