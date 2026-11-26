@@ -12,6 +12,12 @@ const IDLE_LOG_SECONDS: float = 5.0
 const WALK_OFFSET: Vector3 = Vector3(0, 11, 9)
 const DRIVE_OFFSET: Vector3 = Vector3(0, 15, 12.5)
 const DOOR_POS: Vector3 = Vector3(-14, 0, -28)
+const WELL_POS: Vector3 = Vector3(-19, 0, 5)
+const LEAF_COLOR: Color = Color(0.32, 0.60, 0.34)
+const PETAL_COLOR: Color = Color(1.0, 0.80, 0.18)
+## The sunflower field west of the start, and the village edge for the wicker fence.
+const SUNFLOWER_FIELD: Rect2 = Rect2(-37, 8, 9, 12)
+const EDGE: float = 40.0
 const CAR_START: Vector3 = Vector3(-6, 0, 16)
 const HERO_START: Vector3 = Vector3(-14, 0, 8)
 ## Places that teach a word when he walks or drives past: [word, position, radius, camera offset].
@@ -497,7 +503,60 @@ func _build_grass() -> void:
 	var grass: WindGrass = WindGrass.new()
 	add_child(grass)
 	grass.scatter(Rect2(-38, -38, 76, 76), 2500, _grass_blocked)
+	_build_sunflower_field()
+	_build_fence_ring()
 	add_child(PerfMonitor.new())
+
+
+## A field of sunflowers swaying in the wind: one MultiMesh (a few draw calls for all of them).
+func _build_sunflower_field() -> void:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = 11
+	var spots: Array[Transform3D] = []
+	var step: float = 1.4
+	var x: float = SUNFLOWER_FIELD.position.x
+	while x < SUNFLOWER_FIELD.end.x:
+		var z: float = SUNFLOWER_FIELD.position.y
+		while z < SUNFLOWER_FIELD.end.y:
+			var jitter: Vector3 = Vector3(rng.randf_range(-0.4, 0.4), 0, rng.randf_range(-0.4, 0.4))
+			var basis: Basis = Basis(Vector3.UP, rng.randf_range(-0.5, 0.5)).scaled(
+				Vector3.ONE * rng.randf_range(0.85, 1.15)
+			)
+			spots.append(Transform3D(basis, Vector3(x, 0, z) + jitter))
+			z += step
+		x += step
+	add_child(_multimesh("sunflower", spots, [PETAL_COLOR, Color(0.38, 0.62, 0.30)]))
+
+
+## The wicker fence (tyn) all around the village edge, one MultiMesh.
+func _build_fence_ring() -> void:
+	var spots: Array[Transform3D] = []
+	var x: float = -EDGE + 1.0
+	while x < EDGE:
+		spots.append(Transform3D(Basis(), Vector3(x, 0, -EDGE)))
+		spots.append(Transform3D(Basis(), Vector3(x, 0, EDGE)))
+		spots.append(Transform3D(Basis(Vector3.UP, PI / 2.0), Vector3(-EDGE, 0, x)))
+		spots.append(Transform3D(Basis(Vector3.UP, PI / 2.0), Vector3(EDGE, 0, x)))
+		x += 2.0
+	add_child(_multimesh("fence", spots))
+	for child: Node in _nav.get_children():
+		# The old plain edge boards are now only collision.
+		if child is StaticBody3D and absf((child as StaticBody3D).position.y - 0.4) < 0.01:
+			(child.get_child(1) as MeshInstance3D).visible = false
+
+
+func _multimesh(
+	model_name: String, spots: Array[Transform3D], sway_colors: Array[Color] = []
+) -> MultiMeshInstance3D:
+	var mm: MultiMesh = MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.mesh = ModelPainter.merged_mesh(model_name, sway_colors)
+	mm.instance_count = spots.size()
+	for i: int in spots.size():
+		mm.set_instance_transform(i, spots[i])
+	var inst: MultiMeshInstance3D = MultiMeshInstance3D.new()
+	inst.multimesh = mm
+	return inst
 
 
 ## Where no grass grows: roads, the river and bridges, houses, the door house.
@@ -505,6 +564,8 @@ func _grass_blocked(p: Vector2) -> bool:
 	var road: bool = (absf(p.y + 22) < 3.2 or absf(p.y - 22) < 3.2) and absf(p.x) < 27.0
 	road = road or ((absf(p.x + 24) < 3.2 or absf(p.x - 24) < 3.2) and absf(p.y) < 25.0)
 	var river: bool = absf(p.x - 12) < 2.6
+	if SUNFLOWER_FIELD.grow(0.5).has_point(p) or p.distance_to(Vector2(WELL_POS.x, WELL_POS.z)) < 1.4:
+		return true
 	var door_house: bool = absf(p.x - DOOR_POS.x) < 4.5 and p.y < DOOR_POS.z + 1.0 and p.y > DOOR_POS.z - 8.0
 	for h: Vector2 in [Vector2(2, -4), Vector2(4, 8), Vector2(-30, -8), Vector2(30, 6), Vector2(-4, 30)]:
 		if absf(p.x - h.x) < 3.3 and absf(p.y - h.y) < 3.0:
@@ -537,16 +598,22 @@ func _build_houses() -> void:
 	var spots: Array[Vector3] = [
 		Vector3(2, 0, -4), Vector3(4, 0, 8), Vector3(-30, 0, -8), Vector3(30, 0, 6), Vector3(-4, 0, 30)
 	]
-	for i: int in spots.size():
-		Blocks.house(_nav, spots[i], Vector3(5, 3.5, 4.5), walls[i % walls.size()], roofs[i % roofs.size()])
-	# The house with the password door; its front faces south (+z) toward DOOR_POS.
-	Blocks.house(
-		_nav,
-		DOOR_POS + Vector3(0, 0, -3.5),
-		Vector3(7, 4.5, 7),
-		Color(0.98, 0.95, 0.85),
-		Color(0.3, 0.55, 0.4)
-	)
+	# White hatas with thatched roofs, fronts facing south (toward the camera).
+	for spot: Vector3 in spots:
+		Blocks.hidden_solid(_nav, spot + Vector3(0, 1.75, 0), Vector3(5, 3.5, 4.5))
+		add_child(Blocks.prop("hata", spot, 180.0))
+	# The house with the password door: a bigger hata; its own model door is left out, the
+	# PasswordDoor panel takes its place.
+	Blocks.hidden_solid(_nav, DOOR_POS + Vector3(0, 2.25, -3.5), Vector3(7, 4.5, 7))
+	var door_house: MeshInstance3D = MeshInstance3D.new()
+	door_house.mesh = ModelPainter.merged_mesh("hata", [], 0.0, ["Door"])
+	door_house.position = DOOR_POS + Vector3(0, 0, -3.5)
+	door_house.rotation_degrees.y = 180.0
+	door_house.scale = Vector3(1.4, 1.3, 1.58)
+	add_child(door_house)
+	# A well by the path.
+	Blocks.hidden_solid(_nav, WELL_POS + Vector3(0, 0.6, 0), Vector3(1.5, 1.2, 1.5))
+	add_child(Blocks.prop("well", WELL_POS, 30.0))
 	door = PasswordDoor.new()
 	add_child(door)
 	door.position = DOOR_POS + Vector3(0, 0, 0.1)
@@ -554,10 +621,14 @@ func _build_houses() -> void:
 	door.cards_hidden.connect(_on_cards_hidden)
 	door.opened.connect(_on_door_opened)
 	door.wants_question.connect(_on_door_wants_question)
+	# Tree trunks block the way; the clickable trees draw their own tree, the rest are props.
+	var clickable_trees: Array[Vector3] = [Vector3(-10, 0, 2), Vector3(16, 0, -6)]
 	for t: Vector3 in [
 		Vector3(-10, 0, 2), Vector3(-18, 0, -2), Vector3(16, 0, -6), Vector3(18, 0, 12), Vector3(-30, 0, 30)
 	]:
-		Blocks.solid_box(_nav, t + Vector3(0, 1, 0), Vector3(0.5, 2, 0.5), Color(0.5, 0.35, 0.2))
+		Blocks.hidden_solid(_nav, t + Vector3(0, 1, 0), Vector3(0.5, 2, 0.5))
+		if not clickable_trees.has(t):
+			add_child(Blocks.prop("tree", t, t.x * 37.0, Vector3.ONE, [LEAF_COLOR]))
 
 
 func _bake_navigation() -> void:
@@ -596,7 +667,7 @@ func _build_clickables() -> void:
 		{"id": &"house", "uk": "будинок", "en": "house", "pos": Vector3(4, 0, 8)},
 	]
 	for thing: Dictionary in things:
-		var art: Node3D = _art_for(&"flower" if thing["id"] == &"sunflower" else thing["id"])
+		var art: Node3D = _art_for(thing["id"])
 		var size: Vector3 = Vector3(2.0, 2.5, 2.0)
 		if thing["id"] == &"house":
 			art = Node3D.new()
@@ -612,10 +683,9 @@ func _art_for(id: StringName) -> Node3D:
 	var root: Node3D = Node3D.new()
 	match id:
 		&"tree":
-			var crown: SphereMesh = SphereMesh.new()
-			crown.radius = 1.4
-			crown.height = 2.4
-			root.add_child(Blocks.mesh(crown, Color(0.3, 0.6, 0.35), Vector3(0, 2.8, 0), 0.05))
+			root.add_child(Blocks.prop("tree", Vector3.ZERO, 40.0, Vector3.ONE, [LEAF_COLOR]))
+		&"sunflower":
+			root.add_child(Blocks.prop("sunflower", Vector3.ZERO, 0.0, Vector3.ONE, [PETAL_COLOR]))
 		&"flower":
 			var head: SphereMesh = SphereMesh.new()
 			head.radius = 0.35

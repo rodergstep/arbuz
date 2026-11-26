@@ -2,6 +2,7 @@ extends SceneTree
 ## Dev helper: shows every model in assets/models in the painted look and saves
 ## build/shots/models.png. Run: godot --path . --script res://tools/model_preview.gd
 
+## Pass model names after `--` to preview only those; default: the first four.
 const MODELS: Array[String] = ["tygrytsa", "car_hatchback", "car_jeep", "car_van"]
 
 var _frame: int = 0
@@ -30,13 +31,18 @@ func _initialize() -> void:
 	plane.material = PaintedMaterials.make(Color(0.5, 0.72, 0.38))
 	ground.mesh = plane
 	world.add_child(ground)
+	var names: Array[String] = MODELS.duplicate()
+	if not OS.get_cmdline_user_args().is_empty():
+		names = []
+		for arg: String in OS.get_cmdline_user_args():
+			names.append(arg)
 	var x: float = -6.0
-	for model_name: String in MODELS:
+	for model_name: String in names:
 		var model: Node3D = ModelPainter.load_model(model_name)
 		model.position = Vector3(x, 0, 0)
 		model.rotation_degrees.y = 200.0
 		world.add_child(model)
-		x += 4.0 if model_name == "tygrytsa" else 4.2
+		x += 4.0 if model_name in ["tygrytsa", "sunflower"] else 5.5
 	var cam: Camera3D = Camera3D.new()
 	cam.fov = 50.0
 	world.add_child(cam)
