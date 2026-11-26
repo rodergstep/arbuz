@@ -56,6 +56,10 @@ updated_at: "2026-11-26"
   says that thing's name and repeats the ask; after 2 wrong clicks a marker glows under the
   right thing. The answer goes to the learning tracker.
 
+- **AC-12 Say it back.** On every learning card, after the word, Тигриця says "Say it with me:
+  bridge!", waits about 2 s for him to repeat it, then praises "Great job! Bridge!" (praise only,
+  no speech check).
+
 ## 8. Open questions
 
 - Is touch easier than the mouse for him? Tried at the Gate 1 playtest (roadmap D5).
