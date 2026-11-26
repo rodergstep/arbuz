@@ -2,23 +2,32 @@ class_name MicBubble
 extends Control
 ## "Your turn!" sign on the learning card while it listens: a pulsing circle with a microphone
 ## that grows with his voice, so he sees that the game hears him. No text.
+## It always keeps its place in the layout and only draws while `shown`, so the text around it
+## never jumps when it appears or goes away (playtest bug).
 
 const SIZE: float = 120.0
 
+var shown: bool = false:
+	set(value):
+		shown = value
+		queue_redraw()
 var _level: float = 0.0
 
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(SIZE, SIZE)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	VoiceListener.level_changed.connect(func(level: float) -> void: _level = level)
 
 
 func _process(_delta: float) -> void:
-	if visible:
+	if shown:
 		queue_redraw()
 
 
 func _draw() -> void:
+	if not shown:
+		return
 	var c: Vector2 = size / 2.0
 	var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 250.0)
 	var grow: float = clampf(_level / VoiceListener.threshold() - 0.3, 0.0, 1.0)

@@ -23,6 +23,11 @@ const WARMUP_SECONDS: float = 0.25
 ## How much loud sound counts as "he said something" (syllables have gaps, so this adds up).
 const VOICE_SECONDS: float = 0.15
 const BLOCKED_AFTER: int = 3
+## Once he starts, let him finish: the word is over after this much quiet (playtest: the praise
+## came while he was still saying it).
+const END_QUIET_SECONDS: float = 0.9
+## A long word or chatter still ends the turn after this long.
+const MAX_WORD_SECONDS: float = 4.0
 
 var _player: AudioStreamPlayer
 var _capture: AudioEffectCapture
@@ -32,6 +37,10 @@ var _elapsed: float = 0.0
 var _room: float = 0.0
 var _peak: float = 0.0
 var _heard: bool = false
+## He started and then went quiet long enough: his turn is over.
+var _finished: bool = false
+var _quiet_for: float = 0.0
+var _speaking_for: float = 0.0
 ## Each listen() gets a new id; cancel() or a newer listen() ends the older one.
 var _session: int = 0
 ## Listen windows in a row that got only exact digital silence. A blocked microphone (for
@@ -63,8 +72,8 @@ func available() -> bool:
 	)
 
 
-## Listens for up to `seconds`; returns true as soon as he makes a sound, false on timeout or
-## when there is no microphone.
+## Listens for up to `seconds` for him to start; once he does, waits until he has finished
+## the word (a short quiet) and returns true. False on timeout or with no microphone.
 func listen(seconds: float) -> bool:
 	if not available():
 		await get_tree().create_timer(seconds, true).timeout
@@ -72,6 +81,9 @@ func listen(seconds: float) -> bool:
 	_session += 1
 	var session: int = _session
 	_heard = false
+	_finished = false
+	_quiet_for = 0.0
+	_speaking_for = 0.0
 	_heard_for = 0.0
 	_elapsed = 0.0
 	# Start from a quiet room; it adapts only on quiet frames, so his first word never sets it.
@@ -83,7 +95,11 @@ func listen(seconds: float) -> bool:
 	_player.play()
 	_listening = true
 	var waited: float = 0.0
-	while waited < seconds and not _heard and session == _session:
+	# After he starts, the window stretches so he can finish (bounded, in case frames stop).
+	var limit: float = seconds
+	while waited < limit and not _finished and session == _session:
+		if _heard:
+			limit = seconds + MAX_WORD_SECONDS
 		await get_tree().create_timer(0.05, true).timeout
 		waited += 0.05
 	if session != _session:
@@ -151,6 +167,11 @@ func _process(_delta: float) -> void:
 	_peak = maxf(_peak, rms)
 	level_changed.emit(rms)
 	if _elapsed <= WARMUP_SECONDS or rms == 0.0:
+		return
+	if _heard:
+		_speaking_for += seconds
+		_quiet_for = 0.0 if rms >= threshold() else _quiet_for + seconds
+		_finished = _quiet_for >= END_QUIET_SECONDS or _speaking_for >= MAX_WORD_SECONDS
 		return
 	if rms >= threshold():
 		_heard_for += seconds
