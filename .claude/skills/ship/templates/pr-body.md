@@ -36,5 +36,3 @@
 
 - Claude reviewer: `PASS` (record deleted at ship; see git history)
 - Codex: <ran on full route | not run>. For an external pass, comment `@codex review` on this PR.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)

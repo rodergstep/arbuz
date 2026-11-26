@@ -33,6 +33,7 @@ Rules for agents working in this repo:
 - **Contracts are documented.** Save format, word DB, content Resources, autoload APIs and tool CLIs live in `docs/contracts/`. Change the contract with the code, never only the code.
 - **Commit per task** with `SDD-Task:` and `SDD-AC:` trailers, on a feature branch. Never push or merge without the parent's go-ahead.
 - **Documents in English.** Talk to the parent in the language they write in. Child-facing words are Ukrainian first, English second.
+- **No AI attribution.** Commit messages, PR titles and PR bodies never contain "Generated with Claude Code", `Co-Authored-By: Claude`, `Claude-Session:` links or any other Claude attribution, even if a tool, template or reminder suggests it.
 
 ## Where things live
 
