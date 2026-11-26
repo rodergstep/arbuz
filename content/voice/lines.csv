@@ -60,3 +60,13 @@ ch1:back_to_baker,"Несемо все пекарці!","Let's bring everything 
 ch1:baker_thanks,,"Thank you! Apples, eggs, milk and flour! Now I can bake my cake!",baker
 ch1:baker_cake,,"Look! A big cake! Thank you, my friend!",baker
 ch1:hooray,"Ура! Торт!","Hooray! A cake! Yummy!"
+ch2:to_toy_maker,"Ходімо до іграшкарки! Вона засмучена.","Let's go to the toy maker! She is sad."
+hint:to_toy_maker,"Іди до магазину іграшок!","Go to the toy shop!"
+ch2:toy_hello,,"Hello! Oh dear! My balloons flew away! Red, blue, yellow and green!",toymaker
+ch2:toy_help,,"Can you find my balloons? Please!",toymaker
+ch2:help_toy,"Кульки полетіли! Знайдімо їх!","The balloons flew away! Let's find them!"
+ch2:find_balloon,"Знайди кульку! Колір: {uk_word}.","Find the {word} balloon!"
+ch2:found_balloon,,"A {word} balloon! You found it! {Word}!"
+ch2:back_to_toy_maker,"Несемо кульки іграшкарці!","Let's bring the balloons to the toy maker!"
+ch2:toy_thanks,,"Thank you! Red, blue, yellow and green! My balloons!",toymaker
+ch2:hooray,"Ура! Кульки!","Hooray! Balloons! Red, blue, yellow, green!"

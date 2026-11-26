@@ -20,3 +20,7 @@ enum Kind { GET_IN_CAR, DRIVE_TO, WALK_TO, OPEN_DOOR, FIND_OBJECT, TALK_TO, FERR
 ## COLLECT: the word of the things to find and how many (one at each spot).
 @export var word: StringName
 @export var count: int = 1
+## COLLECT: lines with {word} for asking ("Find the red balloon!") and for a single find;
+## empty = the chapter 1 defaults.
+@export var find_line: String = ""
+@export var found_line: String = ""

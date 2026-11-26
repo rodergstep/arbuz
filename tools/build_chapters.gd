@@ -66,7 +66,7 @@ func _initialize() -> void:
 	var ch1: ChapterData = ChapterData.new()
 	ch1.id = &"chapter1_bakery"
 	ch1.done_key = "chapter:bakery"
-	ch1.next_chapter = "res://content/chapters/england_practice.tres"
+	ch1.next_chapter = "res://content/chapters/chapter2_balloons.tres"
 	var intro: QuestStep = _step(
 		QuestStep.Kind.TALK_TO, [Vector3(-5.5, 0, -6.2)], "ch1:to_baker", "hint:to_baker"
 	)
@@ -85,7 +85,36 @@ func _initialize() -> void:
 	]
 	var err4: Error = ResourceSaver.save(ch1, "res://content/chapters/chapter1_bakery.tres")
 	print("chapter1_bakery.tres: ", error_string(err4))
-	quit(0 if err == OK and err2 == OK and err3 == OK and err4 == OK else 1)
+	# Chapter 2: the toy maker's balloons flew away; find the red, blue, yellow and green one
+	# (each with its own pattern), bring them back.
+	var ch2: ChapterData = ChapterData.new()
+	ch2.id = &"chapter2_balloons"
+	ch2.done_key = "chapter:balloons"
+	ch2.next_chapter = "res://content/chapters/england_practice.tres"
+	var toy_spot: Array[Vector3] = [Vector3(-30, 0, 13.5)]
+	var hello: QuestStep = _step(QuestStep.Kind.TALK_TO, toy_spot, "ch2:to_toy_maker", "hint:to_toy_maker")
+	hello.talk_id = &"toy_intro"
+	var bye: QuestStep = _step(QuestStep.Kind.TALK_TO, toy_spot, "ch2:back_to_toy_maker", "hint:to_toy_maker")
+	bye.talk_id = &"toy_thanks"
+	ch2.steps = [
+		hello,
+		_balloon(&"red", Vector3(-32, 0, 22)),
+		_balloon(&"blue", Vector3(14, 0, -28)),
+		_balloon(&"yellow", Vector3(6, 0, 9)),
+		_balloon(&"green", Vector3(-14, 0, 22)),
+		bye,
+	]
+	var err5: Error = ResourceSaver.save(ch2, "res://content/chapters/chapter2_balloons.tres")
+	print("chapter2_balloons.tres: ", error_string(err5))
+	quit(0 if err == OK and err2 == OK and err3 == OK and err4 == OK and err5 == OK else 1)
+
+
+func _balloon(colour: StringName, spot: Vector3) -> QuestStep:
+	var s: QuestStep = _collect(colour, [spot])
+	s.find_line = "ch2:find_balloon"
+	s.found_line = "ch2:found_balloon"
+	s.hint_line = "ch2:find_balloon"
+	return s
 
 
 func _collect(word: StringName, spots: Array[Vector3]) -> QuestStep:
