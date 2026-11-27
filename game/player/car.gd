@@ -20,6 +20,9 @@ const BUMP_COOLDOWN: float = 0.6
 const GRAVITY: float = 20.0
 ## A collision counts as a bump only against something upright, never the ground.
 const WALL_NORMAL_MAX_Y: float = 0.5
+const ENGINE_SOUND: AudioStream = preload("res://audio/sfx/engine_loop.ogg")
+const ENGINE_IDLE_DB: float = -24.0
+const ENGINE_FAST_DB: float = -17.0
 
 var driving: bool = false
 ## Which toy car: car_hatchback, car_jeep or car_van (assets/models).
@@ -34,8 +37,8 @@ var _body: Node3D
 var _moving: bool = false
 ## Body paint: [mesh, surface, original colour] for every surface in the body's colour family.
 var _paint_parts: Array[Array] = []
-## The engine: a toy motor that putters while he sits in the car and goes "brrrm", higher and
-## louder, as it speeds up.
+## The engine: a real recorded petrol engine idling (CC0, see audio/sfx/CREDITS.md) while he
+## sits in the car, higher and a little louder as it speeds up; always well under the voices.
 var _engine: AudioStreamPlayer
 var _body_color: Color = Color.WHITE
 var _turn_time: float = 0.0
@@ -57,8 +60,8 @@ func _ready() -> void:
 	_find_body_paint()
 	# Not positional: the camera is far above, and a toddler should always hear his car.
 	_engine = AudioStreamPlayer.new()
-	_engine.stream = Sfx.engine_stream()
-	_engine.volume_db = -9.0
+	_engine.stream = ENGINE_SOUND
+	_engine.volume_db = ENGINE_IDLE_DB
 	add_child(_engine)
 	if SaveSystem.settings.has("car_color"):
 		repaint(Color.html(String(SaveSystem.settings["car_color"])))
@@ -178,8 +181,8 @@ func _update_engine() -> void:
 	if not _engine.playing:
 		_engine.play()
 	var k: float = clampf(absf(_speed) / MAX_SPEED, 0.0, 1.0)
-	_engine.pitch_scale = 0.85 + 0.85 * k
-	_engine.volume_db = lerpf(-9.0, -3.0, k)
+	_engine.pitch_scale = 0.9 + 0.7 * k
+	_engine.volume_db = lerpf(ENGINE_IDLE_DB, ENGINE_FAST_DB, k)
 
 
 ## Notices starting, stopping and a real turn (half a second of steady turning while moving).

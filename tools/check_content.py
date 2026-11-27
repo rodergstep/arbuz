@@ -25,6 +25,15 @@ for word in csv.DictReader((ROOT / "content/words/words.csv").open(encoding="utf
         if sentence.strip() and sentence.strip() not in scenes:
             problems.append(f'card sentence without a scene ({word["id"]}): "{sentence.strip()}"')
 
+# Sounds the game loads from files (not synthesized) must exist and loop.
+for name in ("audio/sfx/engine_loop.ogg",):
+    f = ROOT / name
+    imp = f.with_name(f.name + ".import")
+    if not f.exists():
+        problems.append(f"missing sound {name}")
+    elif not imp.exists() or "loop=true" not in imp.read_text():
+        problems.append(f"{name} must be imported with loop=true")
+
 if problems:
     print("Content check FAILED:")
     for p in problems:
