@@ -118,17 +118,18 @@ The goal is the English town base plus the first full chapter, which together fo
 
 The goal is the complete England arc, with town life and customization.
 
-- [ ] Before Chapter 2 (colors), a quick color-vision check with a simple picture test: about 1 in 12 boys has some color-vision deficiency, and the chapter's tasks would need shapes or patterns too
-- [ ] Chapter 2, the toy maker's balloons: colors, the park and harbor
-- [ ] Chapter 3, the escaped farm animals: animals and their sounds, the farm
-- [ ] Chapter 4, the stopped clock tower: numbers 1–10
-- [ ] Finale: the festival, with every friend he helped
-- [ ] Town life: walking people and animals, slow traffic that always stops, day/night and weather
-- [ ] Customization: paint shop for car colors, outfits and hats, stickers, horn sounds
-- [ ] Hidden collectibles, the car's word teaching (stop, go, left, right), the friends gallery
-- [ ] A short recorded playtest after each chapter, not only at the end of the arc, so problems surface while the chapter is fresh
+- [ ] (parent) Before Chapter 2 (colors), a quick color-vision check with a simple picture test: about 1 in 12 boys has some color-vision deficiency, and the chapter's tasks would need shapes or patterns too
+- [x] Chapter 2, the toy maker's balloons: colors, the park and harbor
+- [x] Chapter 3, the escaped farm animals: animals and their sounds, the farm
+- [x] Chapter 4, the stopped clock tower: numbers 1–10
+- [x] Finale: the festival, with every friend he helped
+- [x] Town life: walking people and animals, slow traffic that always stops, weather (rain in England, butterflies in Ukraine); day/night left for later
+- [x] Customization: paint shop for car colors and hats (stickers and horn sounds left for later)
+- [x] Hidden collectibles, the car's word teaching (stop, go, left, right), the friends gallery
+- [ ] (parent) A short recorded playtest after each chapter, not only at the end of the arc, so problems surface while the chapter is fresh
 
 **Gate 5:** the whole England arc plays through from the prologue to the festival with no blocking bugs.
+*2026-11-27: scripted runs pass for the prologue, Chapters 1–4 and the festival (each chapter run hands over to the next). The real check is the parent playing it with the child.*
 
 ## Phase 6 — Polish and release builds (about 3–5 sessions)
 
