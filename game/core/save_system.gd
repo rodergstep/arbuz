@@ -60,6 +60,24 @@ func load_profile() -> void:
 				words[str(id)] = stats[id]
 
 
+## Starts over from the very beginning (the parent's "start over"): the current save is kept as
+## a dated backup next to it (saves are sacred), then progress, first meetings and word numbers
+## are cleared. Parent settings (session length, volume, microphone) are kept.
+func start_over() -> void:
+	if FileAccess.file_exists(path()):
+		var stamp: String = Time.get_datetime_string_from_system().replace(":", "-")
+		DirAccess.copy_absolute(path(), "%s/%s.backup-%s.json" % [save_dir, profile_id, stamp])
+	var keep: Dictionary = {}
+	for key: String in ["session_minutes", "volume", "microphone"]:
+		if settings.has(key):
+			keep[key] = settings[key]
+	_encountered.clear()
+	words.clear()
+	settings = default_settings()
+	settings.merge(keep, true)
+	save_now()
+
+
 ## Brings an older save up to VERSION, one step at a time. Never edit a shipped step.
 func migrate(data: Dictionary) -> Dictionary:
 	var version: int = int(data.get("version", 1))

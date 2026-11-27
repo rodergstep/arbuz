@@ -62,3 +62,9 @@ Fixtures: `tests/fixtures/saves/v1.json`, `v2.json`.
 
 - `words.<id>.said` (int, optional, default 0): times the microphone heard him say the word when
   asked (added 2026-11-27 for the parent's progress view; no version bump).
+
+### Start over (2026-11-27)
+
+`SaveSystem.start_over()` (parent screen, "Почати гру спочатку", pressed twice) copies the save to
+`<profile>.backup-<date-time>.json` in the same folder, then clears progress, first meetings and
+word numbers, keeping the parent settings (session length, volume, microphone).
