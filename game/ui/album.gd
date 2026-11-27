@@ -1,7 +1,8 @@
 class_name Album
 extends CanvasLayer
 ## His album (roadmap step 20, rewards): a big book button in the corner opens a page with every
-## friend he has helped and every treasure he has found, each as a little live 3D picture.
+## friend he has helped, every treasure he has found, and a gold star sticker for each word he has
+## said himself, each as a little live 3D picture.
 ## Tapping one says it again ("This is a teddy."): the souvenirs replay their words. Ones not
 ## found yet show a soft question mark. Anyone can open and close it; the game waits behind it.
 
@@ -25,6 +26,7 @@ var _book_button: Button
 var _page: Control
 var _grid: GridContainer
 var _viewports: Array[SubViewport] = []
+var _stickers: HFlowContainer
 
 
 func _ready() -> void:
@@ -61,6 +63,11 @@ func _ready() -> void:
 	_grid.add_theme_constant_override("h_separation", 14)
 	_grid.add_theme_constant_override("v_separation", 14)
 	column.add_child(_grid)
+	# A gold star sticker for every word he has said himself; tapping one says the word.
+	_stickers = HFlowContainer.new()
+	_stickers.custom_minimum_size = Vector2(1060, 0)
+	_stickers.add_theme_constant_override("h_separation", 8)
+	column.add_child(_stickers)
 	var close_button: Button = _big_button(AlbumIcon.Kind.CLOSE, Vector2(100, 100))
 	close_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	close_button.pressed.connect(close)
@@ -87,7 +94,7 @@ func close() -> void:
 	is_open = false
 	_page.visible = false
 	_book_button.visible = true
-	for child: Node in _grid.get_children():
+	for child: Node in _grid.get_children() + _stickers.get_children():
 		child.queue_free()
 	_viewports.clear()
 	get_tree().paused = false
@@ -99,6 +106,26 @@ func _fill() -> void:
 		_add_tile(friend[0], friend[1], SaveSystem.has_encountered(friend[2]), true)
 	for treasure: StringName in TREASURES:
 		_add_tile(String(treasure), treasure, SaveSystem.has_encountered("treasure:%s" % treasure), false)
+	for key: String in SaveSystem.words:
+		if int(LearningTracker.stats(StringName(key))["said"]) > 0:
+			_add_sticker(StringName(key))
+
+
+func _add_sticker(word_id: StringName) -> void:
+	var word: WordEntry = WordDB.get_word(word_id)
+	if word == null:
+		return
+	var sticker: Button = _big_button(AlbumIcon.Kind.STAR, Vector2(64, 64))
+	sticker.tooltip_text = word.en
+	sticker.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	sticker.add_theme_stylebox_override("hover", StyleBoxEmpty.new())
+	sticker.add_theme_stylebox_override("pressed", StyleBoxEmpty.new())
+	sticker.pressed.connect(
+		func() -> void:
+			Sfx.play(&"pop")
+			Speech.line("card:word", word, true)
+	)
+	_stickers.add_child(sticker)
 
 
 ## One picture: the thing turning slowly in its own little world (or "?" until it is found).

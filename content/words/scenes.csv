@@ -147,3 +147,5 @@ The man reads the paper.,town,man stand 0 0,0.9
 The man has a cap.,town,man wave 0 0,0.9
 The woman has an umbrella.,town,woman stand 0 0,0.9
 The woman says hello.,town,woman say 0 0 Hello!,1
+"Ring, ring! The bell rings.",grass,bell say 0 0 Ring ring!,0.5
+A shiny bell.,grass,bell spin 0 0,0.4

@@ -1,8 +1,8 @@
 class_name AlbumIcon
 extends Control
-## Drawn icons for the album's buttons (no font glyphs needed): an open book, a cross.
+## Drawn icons for the album (no font glyphs needed): an open book, a cross, a star sticker.
 
-enum Kind { BOOK, CLOSE }
+enum Kind { BOOK, CLOSE, STAR }
 
 var kind: Kind = Kind.BOOK
 
@@ -21,6 +21,14 @@ func _draw() -> void:
 				var y: float = -s * 0.35 + i * s * 0.35
 				draw_line(c + Vector2(-s * 0.8, y), c + Vector2(-s * 0.2, y), UiTokens.INK, 3.0)
 			draw_circle(c + Vector2(s * 0.5, 0), s * 0.28, UiTokens.ACCENT_SUN)
+		Kind.STAR:
+			var points: PackedVector2Array = PackedVector2Array()
+			for i: int in 10:
+				var r: float = s * (1.35 if i % 2 == 0 else 0.6)
+				var a: float = -PI / 2.0 + TAU * i / 10.0
+				points.append(c + Vector2(cos(a), sin(a)) * r)
+			draw_colored_polygon(points, UiTokens.ACCENT_SUN)
+			draw_polyline(points + PackedVector2Array([points[0]]), Color(0.85, 0.55, 0.15), 3.0, true)
 		Kind.CLOSE:
 			draw_line(c + Vector2(-s, -s), c + Vector2(s, s), UiTokens.INK, 10.0, true)
 			draw_line(c + Vector2(-s, s), c + Vector2(s, -s), UiTokens.INK, 10.0, true)

@@ -131,7 +131,7 @@ func stop() -> void:
 
 
 func honk() -> void:
-	Sfx.play(&"horn")
+	Sfx.play_horn()
 	EventLog.log_event(&"horn")
 	honked.emit()
 	var tween: Tween = create_tween()

@@ -82,6 +82,8 @@ static func _builders() -> Dictionary[String, Callable]:
 		"table": _table,
 		"toy": _toy,
 		"teddy": _teddy,
+		"bulb_horn": _bulb_horn,
+		"bell": _bell,
 		"cap": _cap,
 		"sun_hat": _sun_hat,
 		"butterfly": _butterfly,
@@ -297,6 +299,26 @@ static func _sun_hat(root: Node3D) -> void:
 	crown.is_hemisphere = true
 	root.add_child(Blocks.mesh(crown, straw, Vector3(0, 0.02, 0)))
 	_cyl(root, 0.31, 0.31, 0.07, Color(0.88, 0.3, 0.35), Vector3(0, 0.07, 0))
+
+
+## A big old-fashioned bulb horn: a red rubber bulb and a golden trumpet.
+static func _bulb_horn(root: Node3D) -> void:
+	_sphere(root, 0.2, Color(0.85, 0.2, 0.2), Vector3(-0.35, 0.25, 0))
+	var pipe: MeshInstance3D = _cyl(root, 0.05, 0.05, 0.4, Color(0.95, 0.78, 0.3), Vector3(-0.05, 0.25, 0))
+	pipe.rotation.z = PI / 2.0
+	var bell: MeshInstance3D = _cyl(root, 0.26, 0.05, 0.4, Color(0.98, 0.82, 0.3), Vector3(0.3, 0.25, 0))
+	bell.rotation.z = PI / 2.0
+
+
+## A bicycle bell: a shiny dome with a little lever.
+static func _bell(root: Node3D) -> void:
+	var dome: SphereMesh = SphereMesh.new()
+	dome.radius = 0.28
+	dome.height = 0.28
+	dome.is_hemisphere = true
+	root.add_child(Blocks.mesh(dome, Color(0.85, 0.87, 0.9), Vector3(0, 0.12, 0)))
+	_cyl(root, 0.06, 0.06, 0.12, Color(0.3, 0.3, 0.32), Vector3(0, 0.06, 0))
+	_box(root, Vector3(0.25, 0.04, 0.06), Color(0.85, 0.2, 0.2), Vector3(0.2, 0.18, 0.1))
 
 
 static func _teddy(root: Node3D) -> void:
