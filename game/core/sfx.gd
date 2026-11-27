@@ -5,6 +5,7 @@ extends Node
 const MIX_RATE: int = 22050
 const VOICES: int = 4
 const VOLUME_DB: float = -10.0
+const CAR_HORN: AudioStream = preload("res://audio/sfx/car_horn.ogg")
 
 var _streams: Dictionary[StringName, AudioStreamWAV] = {}
 var _players: Array[AudioStreamPlayer] = []
@@ -18,7 +19,10 @@ func _ready() -> void:
 		add_child(player)
 		_players.append(player)
 	_streams[&"tap"] = _tones([880.0], 0.07, 0.3)
-	_streams[&"horn"] = _tones([392.0, 494.0], 0.18, 0.5, true)
+	_streams[&"horn_toy"] = _tones([392.0, 494.0], 0.18, 0.5, true)
+	# A duck's "quack" (a falling nasal buzz) and a bicycle bell (two bright rings).
+	_streams[&"horn_duck"] = _quack()
+	_streams[&"horn_bell"] = _tones([2093.0, 2637.0, 2093.0, 2637.0], 0.09, 0.35)
 	_streams[&"boing"] = _sweep(320.0, 140.0, 0.28)
 	_streams[&"chime"] = _tones([523.0, 659.0, 784.0, 1047.0], 0.11, 0.4)
 	_streams[&"soft"] = _tones([494.0, 523.0], 0.09, 0.25)
@@ -26,6 +30,33 @@ func _ready() -> void:
 	_streams[&"pop"] = _sweep(500.0, 900.0, 0.09)
 	# A short, bright party tune for the festival (an original little arpeggio).
 	_streams[&"tune"] = _tones([523.0, 659.0, 784.0, 659.0, 698.0, 880.0, 784.0, 1047.0], 0.16, 0.3)
+
+
+## His car's horn: the one he chose at the horn stand (save setting "horn"): a real car horn
+## (CC0 recording), a duck's quack or a bicycle bell.
+func play_horn() -> void:
+	var horn: String = String(SaveSystem.settings.get("horn", "car"))
+	if horn == "car":
+		var player: AudioStreamPlayer = _players[_next]
+		_next = (_next + 1) % _players.size()
+		player.stream = CAR_HORN
+		player.play()
+		return
+	play(StringName("horn_" + horn))
+
+
+func _quack() -> AudioStreamWAV:
+	var count: int = int(0.28 * MIX_RATE)
+	var data: PackedByteArray = PackedByteArray()
+	data.resize(count * 2)
+	var phase: float = 0.0
+	for i: int in count:
+		var k: float = float(i) / count
+		phase += TAU * lerpf(520.0, 330.0, k) / MIX_RATE
+		var buzz: float = clampf(sin(phase) * 2.5, -1.0, 1.0) * 0.7 + sin(phase * 3.0) * 0.3
+		var env: float = minf(1.0, i / 300.0) * (1.0 - k)
+		data.encode_s16(i * 2, int(buzz * env * 0.45 * 32767.0))
+	return _wav(data)
 
 
 func play(kind: StringName) -> void:

@@ -147,3 +147,12 @@ The man reads the paper.,town,man stand 0 0,0.9
 The man has a cap.,town,man wave 0 0,0.9
 The woman has an umbrella.,town,woman stand 0 0,0.9
 The woman says hello.,town,woman say 0 0 Hello!,1
+"Ring, ring! The bell rings.",grass,bell say 0 0 Ring ring!,0.5
+A shiny bell.,grass,bell spin 0 0,0.4
+It is night.,night,moon float 1.5 -2 3.4; lamp glow -1.5 0,1.2
+"Good night, moon!",night,tygrytsa wave 0 0.5; moon float 1.6 -2 3.2,1.1
+It is day.,sky,sun float 0 -2 3.8; cloud drift -4 -4 4.6,1
+The sun is up.,grass,sun float 0 -2 3.2; tree stand -2 -1,1.2
+We live in Ukraine.,grass,hata stand 0 -2.5; sunflower stand -2.5 0.5; sunflower stand 2.6 0.3,1.6
+Sunflowers grow in Ukraine.,grass,sunflower grow -1.2 0; sunflower grow 1.2 -0.5,1.1
+The red bus is in England.,town,double_decker stand 0 -1,2.2

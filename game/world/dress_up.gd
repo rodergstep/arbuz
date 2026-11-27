@@ -2,11 +2,16 @@ class_name DressUp
 extends Node3D
 ## Customization (roadmap step 27): a paint shop of four big paint pots (red with dots, blue with
 ## stripes, yellow with plus signs, green with rings: colour is never the only cue) that repaint
-## his car, and a hat stand (a cap, a sun hat, a crown) for the boy. Each is a thing to click,
-## so it also teaches its word; his choices are kept in the save.
+## his car, a hat stand (a cap, a sun hat, a crown) for the boy, and a horn stand (a car horn, a
+## duck's quack, a bicycle bell). Each is a thing to click, so it also teaches its word; his
+## choices are kept in the save.
 
 const PAINTS: Array[StringName] = [&"red", &"blue", &"yellow", &"green"]
 const HATS: Array[StringName] = [&"cap", &"sun_hat", &"crown"]
+## Horns he can choose for his car: [thing to click, horn sound, word it teaches].
+const HORNS: Array[Array] = [
+	["bulb_horn", "car", &"horn"], ["duck", "duck", &"duck"], ["bell", "bell", &"bell"]
+]
 
 var town: GreyboxVillage
 
@@ -22,6 +27,9 @@ func build(the_town: GreyboxVillage, paint_spot: Vector3, hat_spot: Vector3) -> 
 		var word: StringName = &"hat" if HATS[i] == &"sun_hat" else HATS[i]
 		var hat: Clickable = _thing(HATS[i], word, hat_spot + Vector3(i * 1.9, 0, 0), 1.6)
 		hat.clicked.connect(_on_hat.bind(HATS[i]))
+	for i: int in HORNS.size():
+		var horn: Clickable = _thing(HORNS[i][0], HORNS[i][2], hat_spot + Vector3(i * 1.9, 0, 3.2), 0.9)
+		horn.clicked.connect(_on_horn.bind(String(HORNS[i][1])))
 
 
 func _thing(model: StringName, word: StringName, at: Vector3, lift: float = 0.0) -> Clickable:
@@ -56,3 +64,9 @@ func _on_hat(_word: StringName, hat: StringName) -> void:
 	SaveSystem.settings["hat"] = String(hat)
 	SaveSystem.save_now()
 	Sfx.play(&"pop")
+
+
+func _on_horn(_word: StringName, horn: String) -> void:
+	SaveSystem.settings["horn"] = horn
+	SaveSystem.save_now()
+	Sfx.play_horn()

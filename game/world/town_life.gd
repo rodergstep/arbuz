@@ -5,6 +5,10 @@ extends Node3D
 ## word. Vehicles always stop for him: when the hero or his car is just ahead, they wait.
 
 const STOP_DISTANCE: float = 7.0
+## Warm window lights of the village hatas at night.
+const VILLAGE_LIGHTS: Array[Vector3] = [
+	Vector3(4, 2, 11), Vector3(-30, 2, -5), Vector3(30, 2, 9), Vector3(-4, 2, 33), Vector3(-14, 2, -24)
+]
 ## The loop road both towns share (its four corners).
 const ROAD_LOOP: Array[Vector3] = [
 	Vector3(-24, 0, -22), Vector3(24, 0, -22), Vector3(24, 0, 22), Vector3(-24, 0, 22)
@@ -48,6 +52,13 @@ func add_dress_up(paint_spot: Vector3, hat_spot: Vector3) -> void:
 	var dress: DressUp = DressUp.new()
 	add_child(dress)
 	dress.build(town, paint_spot, hat_spot)
+
+
+## Evening and night with warm lights at these spots (lamps, windows).
+func add_day_night(lights: Array[Vector3]) -> void:
+	var cycle: DayNight = DayNight.new()
+	add_child(cycle)
+	cycle.setup(town, lights)
 
 
 ## Butterflies fluttering over the flowers, one at each spot (orange, blue, pink).
