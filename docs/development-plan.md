@@ -72,7 +72,7 @@ The goal is to prove the core feel with plain shapes and placeholder voices, bef
 The goal is for the systems every chapter relies on to be data-driven and tested, so new content is mostly data and art.
 
 - [ ] **Word database:** each word has an id, Ukrainian, English, Spanish and French text, a picture or model, audio files and a topic
-- [ ] **Voice generation script:** runs locally on the M4. Piper produces the Ukrainian lines and Kokoro the English, Spanish and French words. Output is `.ogg` files named by line id, regenerated whenever the word list changes
+- [ ] **Voice generation script:** runs locally on the M4. Piper produces the Ukrainian lines and Chatterbox TTS the English (Spanish and French later). Output is `.ogg` files named by line id, regenerated whenever the word list changes
 - [ ] **Audio manager:** plays voice lines by id, ducks the music under speech, queues lines without overlap
 - [ ] **Learning tracker:** records every time a word is heard and every right or wrong pick, and decides which struggling words come back (smart repetition, box-based like flashcards)
 - [ ] **Quest and chapter system:** chapters, tasks and door passwords are described as data files, not code
@@ -171,7 +171,7 @@ arbuz/
     chapters/           chapter and task data files
     dialogue/           Dialogic timelines
   assets/               models (glb), textures, music, sfx (Git LFS)
-  audio_gen/            voice generation script + line lists (Piper, Kokoro)
+  audio_gen/            voice generation script + line lists (Piper, Chatterbox)
   audio/voice/          generated .ogg voice files (Git LFS)
   tests/                GUT tests
   tools/                export and build scripts

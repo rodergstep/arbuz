@@ -1,1 +1,1 @@
-kokoro:bf_emma:0.95:pause0.45
+chatterbox:ref-v1:exag0.55:cfg0.5:pause0.45
