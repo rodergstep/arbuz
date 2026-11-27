@@ -28,30 +28,6 @@ func _ready() -> void:
 	_streams[&"tune"] = _tones([523.0, 659.0, 784.0, 659.0, 698.0, 880.0, 784.0, 1047.0], 0.16, 0.3)
 
 
-## A friendly, looping toy-car motor: a bright "brrrm" (a buzzy tone around 110 Hz with
-## harmonics up to about 1 kHz, so laptop speakers play it) with a quick putter. Played by the
-## car with its pitch following the speed. Exactly whole cycles fit the loop, so it never clicks.
-func engine_stream() -> AudioStreamWAV:
-	var seconds: float = 0.5
-	var count: int = int(seconds * MIX_RATE)
-	var data: PackedByteArray = PackedByteArray()
-	data.resize(count * 2)
-	var base: float = 110.0
-	for i: int in count:
-		var t: float = float(i) / MIX_RATE
-		var putter: float = 0.62 + 0.38 * absf(sin(TAU * 14.0 * t))
-		var s: float = 0.0
-		for h: int in range(1, 9):
-			s += sin(TAU * base * h * t) / float(h)
-		s = clampf(s * 0.55, -1.0, 1.0)
-		data.encode_s16(i * 2, int(s * putter * 0.7 * 32767.0))
-	var wav: AudioStreamWAV = _wav(data)
-	wav.loop_mode = AudioStreamWAV.LOOP_FORWARD
-	wav.loop_begin = 0
-	wav.loop_end = count
-	return wav
-
-
 func play(kind: StringName) -> void:
 	if not _streams.has(kind):
 		push_warning("Sfx: unknown sound %s" % kind)
