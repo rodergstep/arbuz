@@ -30,6 +30,7 @@ TYRE = (0.18, 0.18, 0.20, 1)
 GLASS = (0.72, 0.86, 0.96, 1)
 LIGHT = (1.0, 0.93, 0.6, 1)
 CHROME = (0.78, 0.80, 0.84, 1)
+CAR_GLASS = (0.30, 0.48, 0.68, 1)
 
 _materials = {}
 
@@ -213,64 +214,127 @@ def lights(parent, y, z, x=0.55):
         sphere("Light%+.0f" % (sx * 10), (sx, y, z), (0.12, 0.05, 0.1), mat("light", LIGHT), parent, 12)
 
 
+def car_body(name, profile, width, material, parent, bevel=0.16):
+    """A car body from its side silhouette: profile is (y, z) points around the outline
+    (y forward), pushed out to `width`, then rounded with a bevel and smoothed."""
+    import bmesh
+    mesh = bpy.data.meshes.new(name)
+    bm = bmesh.new()
+    verts = [bm.verts.new((-width / 2, y, z)) for y, z in profile]
+    face = bm.faces.new(verts)
+    ext = bmesh.ops.extrude_face_region(bm, geom=[face])
+    for v in [e for e in ext["geom"] if isinstance(e, bmesh.types.BMVert)]:
+        v.co.x += width
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+    bm.to_mesh(mesh)
+    bm.free()
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.collection.objects.link(obj)
+    bpy.ops.object.select_all(action="DESELECT")
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
+    mod = obj.modifiers.new("bevel", "BEVEL")
+    mod.width = bevel
+    mod.segments = 5
+    mod.limit_method = "NONE"
+    bpy.ops.object.modifier_apply(modifier=mod.name)
+    sub = obj.modifiers.new("sub", "SUBSURF")
+    sub.levels = 2
+    bpy.ops.object.modifier_apply(modifier=sub.name)
+    obj.data.materials.append(material)
+    bpy.ops.object.shade_smooth()
+    set_parent(obj, parent)
+    return obj
+
+
+def car_wheel(name, loc, radius, width, parent, rim_colour=(0.92, 0.92, 0.94, 1)):
+    """A chunky tyre with a rounded rim and five little spokes."""
+    side = 1 if loc[0] > 0 else -1
+    bpy.ops.mesh.primitive_torus_add(location=loc, major_radius=radius * 0.72, minor_radius=radius * 0.3, rotation=(0, math.radians(90), 0), major_segments=28, minor_segments=12)
+    t = bpy.context.active_object
+    t.scale = (1.0, 1.0, width / (radius * 0.6))
+    finish(t, name, mat("tyre", TYRE), parent)
+    rim = cylinder(name + "_rim", (loc[0] + side * width * 0.12, loc[1], loc[2]), radius * 0.5, width * 0.7, mat("rim", rim_colour), parent, (0, math.radians(90), 0), 20)
+    sphere(name + "_cap", (loc[0] + side * width * 0.45, loc[1], loc[2]), (0.05, radius * 0.16, radius * 0.16), mat("hub", CHROME), parent, 10)
+    for i in range(5):
+        a = math.tau * i / 5
+        box(name + "_spoke%d" % i, (loc[0] + side * width * 0.42, loc[1] + math.cos(a) * radius * 0.28, loc[2] + math.sin(a) * radius * 0.28), (0.03, radius * 0.08, radius * 0.38), mat("hub", CHROME), parent, 0.005, (a, 0, 0))
+
+
+def car_details(root, body_paint, length_front, length_rear, belt, width, light_z, glass_box):
+    """Headlights with chrome rings, taillights, grille, bumpers, mirrors, door line and handles,
+    a number plate; glass_box = (y_min, y_max, z_min, z_max) where the body is painted as glass."""
+    for x in (-width * 0.3, width * 0.3):
+        cylinder("Headlight%+.0f" % (x * 10), (x, length_front - 0.02, light_z), 0.15, 0.08, mat("headlight", LIGHT), root, (math.radians(90), 0, 0), 20)
+        bpy.ops.mesh.primitive_torus_add(location=(x, length_front + 0.01, light_z), major_radius=0.15, minor_radius=0.025, rotation=(math.radians(90), 0, 0))
+        finish(bpy.context.active_object, "HeadRing%+.0f" % (x * 10), mat("chrome", CHROME), root)
+        box("Taillight%+.0f" % (x * 10), (x * 1.05, length_rear + 0.02, light_z + 0.05), (0.26, 0.06, 0.14), mat("taillight", (0.9, 0.18, 0.18, 1)), root, 0.04)
+    box("Grille", (0, length_front - 0.01, light_z - 0.18), (width * 0.38, 0.05, 0.12), mat("grille", (0.22, 0.22, 0.25, 1)), root, 0.04)
+    for y, n in ((length_front + 0.02, "Front"), (length_rear - 0.02, "Rear")):
+        box("Bumper" + n, (0, y, 0.38), (width * 0.92, 0.18, 0.18), mat("bumper", (0.30, 0.30, 0.33, 1)), root, 0.08)
+    box("Plate", (0, length_front + 0.12, 0.38), (0.4, 0.02, 0.12), mat("plate", (0.98, 0.95, 0.75, 1)), root, 0.01)
+    for side in (-1, 1):
+        x = side * (width / 2 + 0.01)
+        box("DoorLine%+d" % side, (x, glass_box[0] + 0.55, belt - 0.25), (0.01, 0.015, 0.5), mat("doorline", (0.25, 0.15, 0.15, 1)), root, 0.0)
+        box("Handle%+d" % side, (x + side * 0.01, glass_box[0] + 0.35, belt - 0.08), (0.02, 0.16, 0.04), mat("chrome", CHROME), root, 0.01)
+        blob("Mirror%+d" % side, [((side * (width / 2 + 0.05), glass_box[1] - 0.05, belt + 0.04), 0.13, (1.0, 0.6, 0.6))], body_paint, root)
+
+
 def build_hatchback():
-    """A round little hatchback: soft bubble body, big friendly headlights."""
+    """Our family car: a round, friendly hatchback: a smooth lower body, a glass cabin with a
+    painted roof and pillars, round headlights with chrome rings, chunky wheels with spoked rims,
+    mirrors, bumpers and a number plate."""
     reset()
     root = empty("CarHatchback", (0, 0, 0))
-    paint = mat("paint", (0.93, 0.40, 0.33, 1))
-    sphere("Body", (0, 0, 0.62), (0.9, 1.45, 0.42), paint, root, 24)
-    sphere("Cabin", (0, -0.15, 1.02), (0.72, 0.85, 0.42), mat("glass", GLASS), root, 20)
-    sphere("Roof", (0, -0.2, 1.22), (0.62, 0.65, 0.14), paint, root, 20)
-    for x, y in ((-0.82, 0.85), (0.82, 0.85), (-0.82, -0.85), (0.82, -0.85)):
-        wheel("Wheel%+.0f%+.0f" % (x, y), (x, y, 0.35), 0.34, 0.28, root)
-    lights(root, 1.38, 0.72, 0.45)
-    box("Bumper", (0, 1.42, 0.45), (1.2, 0.12, 0.14), mat("chrome", CHROME), root, 0.05)
+    body_paint = mat("paint", (0.90, 0.32, 0.28, 1))
+    car_body("Body", [(-1.5, 0.28), (1.55, 0.28), (1.62, 0.58), (1.45, 0.86), (0.85, 1.02), (-1.42, 1.06), (-1.58, 0.7)], 1.72, body_paint, root)
+    car_body("Windows", [(-1.34, 0.98), (0.84, 0.98), (0.2, 1.42), (-0.94, 1.44)], 1.58, mat("car_glass", CAR_GLASS), root, 0.06)
+    car_body("Roof", [(-1.0, 1.36), (0.28, 1.36), (0.18, 1.5), (-0.95, 1.52)], 1.64, body_paint, root, 0.05)
+    for side in (-1, 1):
+        box("PillarB%+d" % side, (side * 0.77, -0.34, 1.2), (0.05, 0.12, 0.42), body_paint, root, 0.01)
+    for x, y in ((-0.86, 1.0), (0.86, 1.0), (-0.86, -0.95), (0.86, -0.95)):
+        car_wheel("Wheel%+.0f%+.0f" % (x, y), (x, y, 0.36), 0.36, 0.3, root)
+    car_details(root, body_paint, 1.62, -1.58, 1.0, 1.72, 0.7, (-1.4, 0.8))
     export("car_hatchback")
 
 
 def build_jeep():
-    """A small sturdy jeep: chunky box, high wheels, spare tyre on the back, roll bar."""
+    """A sturdy little jeep: a tall boxy body, a dark roof, big chunky wheels, a spare wheel
+    on the back door, round headlights."""
     reset()
     root = empty("CarJeep", (0, 0, 0))
-    paint = mat("paint", (0.42, 0.65, 0.42, 1))
-    box("Body", (0, 0, 0.78), (1.75, 2.9, 0.62), paint, root, 0.12)
-    box("Hood", (0, 0.95, 1.1), (1.6, 0.95, 0.06), paint, root, 0.03)
-    box("Windshield", (0, 0.42, 1.38), (1.55, 0.08, 0.55), mat("glass", GLASS), root, 0.03)
-    bpy.ops.mesh.primitive_torus_add(location=(0, -0.45, 1.1), major_radius=0.75, minor_radius=0.05, rotation=(math.radians(90), 0, math.radians(90)))
-    finish(bpy.context.active_object, "RollBar", mat("chrome", CHROME), root)
-    for x, y in ((-0.9, 0.95), (0.9, 0.95), (-0.9, -0.95), (0.9, -0.95)):
-        wheel("Wheel%+.0f%+.0f" % (x, y), (x, y, 0.42), 0.42, 0.34, root)
-    cylinder("Spare", (0, -1.55, 0.9), 0.36, 0.22, mat("tyre", TYRE), root, (math.radians(90), 0, 0), 20)
-    lights(root, 1.46, 0.85, 0.55)
+    body_paint = mat("paint", (0.36, 0.60, 0.38, 1))
+    car_body("Body", [(-1.55, 0.42), (1.55, 0.42), (1.64, 0.78), (1.56, 1.06), (0.72, 1.12), (-1.55, 1.14), (-1.62, 0.8)], 1.82, body_paint, root, 0.12)
+    car_body("Windows", [(-1.42, 1.06), (0.7, 1.06), (0.48, 1.62), (-1.42, 1.64)], 1.66, mat("car_glass", CAR_GLASS), root, 0.05)
+    car_body("Roof", [(-1.47, 1.56), (0.54, 1.56), (0.48, 1.7), (-1.47, 1.72)], 1.74, mat("jeep_roof", (0.22, 0.24, 0.24, 1)), root, 0.05)
+    for side in (-1, 1):
+        box("PillarB%+d" % side, (side * 0.81, -0.4, 1.32), (0.05, 0.12, 0.52), body_paint, root, 0.01)
+    for x, y in ((-0.9, 1.0), (0.9, 1.0), (-0.9, -0.98), (0.9, -0.98)):
+        car_wheel("Wheel%+.0f%+.0f" % (x, y), (x, y, 0.45), 0.45, 0.36, root, (0.95, 0.82, 0.3, 1))
+    # The spare wheel on the back door.
+    bpy.ops.mesh.primitive_torus_add(location=(0, -1.75, 0.95), major_radius=0.27, minor_radius=0.12, rotation=(math.radians(90), 0, 0), major_segments=24, minor_segments=10)
+    finish(bpy.context.active_object, "Spare", mat("tyre", TYRE), root)
+    cylinder("SpareRim", (0, -1.76, 0.95), 0.18, 0.18, mat("rim", (0.95, 0.82, 0.3, 1)), root, (math.radians(90), 0, 0), 18)
+    car_details(root, body_paint, 1.64, -1.62, 1.12, 1.82, 0.82, (-1.4, 0.68))
     export("car_jeep")
 
 
 def build_van():
-    """A tiny van: tall rounded box, big windows, a cheerful stripe."""
+    """A cheerful little van: tall and round, big windows, a cream stripe, chunky wheels."""
     reset()
     root = empty("CarVan", (0, 0, 0))
-    paint = mat("paint", (0.45, 0.68, 0.92, 1))
-    box("Body", (0, 0, 1.0), (1.75, 3.0, 1.35), paint, root, 0.3)
-    box("Windscreen", (0, 1.45, 1.35), (1.45, 0.1, 0.5), mat("glass", GLASS), root, 0.05)
-    for x in (-0.875, 0.875):
-        box("Window%+.0f" % x, (x, -0.2, 1.38), (0.06, 1.9, 0.45), mat("glass", GLASS), root, 0.04)
-        box("Stripe%+.0f" % x, (x, 0, 0.85), (0.05, 2.8, 0.14), mat("cream", CREAM), root, 0.02)
-    for x, y in ((-0.85, 0.95), (0.85, 0.95), (-0.85, -0.95), (0.85, -0.95)):
-        wheel("Wheel%+.0f%+.0f" % (x, y), (x, y, 0.35), 0.33, 0.28, root)
-    lights(root, 1.5, 0.75, 0.55)
+    body_paint = mat("paint", (0.98, 0.78, 0.28, 1))
+    body = car_body("Body", [(-1.62, 0.3), (1.55, 0.3), (1.66, 0.62), (1.6, 0.96), (1.12, 1.12), (-1.62, 1.12)], 1.8, body_paint, root)
+    paint(body, mat("stripe_cream", CREAM), lambda p: 0.66 < p.z < 0.8)
+    car_body("Windows", [(-1.5, 1.04), (1.1, 1.04), (0.78, 1.66), (-1.5, 1.7)], 1.66, mat("car_glass", CAR_GLASS), root, 0.06)
+    car_body("Roof", [(-1.56, 1.62), (0.84, 1.62), (0.76, 1.84), (-1.56, 1.88)], 1.76, body_paint, root, 0.06)
+    for side in (-1, 1):
+        for y in (-0.55, 0.35):
+            box("Pillar%+.0f%+d" % (y * 10, side), (side * 0.81, y, 1.35), (0.05, 0.12, 0.6), body_paint, root, 0.01)
+    for x, y in ((-0.88, 1.0), (0.88, 1.0), (-0.88, -1.0), (0.88, -1.0)):
+        car_wheel("Wheel%+.0f%+.0f" % (x, y), (x, y, 0.37), 0.37, 0.3, root)
+    car_details(root, body_paint, 1.65, -1.64, 1.1, 1.8, 0.72, (-1.5, 1.05))
     export("car_van")
-
-
-WALL = (0.97, 0.95, 0.90, 1)
-THATCH = (0.80, 0.63, 0.34, 1)
-SHUTTER = (0.36, 0.58, 0.82, 1)
-WOOD = (0.55, 0.38, 0.24, 1)
-LEAF = (0.32, 0.60, 0.34, 1)
-PETAL = (1.0, 0.80, 0.18, 1)
-SEEDS = (0.40, 0.25, 0.14, 1)
-STEM = (0.38, 0.62, 0.30, 1)
-FLOWER_RED = (0.88, 0.30, 0.32, 1)
-STONE = (0.72, 0.70, 0.66, 1)
 
 
 def build_hata():
