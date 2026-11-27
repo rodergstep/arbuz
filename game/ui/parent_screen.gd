@@ -23,10 +23,21 @@ func _ready() -> void:
 	var center: CenterContainer = CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(center)
+	# Two columns so everything fits on one screen: settings on the left, actions on the right.
+	var page: VBoxContainer = VBoxContainer.new()
+	page.add_theme_constant_override("separation", 20)
+	center.add_child(page)
+	page.add_child(_text("Для батьків", UiTokens.SIZE_SUBTITLE))
+	var columns: HBoxContainer = HBoxContainer.new()
+	columns.add_theme_constant_override("separation", 60)
+	page.add_child(columns)
 	var box: VBoxContainer = VBoxContainer.new()
-	box.add_theme_constant_override("separation", 28)
-	center.add_child(box)
-	box.add_child(_text("Для батьків", UiTokens.SIZE_SUBTITLE))
+	box.add_theme_constant_override("separation", 18)
+	columns.add_child(box)
+	var actions: VBoxContainer = VBoxContainer.new()
+	actions.add_theme_constant_override("separation", 18)
+	actions.alignment = BoxContainer.ALIGNMENT_CENTER
+	columns.add_child(actions)
 	box.add_child(_text("Тривалість гри, хвилин", UiTokens.SIZE_BODY))
 	var lengths: HBoxContainer = HBoxContainer.new()
 	lengths.add_theme_constant_override("separation", 16)
@@ -59,10 +70,10 @@ func _ready() -> void:
 	add_child(progress)
 	var progress_button: Button = _button("Прогрес: слова")
 	progress_button.pressed.connect(progress.open)
-	box.add_child(progress_button)
+	actions.add_child(progress_button)
 	var extend: Button = _button("Грати ще 15 хвилин")
 	extend.pressed.connect(func() -> void: extend_requested.emit())
-	box.add_child(extend)
+	actions.add_child(extend)
 	# Start the game from the very beginning: pressed twice (the first press asks to confirm).
 	var start_over: Button = _button("Почати гру спочатку")
 	start_over.pressed.connect(
@@ -74,10 +85,10 @@ func _ready() -> void:
 			get_tree().paused = false
 			get_tree().change_scene_to_file("res://game/boot.tscn")
 	)
-	box.add_child(start_over)
+	actions.add_child(start_over)
 	var close_button: Button = _button("Закрити")
 	close_button.pressed.connect(close)
-	box.add_child(close_button)
+	actions.add_child(close_button)
 	visible = false
 
 
