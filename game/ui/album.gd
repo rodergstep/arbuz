@@ -27,6 +27,7 @@ var _page: Control
 var _grid: GridContainer
 var _viewports: Array[SubViewport] = []
 var _stickers: HFlowContainer
+var _map: HBoxContainer
 
 
 func _ready() -> void:
@@ -63,6 +64,11 @@ func _ready() -> void:
 	_grid.add_theme_constant_override("h_separation", 14)
 	_grid.add_theme_constant_override("v_separation", 14)
 	column.add_child(_grid)
+	# His map: the countries he has been to (Ukraine, then England after the ferry); tapping one
+	# says its name. Later arcs add Spain and France as "?".
+	_map = HBoxContainer.new()
+	_map.add_theme_constant_override("separation", 24)
+	column.add_child(_map)
 	# A gold star sticker for every word he has said himself; tapping one says the word.
 	_stickers = HFlowContainer.new()
 	_stickers.custom_minimum_size = Vector2(1060, 0)
@@ -94,7 +100,7 @@ func close() -> void:
 	is_open = false
 	_page.visible = false
 	_book_button.visible = true
-	for child: Node in _grid.get_children() + _stickers.get_children():
+	for child: Node in _grid.get_children() + _stickers.get_children() + _map.get_children():
 		child.queue_free()
 	_viewports.clear()
 	get_tree().paused = false
@@ -106,9 +112,25 @@ func _fill() -> void:
 		_add_tile(friend[0], friend[1], SaveSystem.has_encountered(friend[2]), true)
 	for treasure: StringName in TREASURES:
 		_add_tile(String(treasure), treasure, SaveSystem.has_encountered("treasure:%s" % treasure), false)
+	_add_place(AlbumIcon.Kind.UKRAINE, &"ukraine", true)
+	_add_place(AlbumIcon.Kind.ENGLAND, &"england", SaveSystem.has_encountered("chapter:prologue"))
 	for key: String in SaveSystem.words:
 		if int(LearningTracker.stats(StringName(key))["said"]) > 0:
 			_add_sticker(StringName(key))
+
+
+func _add_place(kind: AlbumIcon.Kind, word_id: StringName, visited: bool) -> void:
+	var place: Button = _big_button(kind, Vector2(110, 110))
+	if not visited:
+		place.modulate = Color(1, 1, 1, 0.25)
+	var word: WordEntry = WordDB.get_word(word_id)
+	place.pressed.connect(
+		func() -> void:
+			Sfx.play(&"pop" if visited else &"soft")
+			if visited and word != null:
+				Speech.line("card:this_is", word, true)
+	)
+	_map.add_child(place)
 
 
 func _add_sticker(word_id: StringName) -> void:

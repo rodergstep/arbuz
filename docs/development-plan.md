@@ -123,8 +123,8 @@ The goal is the complete England arc, with town life and customization.
 - [x] Chapter 3, the escaped farm animals: animals and their sounds, the farm
 - [x] Chapter 4, the stopped clock tower: numbers 1–10
 - [x] Finale: the festival, with every friend he helped
-- [x] Town life: walking people and animals, slow traffic that always stops, weather (rain in England, butterflies in Ukraine); day/night left for later
-- [x] Customization: paint shop for car colors and hats (stickers and horn sounds left for later)
+- [x] Town life: walking people and animals, slow traffic that always stops, weather (rain in England, butterflies in Ukraine), evening and night
+- [x] Customization: paint shop for car colors, hats, horn sounds (car horn, duck, bell), star stickers for words he says, and a map of visited countries in his album
 - [x] Hidden collectibles, the car's word teaching (stop, go, left, right), the friends gallery
 - [ ] (parent) A short recorded playtest after each chapter, not only at the end of the arc, so problems surface while the chapter is fresh
 
