@@ -350,34 +350,6 @@ def build_well():
     export("well")
 
 
-def build_postman():
-    """A friendly English postman: blue uniform, red cap, big satchel. About 1.7 m."""
-    reset()
-    root = empty("Postman", (0, 0, 0))
-    blue, skin = mat("uniform", (0.25, 0.38, 0.66, 1)), mat("skin", (0.96, 0.80, 0.68, 1))
-    red, bag = mat("cap", (0.80, 0.18, 0.20, 1)), mat("bag", (0.58, 0.40, 0.24, 1))
-    limb("LegL", (-0.12, 0, 0.75), 0.68, 0.09, mat("trousers", (0.18, 0.24, 0.40, 1)), root, mat("shoe", DARK))
-    limb("LegR", (0.12, 0, 0.75), 0.68, 0.09, mat("trousers", (0.18, 0.24, 0.40, 1)), root, mat("shoe", DARK))
-    body = empty("Body", (0, 0, 0.75), root)
-    sphere("Torso", (0, 0, 1.05), (0.3, 0.22, 0.38), blue, body)
-    for i, z in enumerate((1.25, 1.1, 0.95)):
-        sphere("Button%d" % i, (0, 0.21, z), (0.025,) * 3, mat("gold", (0.95, 0.80, 0.30, 1)), body, 8)
-    # Satchel on a strap
-    box("Satchel", (0.3, 0.1, 0.85), (0.12, 0.34, 0.3), bag, body, 0.04)
-    box("Strap", (0.05, 0.12, 1.15), (0.05, 0.04, 0.7), bag, body, 0.01, (0, math.radians(-35), 0))
-    for side, x in (("L", -0.33), ("R", 0.33)):
-        limb("Arm" + side, (x, 0, 1.33), 0.5, 0.075, blue, root, skin)
-    head = empty("Head", (0, 0, 1.55), root)
-    sphere("Face", (0, 0, 1.6), (0.2, 0.19, 0.22), skin, head, 20)
-    sphere("NoseP", (0, 0.19, 1.6), (0.035, 0.03, 0.035), skin, head, 10)
-    for x in (-0.07, 0.07):
-        sphere("EyeP%+.0f" % (x * 100), (x, 0.17, 1.66), (0.025, 0.015, 0.03), mat("eye", DARK), head, 8)
-    sphere("Smile", (0, 0.17, 1.52), (0.06, 0.02, 0.015), mat("mouth", (0.75, 0.35, 0.35, 1)), head, 10)
-    cylinder("Cap", (0, 0, 1.8), 0.2, 0.12, red, head, verts=18)
-    box("Visor", (0, 0.17, 1.75), (0.28, 0.14, 0.03), mat("cap_dark", (0.20, 0.12, 0.12, 1)), head, 0.02)
-    export("postman")
-
-
 def build_ferry():
     """A small river ferry: a flat deck that fits the car, railings, a little cabin, a funnel."""
     reset()
@@ -505,56 +477,6 @@ def build_lamp():
     export("lamp")
 
 
-def build_baker():
-    """The baker: a round, cheerful baker in a white apron and a tall chef's hat. About 1.65 m."""
-    reset()
-    root = empty("Baker", (0, 0, 0))
-    dress, skin = mat("dress", (0.92, 0.55, 0.45, 1)), mat("skin", (0.96, 0.80, 0.68, 1))
-    apron, white = mat("apron", (0.99, 0.98, 0.96, 1)), mat("hat", (1.0, 1.0, 1.0, 1))
-    limb("LegL", (-0.11, 0, 0.6), 0.55, 0.08, skin, root, mat("shoe", DARK))
-    limb("LegR", (0.11, 0, 0.6), 0.55, 0.08, skin, root, mat("shoe", DARK))
-    body = empty("Body", (0, 0, 0.6), root)
-    sphere("Dress", (0, 0, 0.95), (0.36, 0.3, 0.45), dress, body)
-    sphere("Apron", (0, 0.12, 0.92), (0.28, 0.2, 0.36), apron, body)
-    for side, x in (("L", -0.34), ("R", 0.34)):
-        limb("Arm" + side, (x, 0, 1.22), 0.45, 0.075, dress, root, skin)
-    head = empty("Head", (0, 0, 1.45), root)
-    sphere("Face", (0, 0, 1.5), (0.2, 0.19, 0.21), skin, head, 20)
-    sphere("Cheeks", (0, 0.13, 1.46), (0.15, 0.06, 0.06), mat("blush", (0.95, 0.62, 0.60, 1)), head, 12)
-    for x in (-0.07, 0.07):
-        sphere("EyeB%+.0f" % (x * 100), (x, 0.17, 1.55), (0.025, 0.015, 0.03), mat("eye", DARK), head, 8)
-    sphere("SmileB", (0, 0.17, 1.42), (0.06, 0.02, 0.015), mat("mouth", (0.75, 0.35, 0.35, 1)), head, 10)
-    cylinder("HatBand", (0, 0, 1.7), 0.19, 0.12, white, head, verts=18)
-    sphere("HatTop", (0, 0, 1.86), (0.26, 0.26, 0.2), white, head, 18)
-    export("baker")
-
-
-def build_toy_maker():
-    """The toy maker: a purple coat with big yellow buttons, round glasses, a bright cap. 1.65 m."""
-    reset()
-    root = empty("ToyMaker", (0, 0, 0))
-    coat, skin = mat("coat", (0.55, 0.42, 0.80, 1)), mat("skin", (0.92, 0.74, 0.62, 1))
-    button, cap = mat("buttons", (0.98, 0.82, 0.25, 1)), mat("cap", (0.30, 0.70, 0.55, 1))
-    limb("LegL", (-0.11, 0, 0.6), 0.55, 0.08, mat("trousers", (0.25, 0.25, 0.32, 1)), root, mat("shoe", DARK))
-    limb("LegR", (0.11, 0, 0.6), 0.55, 0.08, mat("trousers", (0.25, 0.25, 0.32, 1)), root, mat("shoe", DARK))
-    body = empty("Body", (0, 0, 0.6), root)
-    sphere("Coat", (0, 0, 0.98), (0.33, 0.27, 0.42), coat, body)
-    for i, z in enumerate((1.15, 0.98, 0.81)):
-        sphere("Button%d" % i, (0, 0.27, z), (0.04,) * 3, button, body, 10)
-    for side, x in (("L", -0.32), ("R", 0.32)):
-        limb("Arm" + side, (x, 0, 1.22), 0.45, 0.075, coat, root, skin)
-    head = empty("Head", (0, 0, 1.45), root)
-    sphere("Face", (0, 0, 1.5), (0.2, 0.19, 0.21), skin, head, 20)
-    for x in (-0.075, 0.075):
-        bpy.ops.mesh.primitive_torus_add(location=(x, 0.18, 1.55), major_radius=0.05, minor_radius=0.01, rotation=(math.radians(90), 0, 0))
-        finish(bpy.context.active_object, "Glasses%+.0f" % (x * 100), mat("glasses", DARK), head)
-        sphere("EyeT%+.0f" % (x * 100), (x, 0.17, 1.55), (0.02, 0.012, 0.025), mat("eye", DARK), head, 8)
-    sphere("SmileT", (0, 0.17, 1.42), (0.06, 0.02, 0.015), mat("mouth", (0.75, 0.35, 0.35, 1)), head, 10)
-    sphere("Cap", (0, 0, 1.66), (0.21, 0.21, 0.09), cap, head, 18)
-    sphere("CapBobble", (0, 0, 1.76), (0.05,) * 3, button, head, 10)
-    export("toy_maker")
-
-
 def quadruped(root, body_col, head_col, body_scale, head_loc, leg_h, leg_col, leg_r=0.07):
     """A round toy animal on four short legs; the body is centred over the legs."""
     sphere("Body", (0, 0, leg_h + body_scale[2] * 0.8), body_scale, body_col, root, 18)
@@ -567,101 +489,6 @@ def quadruped(root, body_col, head_col, body_scale, head_loc, leg_h, leg_col, le
 def eyes(root, head_loc, spread=0.09, forward=0.2):
     for x in (-spread, spread):
         sphere("EyeA%+.0f" % (x * 100), (head_loc[0] + x, head_loc[1] + forward, head_loc[2] + 0.06), (0.03,) * 3, mat("eye", DARK), root, 8)
-
-
-def build_cow():
-    reset()
-    root = empty("Cow", (0, 0, 0))
-    white, black = mat("cow_white", (0.97, 0.96, 0.93, 1)), mat("cow_black", (0.15, 0.13, 0.13, 1))
-    quadruped(root, white, white, (0.42, 0.65, 0.36), (0, 0.72, 0.95), 0.4, black, 0.08)
-    for x, y in ((0.2, 0.1), (-0.25, -0.25), (0.05, -0.4)):
-        sphere("Spot%+.0f%+.0f" % (x * 10, y * 10), (x, y, 1.02), (0.16, 0.16, 0.04), black, root, 10)
-    sphere("Snout", (0, 0.92, 0.88), (0.15, 0.08, 0.1), mat("snout_pink", (0.95, 0.70, 0.72, 1)), root, 12)
-    for x in (-0.13, 0.13):
-        cylinder("Horn%+.0f" % (x * 100), (x, 0.7, 1.17), 0.025, 0.12, mat("horn", (0.95, 0.88, 0.7, 1)), root, verts=6)
-    eyes(root, (0, 0.72, 0.95))
-    export("cow")
-
-
-def build_sheep():
-    reset()
-    root = empty("Sheep", (0, 0, 0))
-    wool, face = mat("wool", (0.98, 0.97, 0.94, 1)), mat("sheep_face", (0.25, 0.22, 0.22, 1))
-    quadruped(root, wool, face, (0.36, 0.5, 0.32), (0, 0.55, 0.8), 0.32, face, 0.06)
-    for x, y in ((0.2, 0.2), (-0.2, 0.1), (0.1, -0.25), (-0.15, -0.3), (0, 0.05)):
-        sphere("Puff%+.0f%+.0f" % (x * 10, y * 10), (x, y, 0.82), (0.17,) * 3, wool, root, 10)
-    eyes(root, (0, 0.55, 0.8), 0.08, 0.2)
-    export("sheep")
-
-
-def build_pig():
-    reset()
-    root = empty("Pig", (0, 0, 0))
-    pink = mat("pig_pink", (0.97, 0.70, 0.74, 1))
-    quadruped(root, pink, pink, (0.36, 0.5, 0.3), (0, 0.5, 0.62), 0.22, pink, 0.06)
-    cylinder("PigSnout", (0, 0.72, 0.6), 0.08, 0.06, mat("snout", (0.92, 0.55, 0.62, 1)), root, (math.radians(90), 0, 0), 12)
-    for x in (-0.13, 0.13):
-        sphere("PigEar%+.0f" % (x * 100), (x, 0.5, 0.82), (0.07, 0.03, 0.06), pink, root, 8)
-    eyes(root, (0, 0.5, 0.62), 0.08, 0.19)
-    export("pig")
-
-
-def build_duck():
-    reset()
-    root = empty("Duck", (0, 0, 0))
-    yellow = mat("duck_yellow", (0.99, 0.86, 0.30, 1))
-    sphere("DuckBody", (0, 0, 0.3), (0.28, 0.36, 0.24), yellow, root, 16)
-    sphere("DuckHead", (0, 0.25, 0.62), (0.17,) * 3, yellow, root, 14)
-    sphere("Beak", (0, 0.43, 0.6), (0.08, 0.07, 0.03), mat("beak", (0.98, 0.55, 0.18, 1)), root, 10)
-    eyes(root, (0, 0.25, 0.62), 0.07, 0.14)
-    export("duck")
-
-
-def build_farmer():
-    """The farmer: green overalls, a checked shirt colour, a straw hat. 1.75 m."""
-    reset()
-    root = empty("Farmer", (0, 0, 0))
-    overalls, shirt, skin = mat("overalls", (0.30, 0.48, 0.38, 1)), mat("shirt", (0.85, 0.35, 0.30, 1)), mat("skin", (0.92, 0.74, 0.62, 1))
-    limb("LegL", (-0.12, 0, 0.72), 0.65, 0.09, overalls, root, mat("boot", (0.35, 0.25, 0.2, 1)))
-    limb("LegR", (0.12, 0, 0.72), 0.65, 0.09, overalls, root, mat("boot", (0.35, 0.25, 0.2, 1)))
-    body = empty("Body", (0, 0, 0.72), root)
-    sphere("Shirt", (0, 0, 1.1), (0.31, 0.24, 0.36), shirt, body)
-    box("Bib", (0, 0.2, 1.0), (0.36, 0.06, 0.4), overalls, body, 0.03)
-    for side, x in (("L", -0.33), ("R", 0.33)):
-        limb("Arm" + side, (x, 0, 1.36), 0.5, 0.08, shirt, root, skin)
-    head = empty("Head", (0, 0, 1.58), root)
-    sphere("Face", (0, 0, 1.62), (0.2, 0.19, 0.22), skin, head, 20)
-    for x in (-0.07, 0.07):
-        sphere("EyeF%+.0f" % (x * 100), (x, 0.17, 1.67), (0.025, 0.015, 0.03), mat("eye", DARK), head, 8)
-    sphere("SmileF", (0, 0.17, 1.54), (0.06, 0.02, 0.015), mat("mouth", (0.75, 0.35, 0.35, 1)), head, 10)
-    cylinder("HatBrim", (0, 0, 1.8), 0.36, 0.03, mat("straw", (0.93, 0.80, 0.45, 1)), head, verts=20)
-    cylinder("HatTop", (0, 0, 1.88), 0.19, 0.16, mat("straw", (0.93, 0.80, 0.45, 1)), head, verts=16)
-    export("farmer")
-
-
-def build_clock_maker():
-    """The clock maker: a brown waistcoat, a white beard, round glasses, a flat cap. 1.7 m."""
-    reset()
-    root = empty("ClockMaker", (0, 0, 0))
-    vest, shirt, skin = mat("vest", (0.50, 0.36, 0.26, 1)), mat("shirt", (0.95, 0.93, 0.88, 1)), mat("skin", (0.94, 0.78, 0.66, 1))
-    limb("LegL", (-0.12, 0, 0.7), 0.63, 0.08, mat("trousers", (0.30, 0.30, 0.38, 1)), root, mat("shoe", DARK))
-    limb("LegR", (0.12, 0, 0.7), 0.63, 0.08, mat("trousers", (0.30, 0.30, 0.38, 1)), root, mat("shoe", DARK))
-    body = empty("Body", (0, 0, 0.7), root)
-    sphere("Shirt", (0, 0, 1.08), (0.3, 0.23, 0.35), shirt, body)
-    sphere("Vest", (0, 0.04, 1.06), (0.31, 0.22, 0.3), vest, body)
-    sphere("Watch", (0.12, 0.25, 1.05), (0.05, 0.02, 0.05), mat("gold", (0.95, 0.80, 0.30, 1)), body, 10)
-    for side, x in (("L", -0.32), ("R", 0.32)):
-        limb("Arm" + side, (x, 0, 1.33), 0.48, 0.075, shirt, root, skin)
-    head = empty("Head", (0, 0, 1.55), root)
-    sphere("Face", (0, 0, 1.6), (0.2, 0.19, 0.22), skin, head, 20)
-    sphere("Beard", (0, 0.1, 1.48), (0.17, 0.12, 0.13), mat("beard", (0.97, 0.97, 0.97, 1)), head, 14)
-    for x in (-0.075, 0.075):
-        bpy.ops.mesh.primitive_torus_add(location=(x, 0.18, 1.65), major_radius=0.05, minor_radius=0.01, rotation=(math.radians(90), 0, 0))
-        finish(bpy.context.active_object, "GlassesC%+.0f" % (x * 100), mat("glasses", DARK), head)
-        sphere("EyeC%+.0f" % (x * 100), (x, 0.17, 1.65), (0.02, 0.012, 0.025), mat("eye", DARK), head, 8)
-    sphere("CapC", (0, 0.03, 1.77), (0.22, 0.24, 0.07), mat("flatcap", (0.35, 0.40, 0.50, 1)), head, 18)
-    export("clock_maker")
-
 
 
 # --- Ukraine: the village's own things ---------------------------------------------------
@@ -1046,6 +873,380 @@ def build_boy():
     export("boy")
 
 
+# --- Organic modelling: smooth blended bodies ------------------------------------------
+# Metaballs melt ellipsoids into one smooth surface (a neck flowing into a head, a belly into
+# legs), like a sculpted toy. Colour regions (a cow's patches, a muzzle) are painted onto the
+# same surface by face, so there are no stuck-on balls.
+
+_blob_count = [0]
+
+
+def blob(name, elements, material, parent=None, res=0.025, decimate=0.35, threshold=0.6):
+    """elements: (loc, radius) for a ball or (loc, radius, (sx, sy, sz)) for an ellipsoid."""
+    _blob_count[0] += 1
+    mb = bpy.data.metaballs.new("mb%d" % _blob_count[0])
+    mb.resolution = res
+    mb.render_resolution = res
+    mb.threshold = threshold
+    obj = bpy.data.objects.new("mb%d" % _blob_count[0], mb)
+    bpy.context.collection.objects.link(obj)
+    for el in elements:
+        e = mb.elements.new()
+        e.co = el[0]
+        e.radius = el[1]
+        if len(el) > 2:
+            e.type = "ELLIPSOID"
+            e.size_x, e.size_y, e.size_z = el[2]
+        e.stiffness = 2.0
+    bpy.ops.object.select_all(action="DESELECT")
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
+    bpy.ops.object.convert(target="MESH")
+    o = bpy.context.active_object
+    if decimate < 1.0:
+        mod = o.modifiers.new("dec", "DECIMATE")
+        mod.ratio = decimate
+        bpy.ops.object.modifier_apply(modifier=mod.name)
+    o.name = name
+    o.data.materials.append(material)
+    bpy.ops.object.shade_smooth()
+    if parent is not None:
+        set_parent(o, parent)
+    return o
+
+
+def paint(obj, material, inside):
+    """Gives the faces whose centre passes inside(world_point) another material."""
+    if material.name not in [m.name for m in obj.data.materials if m]:
+        obj.data.materials.append(material)
+    idx = [m.name for m in obj.data.materials].index(material.name)
+    mw = obj.matrix_world
+    for poly in obj.data.polygons:
+        if inside(mw @ poly.center):
+            poly.material_index = idx
+
+
+def in_ellipsoid(center, radii):
+    cx, cy, cz = center
+    rx, ry, rz = radii
+    return lambda p: ((p.x - cx) / rx) ** 2 + ((p.y - cy) / ry) ** 2 + ((p.z - cz) / rz) ** 2 < 1.0
+
+
+def shiny_eye(name, loc, size, parent, look=(0, 1, 0)):
+    """A glossy toy eye: dark, with a white sparkle up and to the side."""
+    sphere(name, loc, (size, size * 0.7, size), mat("eye", DARK), parent, 14)
+    sphere(name + "Shine", (loc[0] + size * 0.35, loc[1] + size * 0.6, loc[2] + size * 0.35), (size * 0.32,) * 3, mat("shine", (1, 1, 1, 1)), parent, 8)
+
+
+def build_cow():
+    """A friendly dairy cow: one smooth body with black patches, a big pink muzzle with
+    nostrils, floppy ears, short horns, a pink udder, dark hooves and a tufted tail."""
+    reset()
+    root = empty("Cow", (0, 0, 0))
+    white, black = mat("cow_white", (0.97, 0.95, 0.91, 1)), mat("cow_black", (0.17, 0.15, 0.15, 1))
+    pink, hoof = mat("cow_pink", (0.96, 0.72, 0.72, 1)), mat("hoof", (0.25, 0.20, 0.18, 1))
+    leg_h = 0.42
+    body = blob("Body", [
+        ((0, 0.3, 0.86), 0.72, (0.95, 1.1, 0.9)),   # chest
+        ((0, -0.05, 0.82), 0.74, (1.0, 1.2, 0.9)),  # belly
+        ((0, -0.42, 0.86), 0.7, (0.95, 1.0, 0.9)),  # hips
+        ((0, 0.68, 1.02), 0.4, (0.85, 1.0, 1.0)),    # neck
+    ] + [((x, y, 0.36), 0.17, (1.0, 1.0, 1.9)) for x in (-0.21, 0.21) for y in (0.3, -0.42)]
+      + [((x, y, 0.13), 0.13, (1.0, 1.0, 1.7)) for x in (-0.21, 0.21) for y in (0.3, -0.42)],
+        white, root, decimate=0.6)
+    for c, r in (((0.38, 0.0, 1.0), (0.3, 0.38, 0.35)), ((-0.38, -0.4, 0.95), (0.3, 0.3, 0.35)),
+                 ((0.1, -0.5, 1.3), (0.25, 0.25, 0.15)), ((-0.35, 0.35, 0.95), (0.22, 0.25, 0.3))):
+        paint(body, black, in_ellipsoid(c, r))
+    paint(body, hoof, lambda p: p.z < 0.09)
+    # The head: its own smooth shape (a forehead and a wide muzzle), so it reads clearly.
+    head = blob("Head", [((0, 0.95, 1.2), 0.38, (0.95, 1.0, 1.0)), ((0, 1.14, 1.06), 0.34, (1.1, 0.95, 0.8))], white, root, decimate=0.6)
+    paint(head, pink, in_ellipsoid((0, 1.26, 1.03), (0.3, 0.14, 0.2)))
+    paint(head, black, in_ellipsoid((0.14, 0.95, 1.38), (0.14, 0.14, 0.12)))
+    for x in (-0.065, 0.065):
+        sphere("Nostril%+.0f" % (x * 100), (x, 1.31, 1.04), (0.03, 0.02, 0.04), black, root, 8)
+    for x in (-0.12, 0.12):
+        shiny_eye("Eye%+.0f" % (x * 100), (x, 1.11, 1.26), 0.04, root)
+    for side in (-1, 1):
+        ear = sphere("Ear%+d" % side, (side * 0.3, 0.92, 1.26), (0.13, 0.05, 0.065), white, root, 12)
+        ear.rotation_euler = (0, math.radians(-25 * side), 0)
+        sphere("EarIn%+d" % side, (side * 0.31, 0.95, 1.26), (0.09, 0.02, 0.04), pink, ear, 10)
+        bpy.ops.mesh.primitive_cone_add(vertices=10, radius1=0.03, radius2=0.01, depth=0.1, location=(side * 0.13, 0.9, 1.43), rotation=(0, math.radians(30 * side), 0))
+        finish(bpy.context.active_object, "Horn%+d" % side, mat("horn", (0.96, 0.9, 0.74, 1)), root)
+    udder = blob("Udder", [((0, -0.18, 0.5), 0.13, (1.2, 1.0, 0.7))] + [((x, y, 0.42), 0.04) for x in (-0.06, 0.06) for y in (-0.12, -0.24)], pink, root)
+    tail = empty("Tail", (0, -0.62, 1.0), root)
+    cylinder("TailRope", (0, -0.75, 0.78), 0.025, 0.45, white, tail, (math.radians(-15), 0, 0), 8)
+    blob("TailTuft", [((0, -0.8, 0.54), 0.08, (1.0, 1.0, 1.6))], black, tail)
+    export("cow")
+
+
+def build_sheep():
+    """A fluffy sheep: a cloud of bumpy wool, a dark face and legs, soft ears."""
+    reset()
+    root = empty("Sheep", (0, 0, 0))
+    wool, face = mat("wool", (0.98, 0.97, 0.93, 1)), mat("sheep_face", (0.24, 0.21, 0.21, 1))
+    puffs = [((x, y, z), 0.32) for x, y, z in (
+        (0, 0.2, 0.72), (0, -0.2, 0.72), (0.2, 0, 0.68), (-0.2, 0, 0.68), (0.15, 0.3, 0.8), (-0.15, 0.3, 0.8),
+        (0.15, -0.3, 0.8), (-0.15, -0.3, 0.8), (0, 0, 0.88), (0, 0.38, 0.62), (0, -0.4, 0.64), (0.2, 0.15, 0.85),
+        (-0.2, -0.15, 0.85))]
+    blob("Wool", puffs, wool, root, decimate=0.5)
+    blob("Legs", [((x, y, z), 0.12, (1, 1, 1.8)) for x in (-0.15, 0.15) for y in (0.25, -0.28) for z in (0.14, 0.4)], face, root)
+    head = blob("Face", [((0, 0.6, 0.85), 0.27, (0.85, 1.1, 1.0)), ((0, 0.75, 0.78), 0.2, (0.85, 1.0, 0.8))], face, root)
+    blob("Topknot", [((0, 0.55, 1.0), 0.2), ((0.06, 0.6, 0.98), 0.15), ((-0.06, 0.6, 0.98), 0.15)], wool, root)
+    for x in (-0.08, 0.08):
+        shiny_eye("Eye%+.0f" % (x * 100), (x, 0.73, 0.89), 0.03, root)
+    for side in (-1, 1):
+        ear = sphere("Ear%+d" % side, (side * 0.17, 0.56, 0.9), (0.09, 0.035, 0.045), face, root, 10)
+        ear.rotation_euler = (0, math.radians(25 * side), 0)
+    export("sheep")
+
+
+def build_pig():
+    """A round pink pig: plump body, a flat snout with nostrils, folded ears, a curly tail."""
+    reset()
+    root = empty("Pig", (0, 0, 0))
+    pink, dark_pink = mat("pig_pink", (0.97, 0.72, 0.75, 1)), mat("snout", (0.92, 0.55, 0.62, 1))
+    body = blob("Body", [((0, 0.12, 0.42), 0.5, (0.95, 1.1, 0.9)), ((0, -0.18, 0.42), 0.5, (0.95, 1.0, 0.9)),
+                         ((0, 0.42, 0.5), 0.38, (0.95, 0.9, 0.95))]
+                + [((x, y, 0.12), 0.11, (1, 1, 1.6)) for x in (-0.14, 0.14) for y in (0.2, -0.25)], pink, root, decimate=0.6)
+    paint(body, mat("trotter", (0.55, 0.38, 0.38, 1)), lambda p: p.z < 0.05)
+    cylinder("Snout", (0, 0.66, 0.46), 0.1, 0.08, dark_pink, root, (math.radians(90), 0, 0), 18)
+    for x in (-0.035, 0.035):
+        sphere("Nostril%+.0f" % (x * 1000), (x, 0.705, 0.46), (0.018, 0.01, 0.028), mat("eye", DARK), root, 8)
+    for x in (-0.1, 0.1):
+        shiny_eye("Eye%+.0f" % (x * 100), (x, 0.6, 0.6), 0.03, root)
+    for side in (-1, 1):
+        bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=0.08, radius2=0.0, depth=0.14, location=(side * 0.14, 0.45, 0.72), rotation=(math.radians(25), math.radians(-20 * side), 0))
+        finish(bpy.context.active_object, "Ear%+d" % side, pink, root, bevel=0.02)
+    bpy.ops.mesh.primitive_torus_add(location=(0, -0.48, 0.5), major_radius=0.06, minor_radius=0.015, rotation=(0, math.radians(90), 0))
+    finish(bpy.context.active_object, "Tail", pink, root)
+    export("pig")
+
+
+def build_duck():
+    """A little yellow duck: a teardrop body with wings, a round head, an orange bill and feet."""
+    reset()
+    root = empty("Duck", (0, 0, 0))
+    yellow, orange = mat("duck_yellow", (1.0, 0.86, 0.3, 1)), mat("duck_orange", (0.98, 0.55, 0.15, 1))
+    blob("Body", [((0, 0.02, 0.24), 0.36, (1.0, 1.25, 0.85)), ((0, -0.25, 0.32), 0.22, (0.8, 1.0, 0.8))], yellow, root)
+    for side in (-1, 1):
+        blob("Wing%+d" % side, [((side * 0.17, -0.05, 0.36), 0.18, (0.4, 1.2, 0.7))], mat("duck_wing", (0.97, 0.78, 0.25, 1)), root)
+    blob("Head", [((0, 0.2, 0.62), 0.27)], yellow, root)
+    blob("Bill", [((0, 0.36, 0.58), 0.13, (1.2, 1.3, 0.45))], orange, root)
+    for x in (-0.07, 0.07):
+        shiny_eye("Eye%+.0f" % (x * 100), (x, 0.3, 0.68), 0.028, root)
+    for x in (-0.08, 0.08):
+        blob("Foot%+.0f" % (x * 100), [((x, 0.08, 0.03), 0.09, (1.0, 1.4, 0.35))], orange, root)
+    export("duck")
+
+
+def build_dog():
+    """A friendly puppy: tan body, a lighter muzzle, a black nose, floppy brown ears, a waggy tail."""
+    reset()
+    root = empty("Dog", (0, 0, 0))
+    tan, light = mat("dog_tan", (0.84, 0.62, 0.40, 1)), mat("dog_light", (0.97, 0.88, 0.74, 1))
+    brown = mat("dog_brown", (0.50, 0.32, 0.20, 1))
+    body = blob("Body", [((0, 0, 0.5), 0.42, (0.85, 1.25, 0.85))]
+                + [((x, y, z), 0.13, (1, 1, 1.6)) for x in (-0.13, 0.13) for y in (0.2, -0.22) for z in (0.12, 0.3)], tan, root)
+    paint(body, light, in_ellipsoid((0, 0.15, 0.4), (0.18, 0.25, 0.15)))
+    paint(body, light, lambda p: p.z < 0.08)
+    head = blob("Head", [((0, 0.35, 0.82), 0.36), ((0, 0.52, 0.74), 0.22, (0.9, 1.1, 0.8))], tan, root)
+    paint(head, light, in_ellipsoid((0, 0.58, 0.72), (0.15, 0.12, 0.12)))
+    sphere("Nose", (0, 0.65, 0.76), (0.045, 0.035, 0.035), mat("eye", DARK), root, 10)
+    for x in (-0.09, 0.09):
+        shiny_eye("Eye%+.0f" % (x * 100), (x, 0.52, 0.88), 0.035, root)
+    for side in (-1, 1):
+        blob("Ear%+d" % side, [((side * 0.2, 0.32, 0.85), 0.14, (0.5, 0.8, 1.4))], brown, root)
+    tail = empty("Tail", (0, -0.32, 0.6), root)
+    blob("TailFluff", [((0, -0.38, 0.68), 0.09, (1, 1, 2.0))], tan, tail)
+    export("dog")
+
+
+def build_cat():
+    """A soft grey cat sitting up: pointy ears with pink inside, a pink nose, whiskers, a long tail."""
+    reset()
+    root = empty("Cat", (0, 0, 0))
+    grey, light, pink = mat("cat_grey", (0.56, 0.53, 0.52, 1)), mat("cat_light", (0.92, 0.92, 0.94, 1)), mat("nose", PINK)
+    body = blob("Body", [((0, 0, 0.32), 0.42, (0.9, 0.9, 1.1)), ((0, 0.05, 0.12), 0.3, (1.1, 1.2, 0.5))], grey, root)
+    paint(body, light, in_ellipsoid((0, 0.18, 0.36), (0.15, 0.15, 0.22)))
+    head = blob("Head", [((0, 0.08, 0.68), 0.36, (1.05, 0.95, 0.9))], grey, root)
+    paint(head, light, in_ellipsoid((0, 0.26, 0.62), (0.12, 0.08, 0.08)))
+    sphere("Nose", (0, 0.29, 0.66), (0.025, 0.015, 0.018), pink, root, 8)
+    for x in (-0.08, 0.08):
+        shiny_eye("Eye%+.0f" % (x * 100), (x, 0.25, 0.72), 0.035, root)
+    for side in (-1, 1):
+        bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=0.08, radius2=0.0, depth=0.15, location=(side * 0.12, 0.06, 0.88), rotation=(0, math.radians(15 * side), math.radians(45)))
+        finish(bpy.context.active_object, "Ear%+d" % side, grey, root, bevel=0.015)
+        for k in (-1, 1):
+            w = box("Whisker%+d%+d" % (side, k), (side * 0.14, 0.27, 0.64 + k * 0.02), (0.18, 0.006, 0.006), mat("whisker", (0.98, 0.98, 0.98, 1)), root, 0.0, (0, math.radians(8 * k * side), 0))
+    tail = empty("Tail", (0, -0.25, 0.15), root)
+    blob("TailCurve", [((0.05 * i, -0.3 - 0.02 * i, 0.12 + 0.07 * i), 0.08) for i in range(6)], grey, tail)
+    export("cat")
+
+
+def build_lion():
+    """A cuddly lion: golden body, a big round mane, a light muzzle, a tufted tail."""
+    reset()
+    root = empty("Lion", (0, 0, 0))
+    gold, mane, light = mat("lion_gold", (0.95, 0.74, 0.36, 1)), mat("mane", (0.78, 0.44, 0.18, 1)), mat("lion_light", (0.99, 0.9, 0.7, 1))
+    blob("Body", [((0, -0.05, 0.62), 0.55, (0.85, 1.3, 0.85))]
+         + [((x, y, z), 0.17, (1, 1, 1.6)) for x in (-0.18, 0.18) for y in (0.3, -0.35) for z in (0.14, 0.38)], gold, root)
+    blob("Mane", [((math.cos(a) * 0.3, 0.42, 1.0 + math.sin(a) * 0.3), 0.22) for a in [math.tau * i / 12 for i in range(12)]], mane, root, decimate=0.5)
+    head = blob("Head", [((0, 0.5, 1.0), 0.42), ((0, 0.68, 0.92), 0.24, (1.1, 0.9, 0.8))], gold, root)
+    paint(head, light, in_ellipsoid((0, 0.75, 0.9), (0.16, 0.1, 0.12)))
+    sphere("Nose", (0, 0.82, 0.96), (0.05, 0.03, 0.035), mat("lion_nose", (0.45, 0.25, 0.2, 1)), root, 10)
+    for x in (-0.1, 0.1):
+        shiny_eye("Eye%+.0f" % (x * 100), (x, 0.73, 1.08), 0.04, root)
+    for side in (-1, 1):
+        sphere("Ear%+d" % side, (side * 0.22, 0.48, 1.24), (0.07, 0.04, 0.07), gold, root, 10)
+    tail = empty("Tail", (0, -0.55, 0.75), root)
+    blob("TailRope", [((0, -0.6 - 0.05 * i, 0.72 - 0.06 * i), 0.06) for i in range(5)], gold, tail)
+    blob("TailTuft", [((0, -0.88, 0.42), 0.1)], mane, tail)
+    export("lion")
+
+
+def build_hen():
+    """A plump white hen: red comb and wattle, a yellow beak, yellow legs."""
+    reset()
+    root = empty("Hen", (0, 0, 0))
+    white, red, yellow = mat("hen_white", (0.98, 0.97, 0.94, 1)), mat("comb", (0.88, 0.18, 0.18, 1)), mat("beak", (0.98, 0.72, 0.2, 1))
+    blob("Body", [((0, 0, 0.36), 0.42, (0.9, 1.2, 0.9)), ((0, -0.28, 0.5), 0.24, (0.7, 0.8, 1.2))], white, root)
+    blob("Head", [((0, 0.25, 0.78), 0.24)], white, root)
+    blob("Comb", [((0, 0.22 + 0.04 * i, 0.94 - 0.01 * i), 0.06) for i in range(3)], red, root)
+    blob("Wattle", [((0, 0.36, 0.68), 0.06, (0.8, 0.6, 1.3))], red, root)
+    bpy.ops.mesh.primitive_cone_add(vertices=8, radius1=0.04, radius2=0.0, depth=0.1, location=(0, 0.4, 0.78), rotation=(math.radians(-90), 0, 0))
+    finish(bpy.context.active_object, "Beak", yellow, root)
+    for x in (-0.07, 0.07):
+        shiny_eye("Eye%+.0f" % (x * 100), (x, 0.34, 0.83), 0.025, root)
+        cylinder("Leg%+.0f" % (x * 100), (x, 0, 0.12), 0.025, 0.24, yellow, root, verts=6)
+        blob("Foot%+.0f" % (x * 100), [((x, 0.05, 0.02), 0.06, (1.0, 1.6, 0.4))], yellow, root)
+    export("hen")
+
+
+SKIN = (0.92, 0.70, 0.56, 1)
+
+
+def person(root, c):
+    """A friendly townsperson in soft, rounded shapes (about 1.75 m, a big head).
+    c: dict of colours (shirt, trousers, shoes, hair, skin) and options (belly, beard, hair_style).
+    Joints: LegL/LegR (hips), ArmL/ArmR (shoulders), Head (neck)."""
+    skin = mat("skin", c.get("skin", SKIN))
+    shirt, trousers = mat("shirt_" + c["name"], c["shirt"]), mat("trousers_" + c["name"], c["trousers"])
+    shoes, hair = mat("shoes", c.get("shoes", (0.30, 0.22, 0.18, 1))), mat("hair_" + c["name"], c["hair"])
+    belly = c.get("belly", 1.0)
+    for side, x in (("L", -0.12), ("R", 0.12)):
+        leg = empty("Leg" + side, (x, 0, 0.82), root)
+        blob("LegShape" + side, [((x, 0, 0.6), 0.2, (1, 1, 2.2)), ((x, 0, 0.3), 0.18, (1, 1, 2.2))], trousers, leg)
+        blob("Shoe" + side, [((x, 0.05, 0.07), 0.16, (0.9, 1.5, 0.6))], shoes, leg)
+    torso = blob("Torso", [((0, 0, 0.98), 0.48 * belly, (1.0, 0.85 * belly, 0.85)), ((0, 0, 1.24), 0.44, (1.05, 0.75, 0.8))], shirt, root, decimate=0.6)
+    for side, x in (("L", -0.3), ("R", 0.3)):
+        arm = empty("Arm" + side, (x, 0, 1.34), root)
+        blob("Sleeve" + side, [((x, 0, 1.28), 0.17), ((x * 1.05, 0, 1.08), 0.15, (1, 1, 1.5))], shirt, arm)
+        blob("Hand" + side, [((x * 1.07, 0.02, 0.9), 0.13)], skin, arm)
+    head = empty("Head", (0, 0, 1.42), root)
+    blob("Neck", [((0, 0, 1.42), 0.14)], skin, head)
+    face = blob("Face", [((0, 0, 1.62), 0.42, (1.0, 0.95, 1.0))], skin, head, decimate=0.6)
+    blob("Nose", [((0, 0.25, 1.58), 0.08)], skin, head)
+    for x in (-1, 1):
+        blob("Ear%+d" % x, [((x * 0.25, 0, 1.6), 0.08, (0.6, 1, 1.2))], skin, head)
+        shiny_eye("Eye%+d" % x, (x * 0.085, 0.235, 1.67), 0.034, head)
+        sphere("Cheek%+d" % x, (x * 0.15, 0.215, 1.56), (0.05, 0.015, 0.032), mat("cheek", (0.95, 0.52, 0.5, 1)), head, 8)
+        box("Brow%+d" % x, (x * 0.085, 0.245, 1.735), (0.065, 0.015, 0.018), hair, head, 0.005)
+    bpy.ops.mesh.primitive_torus_add(location=(0, 0.25, 1.51), major_radius=0.055, minor_radius=0.013, rotation=(math.radians(90), 0, 0))
+    smile = bpy.context.active_object
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.object.mode_set(mode="OBJECT")
+    for v in smile.data.vertices:
+        v.select = v.co.y > 0.0
+    bpy.ops.object.mode_set(mode="EDIT")
+    bpy.ops.mesh.delete(type="VERT")
+    bpy.ops.object.mode_set(mode="OBJECT")
+    finish(smile, "Smile", mat("mouth", (0.45, 0.2, 0.2, 1)), head)
+    style = c.get("hair_style", "short")
+    if style == "short":
+        blob("Hair", [((0, -0.04, 1.74), 0.42, (1.02, 1.0, 0.7)), ((0, 0.12, 1.78), 0.22, (1.3, 0.6, 0.5))], hair, head)
+    elif style == "bun":
+        blob("Hair", [((0, -0.05, 1.72), 0.43, (1.02, 1.0, 0.75)), ((0, -0.2, 1.9), 0.2)], hair, head)
+    elif style == "bald":
+        blob("Hair", [((x, -0.05, 1.62), 0.16, (0.6, 1.2, 0.8)) for x in (-0.22, 0.22)], hair, head)
+    if c.get("beard"):
+        blob("Beard", [((0, 0.12, 1.46), 0.3, (1.0, 0.7, 0.75)), ((0, 0.18, 1.4), 0.2)], hair, head)
+        blob("Moustache", [((x, 0.25, 1.54), 0.07, (1.2, 0.6, 0.5)) for x in (-0.05, 0.05)], hair, head)
+    return head, torso
+
+
+def glasses(head, z=1.67):
+    for x in (-0.085, 0.085):
+        bpy.ops.mesh.primitive_torus_add(location=(x, 0.24, z), major_radius=0.055, minor_radius=0.01, rotation=(math.radians(90), 0, 0))
+        finish(bpy.context.active_object, "Glasses%+.0f" % (x * 100), mat("glasses", DARK), head)
+    box("Bridge", (0, 0.245, z), (0.06, 0.01, 0.01), mat("glasses", DARK), head, 0.0)
+
+
+def build_postman():
+    """The postman: navy uniform with red trim, a red cap, a brown satchel full of letters."""
+    reset()
+    root = empty("Postman", (0, 0, 0))
+    head, torso = person(root, {"name": "postman", "shirt": (0.24, 0.36, 0.64, 1), "trousers": (0.18, 0.24, 0.42, 1), "hair": (0.40, 0.26, 0.16, 1)})
+    paint(torso, mat("trim_red", (0.82, 0.2, 0.2, 1)), lambda p: abs(p.z - 1.36) < 0.025)
+    for i in range(3):
+        sphere("Button%d" % i, (0, 0.23, 1.25 - i * 0.12), (0.022,) * 3, mat("brass", (0.95, 0.78, 0.3, 1)), torso, 8)
+    blob("Cap", [((0, 0.0, 1.86), 0.36, (1.05, 1.05, 0.45))], mat("cap_red", (0.82, 0.18, 0.2, 1)), head)
+    blob("Peak", [((0, 0.24, 1.8), 0.2, (1.1, 0.8, 0.18))], mat("peak", (0.15, 0.15, 0.18, 1)), head)
+    blob("Satchel", [((0.3, 0.05, 0.98), 0.24, (0.5, 1.0, 0.9))], mat("bag", (0.58, 0.40, 0.24, 1)), root)
+    box("Strap", (0, 0.18, 1.18), (0.07, 0.02, 0.8), mat("bag", (0.58, 0.40, 0.24, 1)), root, 0.0, (0, math.radians(-40), 0))
+    box("Letter", (0.3, 0.12, 1.12), (0.18, 0.02, 0.12), mat("letter", (0.98, 0.98, 0.96, 1)), root, 0.005)
+    export("postman")
+
+
+def build_baker():
+    """The baker: round and cheerful, white jacket and apron, a tall puffy chef's hat, a rolling pin."""
+    reset()
+    root = empty("Baker", (0, 0, 0))
+    head, torso = person(root, {"name": "baker", "shirt": (0.98, 0.97, 0.94, 1), "trousers": (0.30, 0.30, 0.34, 1), "hair": (0.75, 0.45, 0.25, 1), "belly": 1.18, "hair_style": "bun"})
+    paint(torso, mat("apron", (0.95, 0.62, 0.42, 1)), lambda p: p.y > 0.1 and p.z < 1.2)
+    blob("Hat", [((0, -0.02, 1.9), 0.3, (1, 1, 0.7)), ((0.1, 0.05, 2.02), 0.26), ((-0.1, 0.0, 2.04), 0.26), ((0, -0.08, 2.08), 0.26)], mat("hat_white", (1, 1, 1, 1)), head)
+    cylinder("HatBand", (0, -0.02, 1.84), 0.25, 0.1, mat("hat_white", (1, 1, 1, 1)), head, verts=20)
+    export("baker")
+
+
+def build_toy_maker():
+    """The toy maker: a purple coat with big yellow buttons, round glasses, a bright striped beanie."""
+    reset()
+    root = empty("ToyMaker", (0, 0, 0))
+    head, torso = person(root, {"name": "toy", "shirt": (0.56, 0.42, 0.80, 1), "trousers": (0.24, 0.26, 0.40, 1), "hair": (0.85, 0.80, 0.70, 1), "hair_style": "short"})
+    for i in range(3):
+        sphere("Button%d" % i, (0, 0.25, 1.28 - i * 0.14), (0.04, 0.02, 0.04), mat("button", (0.98, 0.82, 0.2, 1)), torso, 10)
+    glasses(head)
+    beanie = blob("Beanie", [((0, -0.02, 1.84), 0.4, (1.05, 1.05, 0.6))], mat("beanie", (0.95, 0.35, 0.3, 1)), head)
+    paint(beanie, mat("beanie2", (0.98, 0.85, 0.3, 1)), lambda p: p.z < 1.8)
+    blob("Pompom", [((0, -0.02, 2.02), 0.12)], mat("beanie2", (0.98, 0.85, 0.3, 1)), head)
+    export("toy_maker")
+
+
+def build_farmer():
+    """The farmer: blue dungarees over a red checked shirt, a wide straw hat, rosy cheeks."""
+    reset()
+    root = empty("Farmer", (0, 0, 0))
+    head, torso = person(root, {"name": "farmer", "shirt": (0.86, 0.30, 0.26, 1), "trousers": (0.28, 0.42, 0.66, 1), "hair": (0.55, 0.35, 0.2, 1), "beard": False})
+    paint(torso, mat("trousers_farmer", (0.28, 0.42, 0.66, 1)), lambda p: p.z < 1.12 or (abs(p.x) < 0.14 and p.y > 0.1 and p.z < 1.3))
+    straw = mat("straw", (0.96, 0.84, 0.48, 1))
+    cylinder("Brim", (0, 0, 1.84), 0.5, 0.04, straw, head, verts=28)
+    blob("Crown", [((0, 0, 1.92), 0.28, (1, 1, 0.75))], straw, head)
+    cylinder("HatBand", (0, 0, 1.88), 0.19, 0.06, mat("band", (0.82, 0.25, 0.22, 1)), head, verts=20)
+    export("farmer")
+
+
+def build_clock_maker():
+    """The clock maker: a brown waistcoat with a gold watch chain, a white beard, round glasses, a flat cap."""
+    reset()
+    root = empty("ClockMaker", (0, 0, 0))
+    head, torso = person(root, {"name": "clock", "shirt": (0.95, 0.93, 0.88, 1), "trousers": (0.30, 0.28, 0.32, 1), "hair": (0.95, 0.95, 0.95, 1), "beard": True, "hair_style": "bald"})
+    paint(torso, mat("waistcoat", (0.50, 0.32, 0.20, 1)), lambda p: p.z < 1.3 and not (abs(p.x) < 0.07 and p.y > 0.1))
+    box("Chain", (0.08, 0.24, 1.08), (0.16, 0.01, 0.012), mat("brass", (0.95, 0.78, 0.3, 1)), torso, 0.0, (0, math.radians(15), 0))
+    glasses(head)
+    blob("FlatCap", [((0, 0.02, 1.82), 0.38, (1.08, 1.1, 0.35)), ((0, 0.2, 1.8), 0.2, (1.2, 0.8, 0.2))], mat("flatcap", (0.35, 0.40, 0.50, 1)), head)
+    export("clock_maker")
+
+
 BUILDERS = {
     "tygrytsa": build_tygrytsa,
     "hatchback": build_hatchback,
@@ -1096,6 +1297,10 @@ BUILDERS = {
     "flower_bed": build_flower_bed,
     "bush": build_bush,
     "boy": build_boy,
+    "dog": build_dog,
+    "cat": build_cat,
+    "lion": build_lion,
+    "hen": build_hen,
 }
 
 # BUILD_ONLY="poplar oak" builds just those (all when unset).

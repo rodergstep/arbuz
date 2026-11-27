@@ -38,20 +38,37 @@ func scatter(area: Rect2, count: int, blocked: Callable, seed_value: int = 7) ->
 
 
 func _tuft_mesh() -> ArrayMesh:
-	# Three thin crossed blades, pointy tops; normals up so the toon light reads them as grass.
+	# A lush tuft: seven curved blades of different heights fanning out from a small clump,
+	# each in two segments (it bends) and tapering to a point. Normals point up so the toon
+	# light reads them as soft grass; the painted gradient darkens the base.
 	var st: SurfaceTool = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	for k: int in 3:
-		var a: float = TAU * k / 3.0
-		var side: Vector3 = Vector3(cos(a), 0.0, sin(a)) * 0.07
-		var lean: Vector3 = Vector3(-sin(a), 0.0, cos(a)) * 0.06
-		var top: Vector3 = Vector3(0, TUFT_HEIGHT, 0) + lean
-		for v: Vector3 in [-side, side, top, side, -side, top]:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = 5
+	for k: int in 7:
+		var a: float = TAU * k / 7.0 + rng.randf_range(-0.3, 0.3)
+		var out: Vector3 = Vector3(cos(a), 0.0, sin(a))
+		var side: Vector3 = Vector3(-sin(a), 0.0, cos(a))
+		var h: float = TUFT_HEIGHT * rng.randf_range(0.7, 1.35)
+		var root: Vector3 = out * 0.05
+		var mid: Vector3 = root + out * 0.06 + Vector3(0, h * 0.55, 0)
+		var tip: Vector3 = root + out * rng.randf_range(0.16, 0.26) + Vector3(0, h, 0)
+		var w0: Vector3 = side * 0.045
+		var w1: Vector3 = side * 0.03
+		var tris: Array[Vector3] = [
+			root - w0, root + w0, mid + w1, root - w0, mid + w1, mid - w1, mid - w1, mid + w1, tip
+		]
+		# Both sides of each blade (the painted shader culls back faces).
+		var back: Array[Vector3] = tris.duplicate()
+		back.reverse()
+		tris.append_array(back)
+		for v: Vector3 in tris:
 			st.set_normal(Vector3.UP)
 			st.add_vertex(v)
 	var mesh: ArrayMesh = st.commit()
 	var mat: ShaderMaterial = PaintedMaterials.make(color, 0.12).duplicate()
-	mat.set_shader_parameter(&"gradient", 0.45)
+	mat.set_shader_parameter(&"gradient", 0.55)
 	mat.set_shader_parameter(&"gradient_scale", 2.0)
+	mat.set_shader_parameter(&"variation", 0.25)
 	mesh.surface_set_material(0, mat)
 	return mesh
