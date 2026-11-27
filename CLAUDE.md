@@ -65,6 +65,8 @@ Canonical values live in `docs/architecture-map.md` (frontmatter). `godot` is no
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path . -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json
 # optional: lint and format check (addons/ excluded)
 gdlint game tests tools && gdformat -l 110 --check game tests tools
+# content check (also run by build_mac.sh): data files packed, every card sentence has a scene
+python3 tools/check_content.py
 # builds (macOS: always via the script; it keeps only the latest app at build/macos/, old builds go to the Trash)
 tools/build_mac.sh
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release "Windows" build/windows/arbuz.exe

@@ -6,6 +6,8 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 GODOT=/Applications/Godot.app/Contents/MacOS/Godot
+# Stop before building when content would be broken in the app (see the script).
+python3 tools/check_content.py
 OUT=build/macos
 mkdir -p "$OUT"
 "$GODOT" --headless --path . --import --quit >/dev/null 2>&1 || true
