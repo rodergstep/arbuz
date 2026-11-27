@@ -63,6 +63,18 @@ func _ready() -> void:
 	var extend: Button = _button("Грати ще 15 хвилин")
 	extend.pressed.connect(func() -> void: extend_requested.emit())
 	box.add_child(extend)
+	# Start the game from the very beginning: pressed twice (the first press asks to confirm).
+	var start_over: Button = _button("Почати гру спочатку")
+	start_over.pressed.connect(
+		func() -> void:
+			if start_over.text != "Точно? Натисніть ще раз":
+				start_over.text = "Точно? Натисніть ще раз"
+				return
+			SaveSystem.start_over()
+			get_tree().paused = false
+			get_tree().change_scene_to_file("res://game/boot.tscn")
+	)
+	box.add_child(start_over)
 	var close_button: Button = _button("Закрити")
 	close_button.pressed.connect(close)
 	box.add_child(close_button)
