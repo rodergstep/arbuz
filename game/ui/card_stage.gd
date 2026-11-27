@@ -153,6 +153,29 @@ func _build_ground(kind: String) -> void:
 			floor_color = Color(0.62, 0.6, 0.58)
 		"sea":
 			floor_color = Color(0.86, 0.74, 0.5)
+		"rain":
+			env.background_mode = Environment.BG_COLOR
+			env.background_color = Color(0.62, 0.68, 0.76)
+			sun.light_energy = 0.5
+			var rain: CPUParticles3D = CPUParticles3D.new()
+			var streak: QuadMesh = QuadMesh.new()
+			streak.size = Vector2(0.03, 0.4)
+			var rain_mat: StandardMaterial3D = StandardMaterial3D.new()
+			rain_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			rain_mat.albedo_color = Color(0.85, 0.9, 1.0)
+			rain_mat.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+			streak.material = rain_mat
+			rain.mesh = streak
+			rain.amount = 300
+			rain.lifetime = 0.8
+			rain.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+			rain.emission_box_extents = Vector3(6, 0.3, 4)
+			rain.position = Vector3(0, 5, 0)
+			rain.direction = Vector3.DOWN
+			rain.gravity = Vector3(0, -12, 0)
+			rain.initial_velocity_min = 6.0
+			rain.initial_velocity_max = 8.0
+			add_child(rain)
 		"sky":
 			# A deep, clear blue sky (the painted sky's top colour, bright and saturated).
 			env.background_mode = Environment.BG_COLOR

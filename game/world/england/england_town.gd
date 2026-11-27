@@ -532,6 +532,9 @@ func _populate(life: TownLife) -> void:
 	life.add_vehicle("double_decker", &"bus", loop, 3.0, 0)
 	life.add_vehicle("taxi", &"taxi", loop, 4.0, 2)
 	life.add_wanderer("dog", &"dog", Vector3(-8, 0, 12), 5.0)
+	var weather: Weather = Weather.new()
+	add_child(weather)
+	weather.setup(self)
 
 
 func _clickable_things() -> Array[Dictionary]:

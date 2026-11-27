@@ -131,3 +131,7 @@ The tractor goes slowly.,farm,tractor move -6 0.5 6 0.5 0.8,1.5
 The taxi is yellow.,road,taxi stand 0 0,1.2
 We go by taxi.,road,tygrytsa wave -2.5 -1.6; taxi move -8 0 8 0 2.5,1.4
 The hen says cluck.,farm,hen say 0 0 Cluck!,0.8
+It is raining.,rain,cloud float -1.5 -2 3.4; cloud float 2 -3 3.8,1
+"Drip, drop, rain!",rain,umbrella stand 0 0; tygrytsa stand 0 0.4,1
+The butterfly flies.,grass,butterfly fly 0 0,1
+A butterfly on a flower.,grass,flower stand 0 0; butterfly float 0 0.1 1.0,0.6

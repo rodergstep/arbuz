@@ -80,6 +80,7 @@ static func _builders() -> Dictionary[String, Callable]:
 		"table": _table,
 		"toy": _toy,
 		"teddy": _teddy,
+		"butterfly": _butterfly,
 		"kite": _kite,
 		"star": _star,
 		"umbrella": _umbrella,
@@ -222,6 +223,18 @@ static func _arrow(root: Node3D, side: float) -> void:
 	var inst: MeshInstance3D = Blocks.mesh(head, colour, Vector3(side * 0.45, 0, 0))
 	inst.rotation.z = -side * PI / 2.0
 	root.add_child(inst)
+
+
+static func _butterfly(root: Node3D) -> void:
+	for side: float in [-1.0, 1.0]:
+		var wing: SphereMesh = SphereMesh.new()
+		wing.radius = 0.28
+		wing.height = 0.05
+		var w: MeshInstance3D = Blocks.mesh(wing, Color(0.98, 0.55, 0.2), Vector3(side * 0.27, 0.6, 0))
+		w.rotation.z = side * 0.35
+		root.add_child(w)
+		_sphere(root, 0.07, INK, Vector3(side * 0.3, 0.63, 0.04), 0.05)
+	_cyl(root, 0.04, 0.04, 0.36, INK, Vector3(0, 0.6, 0)).rotation.x = PI / 2.0
 
 
 static func _teddy(root: Node3D) -> void:
