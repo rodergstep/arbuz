@@ -124,6 +124,12 @@ for o in bpy.context.scene.objects:
         o.location.z -= lo[2]
         o.parent = pivot
 import math
+rigged = any(o.type == "ARMATURE" for o in bpy.context.scene.objects)
+if rigged:
+    # A rigged model keeps its own size (scaling a rig breaks its animations); the game scales
+    # it instead: ModelPainter.SCALES[name] = the printed scale.
+    print("RIGGED: add to ModelPainter.SCALES:", name, round(scale, 4))
+    scale = 1.0
 pivot.scale = (scale, scale, scale)
 pivot.rotation_euler = (0, 0, math.radians(yaw))
 os.makedirs(os.path.dirname(OUT), exist_ok=True)

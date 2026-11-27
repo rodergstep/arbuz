@@ -7,3 +7,4 @@ These come from free CC0 (public domain) packs, converted by `tools/blender/impo
 | Model | Source | Licence |
 |---|---|---|
 | car_hatchback (sedan), car_jeep (suv), car_van (van), tractor | Kenney, Car Kit 3.1, https://kenney.nl/assets/car-kit | CC0 1.0 |
+| cow, pig, sheep, dog (Pug) | Quaternius, Farm Animals Pack, https://quaternius.com/packs/farmanimal.html | CC0 1.0 |
