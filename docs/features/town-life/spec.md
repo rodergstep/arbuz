@@ -18,3 +18,9 @@ updated_at: "2026-11-27"
   are new words with scenes), or its name.
 
 Later: walking people, day/night, weather.
+
+## Part 3 — people about
+
+- **AC-06 People strolling.** A grandma with a basket and a headscarf and a girl with a flower
+  wreath stroll in the village; a man with a flat cap and a lady with an umbrella in England. They
+  swing their arms and legs as they walk; clicking one teaches grandma, girl, man or woman.

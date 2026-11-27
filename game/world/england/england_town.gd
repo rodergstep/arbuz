@@ -526,12 +526,11 @@ func _grass_blocked(p: Vector2) -> bool:
 
 ## Town life: the red bus and a taxi drive round, a dog strolls in the park.
 func _populate(life: TownLife) -> void:
-	var loop: Array[Vector3] = [
-		Vector3(-24, 0, -22), Vector3(24, 0, -22), Vector3(24, 0, 22), Vector3(-24, 0, 22)
-	]
-	life.add_vehicle("double_decker", &"bus", loop, 3.0, 0)
-	life.add_vehicle("taxi", &"taxi", loop, 4.0, 2)
+	life.add_vehicle("double_decker", &"bus", TownLife.ROAD_LOOP, 3.0, 0)
+	life.add_vehicle("taxi", &"taxi", TownLife.ROAD_LOOP, 4.0, 2)
 	life.add_wanderer("dog", &"dog", Vector3(-8, 0, 12), 5.0)
+	life.add_wanderer("man", &"man", Vector3(-14, 0, 2), 6.0)
+	life.add_wanderer("woman", &"woman", Vector3(12, 0, 6), 5.0)
 	life.add_dress_up(Vector3(-17, 0, -27.2), Vector3(4, 0, -27.2))
 	var weather: Weather = Weather.new()
 	add_child(weather)
