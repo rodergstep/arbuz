@@ -905,15 +905,14 @@ func _build_actors() -> void:
 	companion.follow = hero
 
 
-## Town life: a tractor on the road, a hen, a pig and a sheep strolling about.
+## Town life: a tractor on the road; a hen, a pig, a sheep, grandma and a girl about.
 func _populate(life: TownLife) -> void:
-	var loop: Array[Vector3] = [
-		Vector3(-24, 0, -22), Vector3(24, 0, -22), Vector3(24, 0, 22), Vector3(-24, 0, 22)
-	]
-	life.add_vehicle("tractor", &"tractor", loop, 2.5, 1)
+	life.add_vehicle("tractor", &"tractor", TownLife.ROAD_LOOP, 2.5, 1)
 	life.add_wanderer("hen", &"hen", Vector3(-26, 0, -3), 4.0)
 	life.add_wanderer("pig", &"pig", Vector3(-6, 0, 33.5), 3.0)
 	life.add_wanderer("sheep", &"sheep", Vector3(30, 0, 31), 4.0)
+	life.add_wanderer("grandma", &"grandma", Vector3(-24, 0, 10), 5.0)
+	life.add_wanderer("girl", &"girl", Vector3(14, 0, 2), 5.0)
 	life.add_dress_up(Vector3(-12, 0, 18), Vector3(-20.5, 0, 18))
 	life.add_butterflies(
 		[

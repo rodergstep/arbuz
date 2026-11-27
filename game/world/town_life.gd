@@ -5,6 +5,10 @@ extends Node3D
 ## word. Vehicles always stop for him: when the hero or his car is just ahead, they wait.
 
 const STOP_DISTANCE: float = 7.0
+## The loop road both towns share (its four corners).
+const ROAD_LOOP: Array[Vector3] = [
+	Vector3(-24, 0, -22), Vector3(24, 0, -22), Vector3(24, 0, 22), Vector3(-24, 0, 22)
+]
 
 var town: GreyboxVillage
 var _movers: Array[Dictionary] = []
@@ -108,10 +112,12 @@ func _wander(m: Dictionary, delta: float) -> void:
 	if to.length() < 0.3:
 		m["wait"] = randf_range(2.0, 6.0)
 		ModelPainter.play(art, "Idle")
+		_swing_limbs(art, m, 0.0, true)
 		return
 	var dir: Vector3 = to.normalized()
 	node.global_position += dir * float(m["speed"]) * delta
 	node.rotation.y = lerp_angle(node.rotation.y, atan2(-dir.x, -dir.z), minf(1.0, 5.0 * delta))
+	_swing_limbs(art, m, delta)
 
 
 ## True when the hero or his car is just ahead: the vehicle waits (they always stop for him).
@@ -124,3 +130,17 @@ func _blocked(pos: Vector3, dir: Vector3) -> bool:
 		if to.length() < STOP_DISTANCE and to.normalized().dot(dir) > 0.5:
 			return true
 	return false
+
+
+## People (our own models with LegL/LegR/ArmL/ArmR joints) swing their arms and legs as they walk.
+func _swing_limbs(art: Node3D, m: Dictionary, delta: float, rest: bool = false) -> void:
+	m["phase"] = float(m.get("phase", 0.0)) + delta * 7.0
+	var swing: float = 0.0 if rest else sin(float(m["phase"])) * 0.5
+	for joint: String in ["LegL", "ArmR"]:
+		var n: Node3D = art.find_child(joint, true, false) as Node3D
+		if n != null:
+			n.rotation.x = swing
+	for joint: String in ["LegR", "ArmL"]:
+		var n: Node3D = art.find_child(joint, true, false) as Node3D
+		if n != null:
+			n.rotation.x = -swing

@@ -1311,6 +1311,63 @@ def build_clock_maker():
     export("clock_maker")
 
 
+def skirt(root, colour, length=0.55, name="Skirt"):
+    """A soft bell skirt from the waist down (over the legs)."""
+    return blob(name, [((0, 0, 0.92), 0.46, (1.0, 0.85, 0.6)), ((0, 0, 0.92 - length * 0.6), 0.5, (1.15, 1.0, 0.7))], mat(name.lower(), colour), root)
+
+
+def build_grandma():
+    """A Ukrainian grandma (бабуся): a flowered headscarf, a long red skirt, a white embroidered
+    blouse, a basket."""
+    reset()
+    root = empty("Grandma", (0, 0, 0))
+    head, torso = person(root, {"name": "grandma", "shirt": (0.98, 0.97, 0.93, 1), "trousers": (0.80, 0.22, 0.22, 1), "hair": (0.85, 0.85, 0.85, 1), "belly": 1.1, "hair_style": "bun"})
+    paint(torso, mat("embroidery", EMBROIDERY), lambda p: abs(p.z - 1.3) < 0.03 or (abs(p.x) < 0.04 and p.y > 0.1))
+    skirt(root, (0.80, 0.22, 0.22, 1), 0.6)
+    scarf = blob("Scarf", [((0, -0.03, 1.72), 0.44, (1.08, 1.05, 0.85)), ((0, -0.12, 1.5), 0.25, (1.2, 0.8, 0.8))], mat("scarf", (0.25, 0.45, 0.85, 1)), head)
+    paint(scarf, mat("scarf_flower", (0.98, 0.82, 0.2, 1)), lambda p: (int(p.x * 12) + int(p.z * 12)) % 3 == 0)
+    blob("Basket", [((0.33, 0.12, 0.85), 0.2, (1.1, 0.8, 0.6))], mat("wicker", (0.70, 0.55, 0.36, 1)), root)
+    export("grandma")
+
+
+def build_girl():
+    """A little girl in a vyshyvanka dress with two plaits and a flower wreath (вінок)."""
+    reset()
+    root = empty("Girl", (0, 0, 0))
+    head, torso = person(root, {"name": "girl", "shirt": (0.98, 0.97, 0.93, 1), "trousers": (0.98, 0.80, 0.70, 1), "hair": (0.55, 0.35, 0.18, 1), "hair_style": "short"})
+    paint(torso, mat("embroidery", EMBROIDERY), lambda p: abs(p.z - 1.3) < 0.03 or abs(p.z - 1.0) < 0.03)
+    skirt(root, (0.98, 0.97, 0.93, 1), 0.45, "Dress")
+    for x in (-0.22, 0.22):
+        blob("Plait%+.0f" % (x * 10), [((x, -0.08, 1.55 - 0.08 * i), 0.07) for i in range(4)], mat("hair_girl", (0.55, 0.35, 0.18, 1)), head)
+    for i in range(8):
+        a = math.tau * i / 8
+        sphere("Flower%d" % i, (math.cos(a) * 0.24, math.sin(a) * 0.22 - 0.02, 1.84), (0.06,) * 3, mat("wreath%d" % (i % 3), [(0.90, 0.2, 0.2, 1), (0.98, 0.82, 0.2, 1), (0.35, 0.55, 0.95, 1)][i % 3]), head, 8)
+    root.scale = (0.72, 0.72, 0.72)
+    export("girl")
+
+
+def build_man():
+    """An English gentleman out for a walk: a green jacket, a flat cap, a newspaper."""
+    reset()
+    root = empty("Man", (0, 0, 0))
+    head, torso = person(root, {"name": "man", "shirt": (0.30, 0.48, 0.34, 1), "trousers": (0.30, 0.30, 0.36, 1), "hair": (0.35, 0.25, 0.18, 1)})
+    blob("FlatCap", [((0, 0.02, 1.82), 0.38, (1.08, 1.1, 0.35)), ((0, 0.2, 1.8), 0.2, (1.2, 0.8, 0.2))], mat("tweed", (0.55, 0.45, 0.35, 1)), head)
+    box("Paper", (0.32, 0.1, 0.95), (0.06, 0.2, 0.3), mat("paper", (0.95, 0.94, 0.9, 1)), root, 0.01)
+    export("man")
+
+
+def build_woman():
+    """An English lady with a red umbrella, a blue coat and a yellow hat."""
+    reset()
+    root = empty("Woman", (0, 0, 0))
+    head, torso = person(root, {"name": "woman", "shirt": (0.28, 0.42, 0.75, 1), "trousers": (0.95, 0.88, 0.78, 1), "hair": (0.75, 0.45, 0.25, 1), "hair_style": "bun"})
+    skirt(root, (0.28, 0.42, 0.75, 1), 0.5, "Coat")
+    blob("Hat", [((0, 0, 1.84), 0.32, (1.1, 1.1, 0.5))], mat("hat_yellow", (0.98, 0.82, 0.25, 1)), head)
+    cylinder("Brim", (0, 0, 1.8), 0.36, 0.03, mat("hat_yellow", (0.98, 0.82, 0.25, 1)), head, verts=24)
+    cylinder("Umbrella", (0.33, 0.05, 0.6), 0.03, 1.0, mat("umbrella", (0.85, 0.2, 0.22, 1)), root, verts=8)
+    export("woman")
+
+
 BUILDERS = {
     "tygrytsa": build_tygrytsa,
     "hatchback": build_hatchback,
@@ -1361,6 +1418,10 @@ BUILDERS = {
     "flower_bed": build_flower_bed,
     "bush": build_bush,
     "boy": build_boy,
+    "grandma": build_grandma,
+    "girl": build_girl,
+    "man": build_man,
+    "woman": build_woman,
     "dog": build_dog,
     "cat": build_cat,
     "lion": build_lion,
