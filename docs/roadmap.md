@@ -39,7 +39,7 @@ Our son learns English words for the things around him, food, colours, animals a
 | 17 | The prologue plays start to finish: meet Tygrytsa, tutorial, the postman's "hello" and "bye", the ferry | `game-spec.md` §Story | L | building |
 | 18 | The English town is laid out in greybox with every landmark | `development-plan.md` §Phase 4 — Chapter 1: the bakery | M | building |
 | 19 | Chapter 1: he finds the baker's ingredients and learns food words and counting, with bakery and café doors | `development-plan.md` §Phase 4 — Chapter 1: the bakery | L | building |
-| 20 | Rewards: the map unlocks, souvenirs replay their word, the friends gallery fills | `game-spec.md` §Gameplay | M | idea |
+| 20 | Rewards: the map unlocks, souvenirs replay their word, the friends gallery fills | `game-spec.md` §Gameplay | M | building |
 | 21 | Parent progress view: words heard, recognized, and struggled with | `game-spec.md` §Parent features and profiles | M | idea |
 | 22 | Chapter 2: the toy maker's balloons, colours with shapes and patterns, park and harbour | `development-plan.md` §Phase 5 — England chapters 2–4 and the finale | L | building |
 | 23 | Chapter 3: the escaped farm animals, their sounds and names | `development-plan.md` §Phase 5 — England chapters 2–4 and the finale | L | building |
