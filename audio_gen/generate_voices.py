@@ -124,13 +124,25 @@ def with_pauses(parts: list, rate: int):
     return np.concatenate(out), rate
 
 
+def trim(samples, rate: int, threshold: float = 0.01, pad: float = 0.08):
+    """Cuts silence (and Chatterbox's occasional quiet tail) from both ends, keeping a short pad."""
+    import numpy as np
+
+    loud = np.nonzero(np.abs(samples) > threshold)[0]
+    if loud.size == 0:
+        return samples
+    start = max(0, int(loud[0] - pad * rate))
+    end = min(len(samples), int(loud[-1] + pad * rate))
+    return samples[start:end]
+
+
 def render_en(model, text: str):
     speaker, text = split_speaker(text)
     ref = VOICES_REF / SPEAKER_VOICES.get(speaker, "tygrytsa.wav")
     parts = []
     for sentence in sentences(text):
         wav = model.generate(sentence, audio_prompt_path=str(ref), exaggeration=EN_EXAGGERATION, cfg_weight=EN_CFG)
-        parts.append(wav.squeeze(0).cpu().numpy())
+        parts.append(trim(wav.squeeze(0).cpu().numpy(), model.sr))
     return with_pauses(parts, model.sr)
 
 

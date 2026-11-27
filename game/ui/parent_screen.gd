@@ -55,6 +55,11 @@ func _ready() -> void:
 	_mic_button.toggle_mode = true
 	_mic_button.toggled.connect(_set_microphone)
 	box.add_child(_mic_button)
+	var progress: ProgressView = ProgressView.new()
+	add_child(progress)
+	var progress_button: Button = _button("Прогрес: слова")
+	progress_button.pressed.connect(progress.open)
+	box.add_child(progress_button)
 	var extend: Button = _button("Грати ще 15 хвилин")
 	extend.pressed.connect(func() -> void: extend_requested.emit())
 	box.add_child(extend)

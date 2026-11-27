@@ -35,6 +35,8 @@ static func wait_for_word(caller: Node, word: WordEntry, mic: Control, alive: Ca
 		var heard: bool = await VoiceListener.listen(LISTEN_SECONDS)
 		if mic != null:
 			mic.shown = false
+		if heard:
+			LearningTracker.record_said(word.id)
 		if heard or not VoiceListener.available() or VoiceListener.seems_blocked():
 			return heard
 		tries += 1
