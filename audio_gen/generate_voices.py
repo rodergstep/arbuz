@@ -6,10 +6,12 @@ every word, and writes audio/voice/<lang>/<hash>.ogg, where hash = sha1("<lang>|
 (the same name Speech.voice_path() computes in the game). Existing files are kept, so a re-run
 only renders new or changed texts; files no longer needed are removed.
 
-English: Kokoro (kokoro-onnx), Ukrainian: Piper (uk_UA ukrainian_tts). Runs locally, offline
-after the one-time model download (see audio_gen/README.md).
+English: Chatterbox TTS (Resemble AI, MIT licence), each speaker's voice cloned from a short
+reference clip in audio_gen/voices_ref/<speaker>.wav (Tygrytsa: tygrytsa.wav). Ukrainian: Piper
+(uk_UA ukrainian_tts). Runs locally, offline after the one-time model download (see
+audio_gen/README.md).
 
-Usage:  audio_gen/.venv/bin/python audio_gen/generate_voices.py [--dry-run]
+Usage:  audio_gen/.venv-chatterbox/bin/python audio_gen/generate_voices.py [--dry-run]
 """
 import argparse
 import csv
@@ -24,17 +26,20 @@ WORDS = ROOT / "content/words/words.csv"
 LINES = ROOT / "content/voice/lines.csv"
 OUT = ROOT / "audio/voice"
 MODELS = ROOT / "audio_gen/models"
+VOICES_REF = ROOT / "audio_gen/voices_ref"
 
-EN_VOICE = "bf_emma"  # Tygrytsa: British English, warm and clear
-# Other speakers (the `speaker` column of lines.csv) and their English voices.
-SPEAKER_VOICES = {"postman": "bm_george", "baker": "bf_isabella", "toymaker": "bf_lily", "farmer": "bm_daniel", "clockmaker": "bm_fable"}
-EN_SPEED = 0.95  # natural pace; slowness comes from pauses, never from stretching (playtests)
+# Speakers (the `speaker` column of lines.csv) other than Tygrytsa, each with a reference clip.
+SPEAKER_VOICES = {s: f"{s}.wav" for s in ("postman", "baker", "toymaker", "farmer", "clockmaker")}
+# Chatterbox: a little warmth (exaggeration) at the natural pace (cfg_weight 0.5); slowness comes
+# from pauses between sentences, never from stretching (playtests).
+EN_EXAGGERATION = 0.55
+EN_CFG = 0.5
 UK_SPEAKER = 0  # "lada"
 UK_LENGTH_SCALE = 1.0  # natural pace
 # When a voice setting changes, every file of that language is rendered again.
 SENTENCE_PAUSE = 0.45  # seconds of silence between sentences of one line
 STAMPS = {
-    "en": f"kokoro:{EN_VOICE}:{EN_SPEED}:pause{SENTENCE_PAUSE}",
+    "en": f"chatterbox:ref-v1:exag{EN_EXAGGERATION}:cfg{EN_CFG}:pause{SENTENCE_PAUSE}",
     "uk": f"piper:{UK_SPEAKER}:{UK_LENGTH_SCALE}:pause{SENTENCE_PAUSE}",
 }
 
@@ -87,7 +92,12 @@ def collect() -> dict:
             speaker = (row.get("speaker") or "") if lang == "en" else ""
             prefix = f"{speaker}|" if speaker else ""
             if "{" in template:
+                # The `words` column narrows a template to the words it is used with
+                # ("topic:food" or word ids); empty = every word.
+                only = (row.get("words") or "").split()
                 for w in words:
+                    if only and w["id"] not in only and f"topic:{w.get('topic', '')}" not in only:
+                        continue
                     texts[lang].add(prefix + fill(template, w))
             else:
                 texts[lang].add(prefix + template)
@@ -114,15 +124,14 @@ def with_pauses(parts: list, rate: int):
     return np.concatenate(out), rate
 
 
-def render_en(kokoro, text: str):
+def render_en(model, text: str):
     speaker, text = split_speaker(text)
-    voice = SPEAKER_VOICES.get(speaker, EN_VOICE)
+    ref = VOICES_REF / SPEAKER_VOICES.get(speaker, "tygrytsa.wav")
     parts = []
-    rate = 24000
     for sentence in sentences(text):
-        samples, rate = kokoro.create(sentence, voice=voice, speed=EN_SPEED, lang="en-gb")
-        parts.append(samples)
-    return with_pauses(parts, rate)
+        wav = model.generate(sentence, audio_prompt_path=str(ref), exaggeration=EN_EXAGGERATION, cfg_weight=EN_CFG)
+        parts.append(wav.squeeze(0).cpu().numpy())
+    return with_pauses(parts, model.sr)
 
 
 def render_uk(piper_voice, text: str):
@@ -194,15 +203,17 @@ def main() -> int:
         return 0
     import soundfile as sf
 
-    kokoro = None
+    chatterbox = None
     piper_voice = None
     for i, (lang, t) in enumerate(todo, 1):
         if lang == "en":
-            if kokoro is None:
-                from kokoro_onnx import Kokoro
+            if chatterbox is None:
+                import torch
+                from chatterbox.tts import ChatterboxTTS
 
-                kokoro = Kokoro(str(MODELS / "kokoro-v1.0.fp16.onnx"), str(MODELS / "voices-v1.0.bin"))
-            samples, rate = render_en(kokoro, t)
+                device = "mps" if torch.backends.mps.is_available() else "cpu"
+                chatterbox = ChatterboxTTS.from_pretrained(device=device)
+            samples, rate = render_en(chatterbox, t)
         else:
             if piper_voice is None:
                 from piper import PiperVoice

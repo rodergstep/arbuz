@@ -28,6 +28,28 @@ func _ready() -> void:
 	_streams[&"tune"] = _tones([523.0, 659.0, 784.0, 659.0, 698.0, 880.0, 784.0, 1047.0], 0.16, 0.3)
 
 
+## A soft, looping toy-car engine hum (synthesized: a low tone with a few harmonics and a gentle
+## putter), for an AudioStreamPlayer that changes its pitch with the car's speed.
+func engine_stream() -> AudioStreamWAV:
+	var seconds: float = 1.0
+	var count: int = int(seconds * MIX_RATE)
+	var data: PackedByteArray = PackedByteArray()
+	data.resize(count * 2)
+	var base: float = 60.0
+	for i: int in count:
+		var t: float = float(i) / MIX_RATE
+		var putter: float = 0.75 + 0.25 * sin(TAU * 12.0 * t)
+		var s: float = (
+			sin(TAU * base * t) * 0.6 + sin(TAU * base * 2.0 * t) * 0.25 + sin(TAU * base * 3.0 * t) * 0.12
+		)
+		data.encode_s16(i * 2, int(s * putter * 0.35 * 32767.0))
+	var wav: AudioStreamWAV = _wav(data)
+	wav.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	wav.loop_begin = 0
+	wav.loop_end = count
+	return wav
+
+
 func play(kind: StringName) -> void:
 	if not _streams.has(kind):
 		push_warning("Sfx: unknown sound %s" % kind)
