@@ -144,6 +144,11 @@ var _hint_line: String = ""
 
 func _configure() -> void:
 	look = ENGLAND_LOOK
+	treasures = [
+		[&"umbrella", Vector3(-27.8, 0, -14.8)],
+		[&"teapot", Vector3(11.6, 0, -13.2)],
+		[&"crown", Vector3(35.2, 0, 27.5)]
+	]
 	door_pos = BAKERY_POS + Vector3(-1.4, 0, 2.6)
 	hero_start = Vector3(-4, 0, -27)
 	car_start = Vector3(-8, 0, -26)

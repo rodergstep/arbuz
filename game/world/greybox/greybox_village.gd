@@ -46,6 +46,10 @@ const UKRAINE_LOOK: Dictionary = {
 ## Town layout (a town subclass sets these in _configure()).
 var door_pos: Vector3 = Vector3(-14, 0, -28)
 var look: Dictionary = UKRAINE_LOOK
+## Hidden treasures to find freely: [word id, position], tucked behind houses and fields.
+var treasures: Array[Array] = [
+	[&"teddy", Vector3(5.2, 0, -4.8)], [&"kite", Vector3(-36, 0, 23)], [&"star", Vector3(17, 0, -27)]
+]
 var car_start: Vector3 = Vector3(-6, 0, 16)
 var hero_start: Vector3 = Vector3(-14, 0, 8)
 ## Words the door may ask: all are things in this village, so each can be taught on the spot.
@@ -127,6 +131,7 @@ func _ready() -> void:
 	_build_story_cast()
 	_build_camera()
 	_build_learning()
+	_build_treasures()
 	var car_words: CarWords = CarWords.new()
 	add_child(car_words)
 	car_words.setup(car, learning)
@@ -195,6 +200,8 @@ func _on_pickable_clicked(area: Area3D) -> void:
 		door.pick(area)
 	elif area is CollectItem:
 		_on_collect_click(area)
+	elif area is Treasure:
+		_on_treasure_click(area)
 	elif area is Clickable and _find_target != null:
 		_on_find_click(area)
 	elif area is Clickable:
@@ -210,6 +217,36 @@ func _on_pickable_clicked(area: Area3D) -> void:
 		else:
 			_pending_enter = true
 			hero.go_to(car.global_position + Vector3(-1.8, 0, 0))
+
+
+## The treasures he hasn't found yet (found ones stay found, across sessions).
+func _build_treasures() -> void:
+	for t: Array in treasures:
+		if SaveSystem.has_encountered("treasure:%s" % t[0]):
+			continue
+		var treasure: Treasure = Treasure.new()
+		treasure.setup(t[0])
+		add_child(treasure)
+		treasure.global_position = t[1]
+
+
+func _on_treasure_click(treasure: Treasure) -> void:
+	if treasure.is_found():
+		return
+	var word: WordEntry = WordDB.get_word(treasure.word_id)
+	var pos: Vector3 = treasure.global_position
+	treasure.find()
+	EventLog.log_event(&"treasure", {"word": String(treasure.word_id)})
+	Speech.line("treasure:found", word, true)
+	LearningTracker.record_heard(treasure.word_id)
+	learning.request(treasure.word_id, pos, pos + Vector3(2.0, 1.8, 2.6))
+	var left: int = (
+		treasures
+		. filter(func(t: Array) -> bool: return not SaveSystem.has_encountered("treasure:%s" % t[0]))
+		. size()
+	)
+	if left == 0:
+		say_when_free("treasure:all")
 
 
 func _on_any_input() -> void:

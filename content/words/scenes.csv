@@ -114,3 +114,15 @@ Turn right!,road,arrow_right float 0 -1.5 2.6; car move -7 0 7 0 2,1.4
 The ball is on the right.,grass,arrow_right float 1.6 0 1.8; ball stand 1.6 0; duck stand -1.6 0,1
 Beep beep! The horn!,road,car say 0 0 Beep beep!,1.2
 The car has a horn.,road,car stand 0 0; tygrytsa wave -2.4 0.5,1.2
+The teddy is soft.,grass,teddy grow 0 0,0.6
+I hug my teddy.,grass,tygrytsa stand -0.5 0; teddy stand 0.45 0.3,0.8
+The kite flies high.,sky,kite drift 0 -2 3.6; cloud drift -4 -4 5,1
+A red kite in the sky.,sky,kite float 0 -1 3.4,0.9
+The star shines.,night,star float 0 0 1.4,0.7
+A little yellow star.,night,star spin 0 0,0.6
+Open the umbrella!,grass,umbrella grow 0 0; cloud float 0 -2 3.6,0.9
+A big blue umbrella.,grass,umbrella spin 0 0,0.9
+The teapot is hot.,kitchen,teapot steam 0 0,0.6
+Tea for you!,kitchen,teapot stand -0.5 0; cup stand 0.6 0.2,0.7
+The king has a crown.,town,crown float 0 0 1.0,0.6
+A golden crown.,town,crown spin 0 0.2,0.5

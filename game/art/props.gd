@@ -79,6 +79,12 @@ static func _builders() -> Dictionary[String, Callable]:
 		"cup": _cup,
 		"table": _table,
 		"toy": _toy,
+		"teddy": _teddy,
+		"kite": _kite,
+		"star": _star,
+		"umbrella": _umbrella,
+		"teapot": _teapot,
+		"crown": _crown,
 		"arrow_left": func(r: Node3D) -> void: _arrow(r, -1.0),
 		"arrow_right": func(r: Node3D) -> void: _arrow(r, 1.0),
 		"balloon": func(r: Node3D) -> void: _balloon(r, &"red"),
@@ -216,6 +222,111 @@ static func _arrow(root: Node3D, side: float) -> void:
 	var inst: MeshInstance3D = Blocks.mesh(head, colour, Vector3(side * 0.45, 0, 0))
 	inst.rotation.z = -side * PI / 2.0
 	root.add_child(inst)
+
+
+static func _teddy(root: Node3D) -> void:
+	var fur: Color = Color(0.74, 0.50, 0.30)
+	var light: Color = Color(0.95, 0.82, 0.62)
+	_sphere(root, 0.32, fur, Vector3(0, 0.38, 0), 0.7)
+	_sphere(root, 0.18, light, Vector3(0, 0.36, 0.22), 0.3)
+	_sphere(root, 0.26, fur, Vector3(0, 0.86, 0))
+	_sphere(root, 0.1, light, Vector3(0, 0.8, 0.22), 0.16)
+	_sphere(root, 0.04, INK, Vector3(0, 0.84, 0.31))
+	_eyes(root, Vector3(0, 0.93, 0.21), 0.16, 0.04)
+	for side: float in [-1.0, 1.0]:
+		_sphere(root, 0.09, fur, Vector3(side * 0.2, 1.08, 0))
+		_sphere(root, 0.05, light, Vector3(side * 0.2, 1.08, 0.05))
+		_sphere(root, 0.1, fur, Vector3(side * 0.3, 0.45, 0.08), 0.24)
+		_sphere(root, 0.11, fur, Vector3(side * 0.16, 0.08, 0.12), 0.18)
+	_box(root, Vector3(0.36, 0.06, 0.08), Color(0.85, 0.2, 0.25), Vector3(0, 0.66, 0.15))
+
+
+static func _kite(root: Node3D) -> void:
+	var diamond: PrismMesh = PrismMesh.new()
+	diamond.size = Vector3(0.9, 0.6, 0.04)
+	var top: MeshInstance3D = Blocks.mesh(diamond, Color(0.9, 0.25, 0.25), Vector3(0, 1.3, 0))
+	root.add_child(top)
+	var bottom: MeshInstance3D = Blocks.mesh(diamond.duplicate(), Color(0.98, 0.8, 0.2), Vector3(0, 0.7, 0))
+	bottom.rotation.z = PI
+	root.add_child(bottom)
+	_box(root, Vector3(0.03, 1.2, 0.05), Color(0.55, 0.4, 0.3), Vector3(0, 1.0, 0.03))
+	for i: int in 4:
+		var bow: MeshInstance3D = _box(
+			root, Vector3(0.14, 0.06, 0.03), Color(0.3, 0.55, 0.9), Vector3(0.05 * (i % 2), 0.3 - i * 0.18, 0)
+		)
+		bow.rotation.z = 0.5 if i % 2 == 0 else -0.5
+
+
+static func _star(root: Node3D) -> void:
+	var gold: Color = Color(1.0, 0.84, 0.25)
+	_sphere(root, 0.22, gold, Vector3(0, 0.6, 0), 0.18)
+	for i: int in 5:
+		var a: float = TAU * i / 5.0
+		var ray: PrismMesh = PrismMesh.new()
+		ray.size = Vector3(0.26, 0.34, 0.16)
+		var inst: MeshInstance3D = Blocks.mesh(ray, gold, Vector3(sin(a) * 0.3, 0.6 + cos(a) * 0.3, 0))
+		inst.rotation.z = -a
+		root.add_child(inst)
+	_eyes(root, Vector3(0, 0.64, 0.09), 0.1, 0.03)
+
+
+static func _umbrella(root: Node3D) -> void:
+	var canopy: SphereMesh = SphereMesh.new()
+	canopy.radius = 0.8
+	canopy.height = 0.8
+	canopy.is_hemisphere = true
+	root.add_child(Blocks.mesh(canopy, Color(0.28, 0.5, 0.88), Vector3(0, 1.45, 0)))
+	for i: int in 6:
+		var a: float = TAU * i / 6.0
+		_sphere(root, 0.06, WHITE, Vector3(cos(a) * 0.78, 1.45, sin(a) * 0.78))
+	_box(root, Vector3(0.04, 1.4, 0.04), Color(0.3, 0.3, 0.32), Vector3(0, 0.75, 0))
+	var hook: TorusMesh = TorusMesh.new()
+	hook.inner_radius = 0.08
+	hook.outer_radius = 0.12
+	var h: MeshInstance3D = Blocks.mesh(hook, Color(0.55, 0.35, 0.2), Vector3(0.1, 0.06, 0))
+	h.rotation.x = PI / 2.0
+	root.add_child(h)
+
+
+static func _teapot(root: Node3D) -> void:
+	var china: Color = Color(0.96, 0.95, 0.98)
+	var blue: Color = Color(0.3, 0.5, 0.85)
+	_sphere(root, 0.32, china, Vector3(0, 0.32, 0), 0.56)
+	var band: TorusMesh = TorusMesh.new()
+	band.inner_radius = 0.3
+	band.outer_radius = 0.34
+	root.add_child(Blocks.mesh(band, blue, Vector3(0, 0.32, 0)))
+	_cyl(root, 0.14, 0.18, 0.08, china, Vector3(0, 0.62, 0))
+	_sphere(root, 0.05, blue, Vector3(0, 0.69, 0))
+	var spout: MeshInstance3D = _cyl(root, 0.04, 0.07, 0.36, china, Vector3(0.36, 0.4, 0))
+	spout.rotation.z = -0.8
+	var handle: TorusMesh = TorusMesh.new()
+	handle.inner_radius = 0.09
+	handle.outer_radius = 0.14
+	var h: MeshInstance3D = Blocks.mesh(handle, china, Vector3(-0.34, 0.36, 0))
+	h.rotation.x = PI / 2.0
+	root.add_child(h)
+
+
+static func _crown(root: Node3D) -> void:
+	var gold: Color = Color(1.0, 0.8, 0.22)
+	_cyl(root, 0.36, 0.34, 0.24, gold, Vector3(0, 0.12, 0))
+	for i: int in 6:
+		var a: float = TAU * i / 6.0
+		var spike: CylinderMesh = CylinderMesh.new()
+		spike.top_radius = 0.0
+		spike.bottom_radius = 0.1
+		spike.height = 0.26
+		root.add_child(Blocks.mesh(spike, gold, Vector3(cos(a) * 0.3, 0.36, sin(a) * 0.3)))
+		_sphere(root, 0.04, WHITE, Vector3(cos(a) * 0.3, 0.5, sin(a) * 0.3))
+	for i: int in 4:
+		var a: float = TAU * i / 4.0 + 0.4
+		_sphere(
+			root,
+			0.06,
+			Color(0.85, 0.15, 0.25) if i % 2 == 0 else Color(0.2, 0.45, 0.9),
+			Vector3(cos(a) * 0.36, 0.13, sin(a) * 0.36)
+		)
 
 
 static func _letter(root: Node3D) -> void:
