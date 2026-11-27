@@ -57,6 +57,9 @@ func collect() -> void:
 		_art.rotation.y = atan2(-to.x, -to.z)
 		var walk: Tween = create_tween()
 		walk.tween_property(self, "global_position", home, clampf(to.length() / 4.0, 1.5, 8.0))
+		# Animals with a walk animation really walk home, then stand and graze.
+		if ModelPainter.play(_art, "Walk"):
+			walk.tween_callback(func() -> void: ModelPainter.play(_art, "Idle"))
 		return
 	var tween: Tween = create_tween()
 	tween.tween_property(_art, "position:y", 2.2, 0.5).set_ease(Tween.EASE_OUT)
@@ -67,7 +70,7 @@ func collect() -> void:
 func _process(delta: float) -> void:
 	_time += delta
 	if _collected:
-		if home != Vector3.INF:
+		if home != Vector3.INF and _art.find_children("*", "AnimationPlayer", true, false).is_empty():
 			_art.position.y = absf(sin(_time * 8.0)) * 0.12
 		return
 	_art.position.y = 0.1 + absf(sin(_time * 2.0)) * 0.15

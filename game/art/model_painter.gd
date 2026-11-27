@@ -4,6 +4,17 @@ extends RefCounted
 ## keeping each material's own colour, so imported models match the rest of the world.
 
 const MODELS_DIR: String = "res://assets/models"
+## Rigged CC0 models keep their own size in the file (scaling a rig breaks its animations), so
+## they are scaled here (from the values printed by tools/blender/import_cc0.py, a little bigger
+## so a toddler spots them).
+const SCALES: Dictionary[String, float] = {
+	"cow": 0.28,
+	"pig": 0.165,
+	"sheep": 0.27,
+	"dog": 0.3,
+}
+## Their idle animation plays on its own, so animals breathe and look around.
+const IDLE_NAMES: Array[String] = ["Idle", "idle", "Idle_2", "Eating"]
 
 static var _merged: Dictionary[String, ArrayMesh] = {}
 
@@ -15,7 +26,37 @@ static func load_model(model_name: String) -> Node3D:
 		return Node3D.new()
 	var model: Node3D = scene.instantiate()
 	paint(model)
+	if SCALES.has(model_name):
+		var holder: Node3D = Node3D.new()
+		holder.name = model_name
+		model.scale = Vector3.ONE * SCALES[model_name]
+		holder.add_child(model)
+		_play_idle(model)
+		return holder
 	return model
+
+
+## Plays a model's animation by name (when it has one); false when it doesn't.
+static func play(model: Node3D, animation: String) -> bool:
+	var players: Array[Node] = model.find_children("*", "AnimationPlayer", true, false)
+	if players.is_empty() or not (players[0] as AnimationPlayer).has_animation(animation):
+		return false
+	var player: AnimationPlayer = players[0]
+	player.get_animation(animation).loop_mode = Animation.LOOP_LINEAR
+	player.play(animation)
+	return true
+
+
+static func _play_idle(model: Node3D) -> void:
+	var players: Array[Node] = model.find_children("*", "AnimationPlayer", true, false)
+	if players.is_empty():
+		return
+	var player: AnimationPlayer = players[0]
+	for idle: String in IDLE_NAMES:
+		if player.has_animation(idle):
+			player.get_animation(idle).loop_mode = Animation.LOOP_LINEAR
+			player.play(idle)
+			return
 
 
 static func paint(root: Node) -> void:

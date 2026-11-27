@@ -459,7 +459,7 @@ func _build_scenery() -> void:
 	Scenery.solid(_nav, self, "post_box", Vector3(-12.5, 0, -8), 180.0, Vector3(0.7, 1.4, 0.7))
 	for spot: Vector3 in [Vector3(-12, 0, 9), Vector3(11, 0, 14.5)]:
 		Scenery.solid(_nav, self, "bench", spot, 180.0, Vector3(1.8, 0.8, 0.6))
-	Scenery.solid(_nav, self, "double_decker", Vector3(-22, 0, -26.4), 90.0, Vector3(7.8, 4, 2.6))
+	Scenery.solid(_nav, self, "double_decker", Vector3(-29, 0, -26.4), 90.0, Vector3(7.8, 4, 2.6))
 	Scenery.solid(_nav, self, "tractor", BARN_POS + Vector3(-5.5, 0, 3.5), 200.0, Vector3(2.2, 2, 3.2))
 	_build_pond(Vector3(12, 0, -2))
 	var hedges: Array[Transform3D] = []
