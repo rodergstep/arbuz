@@ -104,3 +104,13 @@ The clock maker fixes clocks.,town,clockmaker stand -1 0; clock tick 1 0.3,1
 The clock maker says tick tock.,town,clockmaker say 0 0 Tick tock!,1
 It is a party!,grass,tygrytsa wave 0 0; balloon_red stand -2 -1; balloon_blue stand 2 -1; balloon_yellow stand -1 -2; cake stand 1.2 1,1.3
 A party with balloons and cake.,grass,cake stand 0 0.5; balloon_green fly -2 -1; balloon_red fly 2 -1,1.2
+The car can go!,road,car move -8 0 8 0 4,1.4
+"Ready, steady, go!",road,tygrytsa wave -2.5 -1.6; car move -8 0 8 0 3.5,1.4
+The car stops.,road,car arrive -9 0 0 0 3,1.3
+"Stop, car, stop!",road,tygrytsa wave 2.5 -1.6; car arrive -9 0 0.5 0 3,1.3
+Turn left!,road,arrow_left float 0 -1.5 2.6; car move 7 0 -7 0 2,1.4
+The duck is on the left.,grass,arrow_left float -1.6 0 1.8; duck stand -1.6 0; ball stand 1.6 0,1
+Turn right!,road,arrow_right float 0 -1.5 2.6; car move -7 0 7 0 2,1.4
+The ball is on the right.,grass,arrow_right float 1.6 0 1.8; ball stand 1.6 0; duck stand -1.6 0,1
+Beep beep! The horn!,road,car say 0 0 Beep beep!,1.2
+The car has a horn.,road,car stand 0 0; tygrytsa wave -2.4 0.5,1.2

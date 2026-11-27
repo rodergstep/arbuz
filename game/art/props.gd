@@ -79,6 +79,8 @@ static func _builders() -> Dictionary[String, Callable]:
 		"cup": _cup,
 		"table": _table,
 		"toy": _toy,
+		"arrow_left": func(r: Node3D) -> void: _arrow(r, -1.0),
+		"arrow_right": func(r: Node3D) -> void: _arrow(r, 1.0),
 		"balloon": func(r: Node3D) -> void: _balloon(r, &"red"),
 	}
 
@@ -203,6 +205,17 @@ static func _toy(root: Node3D) -> void:
 				root, 0.14, 0.14, 0.06, Color(0.98, 0.82, 0.2), Vector3(x, 0.14, z)
 			)
 			wheel.rotation.x = PI / 2.0
+
+
+## A big friendly arrow pointing left (-1) or right (+1), seen from the front.
+static func _arrow(root: Node3D, side: float) -> void:
+	var colour: Color = Color(0.98, 0.62, 0.18)
+	_box(root, Vector3(0.9, 0.32, 0.14), colour, Vector3(-side * 0.2, 0, 0))
+	var head: PrismMesh = PrismMesh.new()
+	head.size = Vector3(0.7, 0.6, 0.14)
+	var inst: MeshInstance3D = Blocks.mesh(head, colour, Vector3(side * 0.45, 0, 0))
+	inst.rotation.z = -side * PI / 2.0
+	root.add_child(inst)
 
 
 static func _letter(root: Node3D) -> void:

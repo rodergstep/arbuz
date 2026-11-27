@@ -103,3 +103,8 @@ ch5:farmer,,"Thank you for my animals! Moo! Baa! Quack! Oink!",farmer
 ch5:clock,,"Thank you for the clock! Tick tock! Now the party can start!",clockmaker
 ch5:say_hello,"Усі друзі кажуть тобі «hello»! Скажи і ти!","Everybody says hello! Now you! Say: hello!"
 ch5:hooray,"Ура! Свято! Дякуємо, друзі!","Hooray! It's a party! Thank you, friends!"
+car:go,"Поїхали! Машина їде!","Go! The car goes!"
+car:stop,"Стоп! Машина стоїть.","Stop! The car stops."
+car:left,"Ліворуч! Повертаємо ліворуч.","Left! We turn left."
+car:right,"Праворуч! Повертаємо праворуч.","Right! We turn right."
+car:horn,"Біп-біп! Це сигнал.","Beep beep! The horn!"
