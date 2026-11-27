@@ -39,7 +39,9 @@ static func make(thing: StringName) -> Node3D:
 	var root: Node3D = Node3D.new()
 	root.name = String(thing)
 	var name: String = String(thing)
-	if name.begins_with("balloon_"):
+	if name.begins_with("paint_pot_"):
+		_paint_pot(root, StringName(name.trim_prefix("paint_pot_")))
+	elif name.begins_with("balloon_"):
 		_balloon(root, StringName(name.trim_prefix("balloon_")))
 	elif BALLOON_COLORS.has(thing):
 		_balloon(root, thing)
@@ -80,6 +82,8 @@ static func _builders() -> Dictionary[String, Callable]:
 		"table": _table,
 		"toy": _toy,
 		"teddy": _teddy,
+		"cap": _cap,
+		"sun_hat": _sun_hat,
 		"butterfly": _butterfly,
 		"kite": _kite,
 		"star": _star,
@@ -235,6 +239,64 @@ static func _butterfly(root: Node3D) -> void:
 		root.add_child(w)
 		_sphere(root, 0.07, INK, Vector3(side * 0.3, 0.63, 0.04), 0.05)
 	_cyl(root, 0.04, 0.04, 0.36, INK, Vector3(0, 0.6, 0)).rotation.x = PI / 2.0
+
+
+## A big paint pot in a colour word's colour with that colour's own pattern (dots, stripes,
+## a plus, rings), a lid of paint and a brush.
+static func _paint_pot(root: Node3D, id: StringName) -> void:
+	var c: Color = BALLOON_COLORS.get(id, Color.WHITE)
+	_cyl(root, 0.42, 0.36, 0.8, c, Vector3(0, 0.4, 0))
+	_cyl(root, 0.44, 0.44, 0.06, c.darkened(0.25), Vector3(0, 0.81, 0))
+	var drip: MeshInstance3D = _sphere(root, 0.12, c, Vector3(0.3, 0.7, 0.28), 0.3)
+	drip.scale = Vector3(0.6, 1.4, 0.6)
+	match id:
+		&"red":
+			for a: float in [0.0, 1.2, 2.4, 3.6, 4.8]:
+				_sphere(root, 0.07, WHITE, Vector3(sin(a) * 0.41, 0.45, cos(a) * 0.41))
+		&"blue":
+			for y: float in [0.25, 0.55]:
+				var band: TorusMesh = TorusMesh.new()
+				band.inner_radius = 0.38
+				band.outer_radius = 0.43
+				root.add_child(Blocks.mesh(band, WHITE, Vector3(0, y, 0)))
+		&"yellow":
+			_box(root, Vector3(0.3, 0.08, 0.05), WHITE, Vector3(0, 0.45, 0.41))
+			_box(root, Vector3(0.08, 0.3, 0.05), WHITE, Vector3(0, 0.45, 0.41))
+		&"green":
+			var ring: TorusMesh = TorusMesh.new()
+			ring.inner_radius = 0.12
+			ring.outer_radius = 0.17
+			var r: MeshInstance3D = Blocks.mesh(ring, WHITE, Vector3(0, 0.45, 0.41))
+			r.rotation.x = PI / 2.0
+			root.add_child(r)
+	var brush: MeshInstance3D = _box(
+		root, Vector3(0.06, 0.6, 0.06), Color(0.6, 0.42, 0.28), Vector3(-0.1, 1.05, 0)
+	)
+	brush.rotation.z = 0.35
+	_box(root, Vector3(0.16, 0.14, 0.08), c, Vector3(0.0, 0.78, 0))
+
+
+static func _cap(root: Node3D) -> void:
+	var blue: Color = Color(0.25, 0.48, 0.88)
+	var dome: SphereMesh = SphereMesh.new()
+	dome.radius = 0.32
+	dome.height = 0.32
+	dome.is_hemisphere = true
+	root.add_child(Blocks.mesh(dome, blue, Vector3.ZERO))
+	var peak: MeshInstance3D = _cyl(root, 0.22, 0.22, 0.03, blue.darkened(0.2), Vector3(0, 0.02, 0.24))
+	peak.scale = Vector3(1.0, 1.0, 0.7)
+	_sphere(root, 0.05, WHITE, Vector3(0, 0.3, 0))
+
+
+static func _sun_hat(root: Node3D) -> void:
+	var straw: Color = Color(0.96, 0.84, 0.48)
+	_cyl(root, 0.55, 0.55, 0.04, straw, Vector3(0, 0.02, 0))
+	var crown: SphereMesh = SphereMesh.new()
+	crown.radius = 0.3
+	crown.height = 0.4
+	crown.is_hemisphere = true
+	root.add_child(Blocks.mesh(crown, straw, Vector3(0, 0.02, 0)))
+	_cyl(root, 0.31, 0.31, 0.07, Color(0.88, 0.3, 0.35), Vector3(0, 0.07, 0))
 
 
 static func _teddy(root: Node3D) -> void:

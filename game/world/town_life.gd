@@ -39,6 +39,13 @@ func add_wanderer(model: String, word: StringName, center: Vector3, radius: floa
 	)
 
 
+## The paint shop (four paint pots) and the hat stand, side by side from these spots.
+func add_dress_up(paint_spot: Vector3, hat_spot: Vector3) -> void:
+	var dress: DressUp = DressUp.new()
+	add_child(dress)
+	dress.build(town, paint_spot, hat_spot)
+
+
 ## Butterflies fluttering over the flowers, one at each spot (orange, blue, pink).
 func add_butterflies(spots: Array[Vector3]) -> void:
 	var colours: Array[Color] = [Color(0.98, 0.55, 0.2), Color(0.35, 0.55, 0.95), Color(0.95, 0.4, 0.6)]

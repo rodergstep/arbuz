@@ -32,6 +32,9 @@ var _bump_timer: float = 0.0
 var _fall_speed: float = 0.0
 var _body: Node3D
 var _moving: bool = false
+## Body paint: [mesh, surface, original colour] for every surface in the body's colour family.
+var _paint_parts: Array[Array] = []
+var _body_color: Color = Color.WHITE
 var _turn_time: float = 0.0
 var _last_yaw: float = 0.0
 
@@ -48,6 +51,9 @@ func _ready() -> void:
 	_body = Node3D.new()
 	add_child(_body)
 	_body.add_child(ModelPainter.load_model(model_name))
+	_find_body_paint()
+	if SaveSystem.settings.has("car_color"):
+		repaint(Color.html(String(SaveSystem.settings["car_color"])))
 	# Pick area so a click on the car is recognised.
 	var area: Area3D = Area3D.new()
 	area.collision_layer = Blocks.LAYER_PICKABLE
@@ -60,6 +66,48 @@ func _ready() -> void:
 	area.add_child(pick)
 	area.set_meta(&"car", self)
 	add_child(area)
+
+
+## Repaints the car's body (all shades of its main colour), keeping each shade's lightness.
+func repaint(color: Color) -> void:
+	for part: Array in _paint_parts:
+		var mesh_inst: MeshInstance3D = part[0]
+		var original: Color = part[2]
+		var shade: float = clampf(original.v / maxf(_body_color.v, 0.01), 0.6, 1.3)
+		var c: Color = Color.from_hsv(color.h, color.s, clampf(color.v * shade, 0.0, 1.0))
+		mesh_inst.set_surface_override_material(part[1], PaintedMaterials.make(c))
+
+
+## The body colour is the most-used colourful colour of the model (by triangles).
+func _find_body_paint() -> void:
+	var weight: Dictionary[String, int] = {}
+	var colors: Dictionary[String, Color] = {}
+	var parts: Array[Array] = []
+	for node: Node in _body.find_children("*", "MeshInstance3D", true, false):
+		var mesh_inst: MeshInstance3D = node
+		for i: int in mesh_inst.mesh.get_surface_count():
+			var mat: Material = mesh_inst.get_active_material(i)
+			if not mat is ShaderMaterial:
+				continue
+			var c: Color = (mat as ShaderMaterial).get_shader_parameter(&"base_color")
+			parts.append([mesh_inst, i, c])
+			if c.s < 0.3:
+				continue
+			var key: String = "%d" % int(c.h * 12.0)
+			var tris: int = mesh_inst.mesh.surface_get_array_len(i)
+			weight[key] = weight.get(key, 0) + tris
+			colors[key] = c
+	if weight.is_empty():
+		return
+	var best: String = weight.keys()[0]
+	for key: String in weight:
+		if weight[key] > weight[best]:
+			best = key
+	_body_color = colors[best]
+	for part: Array in parts:
+		var c: Color = part[2]
+		if c.s >= 0.3 and absf(angle_difference(c.h * TAU, _body_color.h * TAU)) < TAU / 14.0:
+			_paint_parts.append(part)
 
 
 func drive_to(point: Vector3) -> void:

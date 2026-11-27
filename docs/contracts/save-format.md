@@ -53,3 +53,9 @@ Fixtures: `tests/fixtures/saves/v1.json`, `v2.json`.
   This is the one test the project insists on (saves are sacred). Standard route.
 - Dev tools write to `user://dev_saves`, never to `user://saves`.
 - The user folder moved from `Тигриця's Journey` to `Tygrytsa's Journey` (rename); on first start `SaveSystem` copies an existing save from the old folder.
+
+
+### Settings added 2026-11-27 (no version bump: optional keys)
+
+- `car_color` (string, HTML colour): the paint he chose for his car.
+- `hat` (string: `cap`, `sun_hat`, `crown`): the hat the boy wears.
