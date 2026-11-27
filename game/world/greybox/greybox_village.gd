@@ -834,6 +834,7 @@ func _build_scenery() -> void:
 		Scenery.solid(_nav, self, "haystack", spot, spot.x * 11.0, Vector3(2, 2, 2))
 	Scenery.solid(_nav, self, "stork_nest", Vector3(-2, 0, -11), 160.0, Vector3(0.4, 5, 0.4))
 	Scenery.solid(_nav, self, "zhuravel", Vector3(20, 0, 15), 200.0, Vector3(1.4, 1, 1.4))
+	Scenery.solid(_nav, self, "tractor", Vector3(-24, 0, -31), 70.0, Vector3(2.2, 2, 3.2))
 	var pumpkins: Array[Transform3D] = Scenery.field(Rect2(-9, 34, 8, 2.5), 1.3, 31, 0.3)
 	pumpkins.append_array(Scenery.field(Rect2(33, 9, 3, 4), 1.3, 32, 0.3))
 	add_child(Scenery.scatter("pumpkin", pumpkins))
