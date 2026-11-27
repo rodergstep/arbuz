@@ -51,3 +51,8 @@ four,numbers,чотири,four,cuatro,quatre,,"Four legs on a cow.|One, two, thr
 five,numbers,п'ять,five,cinco,cinq,,"Five little ducks.|One, two, three, four, five!"
 clockmaker,people,годинникар,clock maker,relojero,horloger,,"The clock maker fixes clocks.|The clock maker says tick tock."
 party,events,свято,party,fiesta,fête,,"It is a party!|A party with balloons and cake.|We dance at the party."
+go,car,їхати,go,ir,aller,,"The car can go!|Ready, steady, go!"
+stop,car,стоп,stop,parar,stop,,"The car stops.|Stop, car, stop!"
+left,car,ліворуч,left,izquierda,gauche,,"Turn left!|The duck is on the left."
+right,car,праворуч,right,derecha,droite,,"Turn right!|The ball is on the right."
+horn,car,сигнал,horn,bocina,klaxon,,"Beep beep! The horn!|The car has a horn."

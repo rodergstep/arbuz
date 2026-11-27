@@ -5,6 +5,11 @@ extends CharacterBody3D
 ## with a funny sound; nothing breaks.
 
 signal bumped
+## Driving events for the car's words (go, stop, left, right, horn).
+signal started
+signal stopped
+signal turned(left: bool)
+signal honked
 
 const MAX_SPEED: float = 7.0
 const ACCEL: float = 8.5
@@ -26,6 +31,9 @@ var _has_target: bool = false
 var _bump_timer: float = 0.0
 var _fall_speed: float = 0.0
 var _body: Node3D
+var _moving: bool = false
+var _turn_time: float = 0.0
+var _last_yaw: float = 0.0
 
 
 func _ready() -> void:
@@ -66,6 +74,7 @@ func stop() -> void:
 func honk() -> void:
 	Sfx.play(&"horn")
 	EventLog.log_event(&"horn")
+	honked.emit()
 	var tween: Tween = create_tween()
 	tween.tween_property(_body, "scale", Vector3(1.08, 0.92, 1.08), 0.08)
 	tween.tween_property(_body, "scale", Vector3.ONE, 0.15)
@@ -101,6 +110,30 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	if _hit_wall() and absf(_speed) > 2.0 and _bump_timer <= 0.0:
 		_bounce()
+	_watch_motion(delta)
+
+
+## Notices starting, stopping and a real turn (half a second of steady turning while moving).
+func _watch_motion(delta: float) -> void:
+	if not driving:
+		_moving = false
+		return
+	if not _moving and _speed > 2.5:
+		_moving = true
+		started.emit()
+	elif _moving and absf(_speed) < 0.2:
+		_moving = false
+		stopped.emit()
+	var yaw_rate: float = angle_difference(_last_yaw, rotation.y) / maxf(delta, 0.001)
+	_last_yaw = rotation.y
+	if absf(_speed) > 1.0 and absf(yaw_rate) > 1.0:
+		_turn_time += delta * signf(yaw_rate)
+		if absf(_turn_time) > 0.5:
+			# Counter-clockwise seen from above (positive yaw) is a left turn.
+			turned.emit(_turn_time > 0.0)
+			_turn_time = 0.0
+	else:
+		_turn_time = move_toward(_turn_time, 0.0, delta)
 
 
 func _hit_wall() -> bool:
