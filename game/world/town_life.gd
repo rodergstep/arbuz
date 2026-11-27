@@ -39,6 +39,15 @@ func add_wanderer(model: String, word: StringName, center: Vector3, radius: floa
 	)
 
 
+## Butterflies fluttering over the flowers, one at each spot (orange, blue, pink).
+func add_butterflies(spots: Array[Vector3]) -> void:
+	var colours: Array[Color] = [Color(0.98, 0.55, 0.2), Color(0.35, 0.55, 0.95), Color(0.95, 0.4, 0.6)]
+	for i: int in spots.size():
+		var b: Butterfly = Butterfly.new()
+		b.start(spots[i], colours[i % colours.size()])
+		add_child(b)
+
+
 func _clickable(model: String, word: StringName, pick: Vector3) -> Clickable:
 	var entry: WordEntry = WordDB.get_word(word)
 	var holder: Node3D = Node3D.new()

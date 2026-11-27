@@ -914,6 +914,15 @@ func _populate(life: TownLife) -> void:
 	life.add_wanderer("hen", &"hen", Vector3(-26, 0, -3), 4.0)
 	life.add_wanderer("pig", &"pig", Vector3(-6, 0, 33.5), 3.0)
 	life.add_wanderer("sheep", &"sheep", Vector3(30, 0, 31), 4.0)
+	life.add_butterflies(
+		[
+			Vector3(-32, 0, 14),
+			Vector3(-10, 0, 10),
+			Vector3(6, 0, 18),
+			Vector3(-20, 0, -10),
+			Vector3(28, 0, -30)
+		]
+	)
 
 
 ## Things he can click in this town: {id, uk, en, pos}.
