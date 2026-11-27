@@ -5,6 +5,23 @@ extends RefCounted
 ## Used by learning cards and by characters who teach a word (the postman).
 
 const LISTEN_SECONDS: float = 5.0
+## Short praise, picked at random and never one of the last two (playtest: the same long
+## "Yes, car, great job, you said it" every time was tiring). The word itself comes up in only
+## one of them; the card already says it many times.
+const PRAISE_HEARD: Array[String] = [
+	"praise:yes",
+	"praise:super",
+	"praise:well_done",
+	"praise:wow",
+	"praise:brilliant",
+	"praise:hooray",
+	"praise:right",
+	"praise:clever",
+]
+## Without a microphone he isn't heard, so the praise stays calm.
+const PRAISE_QUIET: Array[String] = ["praise:lovely", "praise:good", "praise:well_done"]
+
+static var _recent: Array[String] = []
 
 
 ## Listens until he makes a sound. `alive` returns false to stop (the card closed, the scene
@@ -32,8 +49,18 @@ static func wait_for_word(caller: Node, word: WordEntry, mic: Control, alive: Ca
 static func praise(caller: Node, word: WordEntry, heard: bool, alive: Callable) -> void:
 	if heard:
 		Sfx.play(&"chime")
-	var key: String = "card:great_heard" if heard else "card:great"
-	await say_and_wait(caller, Speech.text(key, Speech.LANG_EN, word), alive)
+	await say_and_wait(caller, Speech.text(praise_key(heard), Speech.LANG_EN, word), alive)
+
+
+## A praise line key: random, never one of the last two used.
+static func praise_key(heard: bool) -> String:
+	var pool: Array[String] = PRAISE_HEARD if heard else PRAISE_QUIET
+	var fresh: Array[String] = pool.filter(func(k: String) -> bool: return not _recent.has(k))
+	var key: String = (fresh if not fresh.is_empty() else pool).pick_random()
+	_recent.append(key)
+	if _recent.size() > 2:
+		_recent.pop_front()
+	return key
 
 
 ## Says one English text and waits until it has been spoken.

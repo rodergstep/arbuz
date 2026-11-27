@@ -165,8 +165,7 @@ func _play(run: int) -> void:
 	if heard:
 		Sfx.play(&"chime")
 		_celebrate()
-	var praise: String = "card:great_heard" if heard else "card:great"
-	await _line(Speech.text(praise, Speech.LANG_EN, _entry), Speech.LANG_EN, run)
+	await _line(Speech.text(SayItBack.praise_key(heard), Speech.LANG_EN, _entry), Speech.LANG_EN, run)
 	var sentences: PackedStringArray = _entry.examples_en.duplicate()
 	if sentences.size() > MAX_SENTENCES:
 		sentences = sentences.slice(0, MAX_SENTENCES)
