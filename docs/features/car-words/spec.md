@@ -17,3 +17,12 @@ updated_at: "2026-11-27"
   right). After that only the short line.
 - **AC-03 Not chatty.** One car word at most every 6 s, the same word not again for 25 s, never
   over other speech or a card.
+
+## Part 2 — hidden treasures
+
+- **AC-04 Treasures to find.** Each town hides three treasures, peeking out beside a house or a
+  barn with a twinkling star above: the village a teddy, a kite and a star; England an umbrella,
+  a teapot and a crown.
+- **AC-05 Each teaches a word.** Clicking one: "A treasure! You found a teddy!", its learning
+  card (with scenes), and it is remembered (`treasure:<id>`); found ones don't come back. All
+  three found: "You found all the treasures! Hooray!".
