@@ -130,6 +130,7 @@ Any input resets the ladder. Mashing (≥5 taps in 2 s on non-targets) *(start)*
 | `ProgressStars` | progress without numbers | 0..N filled | soft chime on fill | `game/ui/components/progress_stars.tscn` | planned |
 | `ParentGate` | blocks parent-only areas | locked, challenge, open | none for the child | `game/ui/components/parent_gate.tscn` | planned |
 | `SessionTimerOverlay` | soft end of session | hidden, winding-down, goodbye | goodbye line | `game/ui/components/session_timer_overlay.tscn` | planned |
+| `Album` | his friends and treasures (rewards): a book button, a page of live 3D tiles, "?" until found; a tile says its word | closed, open | "Look! Your friends and your treasures!", the word on tap | `game/ui/album.gd` (+ `album_icon.gd`) | built |
 
 ## Screens
 
@@ -145,6 +146,7 @@ Any input resets the ladder. Mashing (≥5 taps in 2 s on non-targets) *(start)*
 
 | Date | Component | Requested by | Why nothing existing fit | Decision |
 |---|---|---|---|---|
+| 2026-11-27 | `Album` | roadmap step 20 (rewards) | no existing component shows collected things; cards are single-word moments | built under roderg's standing approval ("don't ask me for approving"); confirmed by merging the PR |
 | 2026-11-26 | `BigButton`, `PictureCard`, `ChoiceRow`, `HintHand`, `DialogueBubble`, `ProgressStars`, `ParentGate`, `SessionTimerOverlay` | `/design-system` setup | starter inventory; the canon was empty, and each maps to a feature the game spec names (title, password doors, hint ladder, Dialogic dialogue, parent lock, gentle session end) | approved as `planned` under roderg's standing approval for setup work |
 
 ## Theme sync
