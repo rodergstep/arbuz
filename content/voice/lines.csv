@@ -1,124 +1,124 @@
-key,uk,en,speaker
-line:intro,"Привіт! Я Тигриця. Поїхали в пригоду! Ходімо до машини.","Hello! I am Tygrytsa. Let's go! Let's go to the car!"
-line:here_car,"Ось наша машина! Натисни на неї.","Here is our car! Click the car!"
-line:drive,"Поїхали! Їдь до вогника!","Let's go! Drive to the light!"
-line:to_door,"Приїхали! Ходімо до дверей.","We are here! Out of the car. Let's go to the door!"
-line:again,"Ще раз? Ходімо до машини!","Again? Let's go to the car!"
-line:teach,"Спершу вивчимо слово!","Let's learn a new word!"
-hint:to_car,"Я тут! Ходи до машини, натисни на неї!","I'm here! Go to the car! Click the car!"
-hint:drive,"Їдь до вогника! Натисни на вогник!","Drive to the light! Click the light!"
-hint:to_door,"Ходімо до дверей! Вони тут.","Go to the door! The door is here!"
-door:question,"Що це? Послухай картки!","What is this? Listen to the cards!"
-door:yes,,"Yes! {Word}! Well done!"
-door:opening,"Двері відчиняються!","The door is opening!"
-door:glow,"Дивись! Ця картка світиться!","Look! This card is glowing!"
-door:glow_word,,"{Word}!"
-door:glow_done,,"This is {a_word}. Well done! The door is opening!"
-door:retry,"Спробуймо ще!","Try again! Where is the {word}?"
-card:first,"Це {uk_word}!",
-card:this_is,,"This is {a_word}."
-card:word,,"{word}"
-thing:click,"Це {uk_word}!","This is {a_word}. {Word}!"
-session:warn,"Ще дві хвилинки, і будемо відпочивати.","Two more minutes, then we rest."
-session:bye,"Ох, я втомилася. Бувай! До завтра!","I am tired. Bye bye! See you tomorrow!"
-find:ask,"Знайди {uk_word}!","Find the {word}! Where is the {word}?"
-find:yes,,"Yes! The {word}! Well done!"
-find:retry,"Спробуймо ще!","Try again! Find the {word}!"
-find:glow,"Дивись, ось тут!","Look! Here is the {word}!"
-find:hint,"Шукай {uk_word}!","Find the {word}! Look around!"
-card:say_it,,"Now you! Say: {word}!"
-praise:yes,,"Yes!"
-praise:super,,"Super!"
-praise:well_done,,"Well done!"
-praise:wow,,"Wow!"
-praise:brilliant,,"Brilliant!"
-praise:hooray,,"Hooray!"
-praise:right,,"{Word}! That's right!"
-praise:clever,,"Clever you!"
-praise:lovely,,"Lovely!"
-praise:good,,"Good!"
-card:your_turn,,"Your turn! Say: {word}!"
-line:walk_tutorial,"Натискай на землю, щоб іти. Іди до вогника!","Click the ground to walk. Walk to the light!"
-hint:walk,"Натисни на вогник, і ти підеш туди!","Click the light, and you walk there!"
-line:to_postman,"Дивись, листоноша! Ходімо до нього.","Look, a postman! Let's go to him!"
-hint:to_postman,"Іди до листоноші!","Go to the postman!"
-talk:hello,,"Hello! Hello!",postman
-talk:say_hello,"Він каже «hello», це «привіт». Скажи і ти!","He says hello! Now you! Say: hello!"
-talk:letter,,"Here is a letter for you! A letter from England!",postman
-talk:bye,,"Bye! Bye bye! See you in England!",postman
-talk:say_bye,"Він каже «bye», це «бувай». Скажи і ти!","He says bye! Now you! Say: bye!"
-line:to_ferry,"Нас запросили до Англії! Їдьмо до порому!","We are going to England! Drive to the ferry!"
-hint:to_ferry,"Їдь до порому, до вогника біля річки!","Drive to the ferry! Drive to the light by the river!"
-ferry:board,,"Onto the ferry! Here we go!"
-ferry:bye,"Бувай, село! Привіт, Англіє!","Bye bye, village! Hello, England!"
-england:arrive,"Ми в Англії! Привіт, Англіє!","We are in England! Hello, England!"
-ch1:to_baker,"Ходімо до пекарки! Вона нас кличе.","Let's go to the baker! She is calling us."
-hint:to_baker,"Іди до пекарки, біля пекарні!","Go to the baker, by the bakery!"
-ch1:baker_hello,,"Hello! Oh no, oh no! I lost my apples, my eggs, my milk and my flour!",baker
-ch1:baker_help,,"I want to bake a cake. Can you help me? Please find them!",baker
-ch1:help_baker,"Пекарка загубила продукти для торта. Допоможемо їй!","The baker lost her things for the cake. Let's help her!"
-ch1:find_items,"Знайди {uk_word}! Скільки їх?","Find the {word}s! Let's count them!"
-ch1:find_one,"Знайди {uk_word}!","Find the {word}!"
-count:one,,"One {word}!"
-count:two,,"Two {word}s!"
-count:three,,"Three {word}s!"
-count:found,,"Here is the {word}! You found it!"
-ch1:all_found,,"We found them all! Well done!"
-ch1:back_to_baker,"Несемо все пекарці!","Let's bring everything to the baker!"
-ch1:baker_thanks,,"Thank you! Apples, eggs, milk and flour! Now I can bake my cake!",baker
-ch1:baker_cake,,"Look! A big cake! Thank you, my friend!",baker
-ch1:hooray,"Ура! Торт!","Hooray! A cake! Yummy!"
-ch2:to_toy_maker,"Ходімо до іграшкарки! Вона засмучена.","Let's go to the toy maker! She is sad."
-hint:to_toy_maker,"Іди до магазину іграшок!","Go to the toy shop!"
-ch2:toy_hello,,"Hello! Oh dear! My balloons flew away! Red, blue, yellow and green!",toymaker
-ch2:toy_help,,"Can you find my balloons? Please!",toymaker
-ch2:help_toy,"Кульки полетіли! Знайдімо їх!","The balloons flew away! Let's find them!"
-ch2:find_balloon,"Знайди кульку! Колір: {uk_word}.","Find the {word} balloon!"
-ch2:found_balloon,,"A {word} balloon! You found it! {Word}!"
-ch2:back_to_toy_maker,"Несемо кульки іграшкарці!","Let's bring the balloons to the toy maker!"
-ch2:toy_thanks,,"Thank you! Red, blue, yellow and green! My balloons!",toymaker
-ch2:hooray,"Ура! Кульки!","Hooray! Balloons! Red, blue, yellow, green!"
-ch3:to_farmer,"Ходімо на ферму! Фермер нас кличе.","Let's go to the farm! The farmer is calling us."
-hint:to_farmer,"Іди на ферму, до великого червоного сараю!","Go to the farm, to the big red barn!"
-ch3:farmer_hello,,"Hello! Oh no! My animals ran away! The cow, the sheep, the duck and the pig!",farmer
-ch3:farmer_help,,"Can you find them and bring them home? Thank you!",farmer
-ch3:help_farmer,"Тварини втекли! Знайдімо їх!","The animals ran away! Let's find them!"
-ch3:find_animal,"Де {uk_word}? Знайди!","Where is the {word}? Find the {word}!"
-ch3:found_cow,,"Moo! Moo! The cow says moo! Cow! Go home, cow!"
-ch3:found_sheep,,"Baa! Baa! The sheep says baa! Sheep! Go home, sheep!"
-ch3:found_duck,,"Quack! Quack! The duck says quack! Duck! Go home, duck!"
-ch3:found_pig,,"Oink! Oink! The pig says oink! Pig! Go home, pig!"
-ch3:back_to_farmer,"Усі тварини вдома! Ходімо до фермера.","All the animals are home! Let's go to the farmer."
-ch3:farmer_thanks,,"Thank you! The cow, the sheep, the duck and the pig! All home!",farmer
-ch3:hooray,"Ура! Усі вдома!","Hooray! Moo, baa, quack, oink!"
-ch4:to_clock_maker,"Ходімо до годинникової вежі! Годинник зупинився.","Let's go to the clock tower! The clock stopped."
-hint:to_clock_maker,"Іди до великої годинникової вежі!","Go to the big clock tower!"
-ch4:clock_hello,,"Hello! Oh no! My clock stopped! The numbers fell off!",clockmaker
-ch4:clock_help,,"Can you find the numbers? One, two, three, four and five!",clockmaker
-ch4:help_clock,"Цифри впали! Знайдімо їх!","The numbers fell off! Let's find them!"
-ch4:find_number,"Знайди цифру {uk_word}!","Find number {word}!"
-ch4:found_number,,"Number {word}! {Word}! You found it!"
-ch4:back_to_clock_maker,"Несемо цифри годинникареві!","Let's bring the numbers to the clock maker!"
-ch4:clock_thanks,,"Thank you! One, two, three, four, five! Now let's count to ten together!",clockmaker
-ch4:count_ten,,"One! Two! Three! Four! Five! Six! Seven! Eight! Nine! Ten!",clockmaker
-ch4:clock_works,"Годинник знову йде! Тік-так!","The clock works again! Tick tock! Ding dong!"
-ch5:to_party,"Слухай! Годинник дзвонить! Починається свято! Ходімо на площу!","Listen! Ding dong! The party is starting! Let's go to the square!"
-hint:to_party,"Свято на площі! Ходімо туди!","The party is on the square! Let's go!"
-ch5:postman,,"Hello again! I brought you the letter, remember? Welcome to the party!",postman
-ch5:baker,,"Thank you for the cake! Yummy!",baker
-ch5:toy,,"Thank you for the balloons! Red, blue, yellow and green!",toymaker
-ch5:farmer,,"Thank you for my animals! Moo! Baa! Quack! Oink!",farmer
-ch5:clock,,"Thank you for the clock! Tick tock! Now the party can start!",clockmaker
-ch5:say_hello,"Усі друзі кажуть тобі «hello»! Скажи і ти!","Everybody says hello! Now you! Say: hello!"
-ch5:hooray,"Ура! Свято! Дякуємо, друзі!","Hooray! It's a party! Thank you, friends!"
-car:go,"Поїхали! Машина їде!","Go! The car goes!"
-car:stop,"Стоп! Машина стоїть.","Stop! The car stops."
-car:left,"Ліворуч! Повертаємо ліворуч.","Left! We turn left."
-car:right,"Праворуч! Повертаємо праворуч.","Right! We turn right."
-car:horn,"Біп-біп! Це сигнал.","Beep beep! The horn!"
-treasure:found,"Скарб! Ти знайшов {uk_word}!","A treasure! You found {a_word}!"
-treasure:all,"Ти знайшов усі скарби! Ура!","You found all the treasures! Hooray!"
-album:open,"Подивись! Твої друзі й скарби!","Look! Your friends and your treasures!"
-weather:rain,"Дивись! Іде дощ!","Look! It's raining! Rain, rain!"
-weather:sun,"Дощ скінчився. Ось сонечко!","The rain stopped. Here is the sun!"
-paint:done,"{uk_word}! Тепер наша машина така!","{Word}! Now our car is {word}!"
+key,uk,en,speaker,words
+line:intro,Привіт! Я Тигриця. Поїхали в пригоду! Ходімо до машини.,Hello! I am Tygrytsa. Let's go! Let's go to the car!,,
+line:here_car,Ось наша машина! Натисни на неї.,Here is our car! Click the car!,,
+line:drive,Поїхали! Їдь до вогника!,Let's go! Drive to the light!,,
+line:to_door,Приїхали! Ходімо до дверей.,We are here! Out of the car. Let's go to the door!,,
+line:again,Ще раз? Ходімо до машини!,Again? Let's go to the car!,,
+line:teach,Спершу вивчимо слово!,Let's learn a new word!,,
+hint:to_car,"Я тут! Ходи до машини, натисни на неї!",I'm here! Go to the car! Click the car!,,
+hint:drive,Їдь до вогника! Натисни на вогник!,Drive to the light! Click the light!,,
+hint:to_door,Ходімо до дверей! Вони тут.,Go to the door! The door is here!,,
+door:question,Що це? Послухай картки!,What is this? Listen to the cards!,,
+door:yes,,Yes! {Word}! Well done!,,
+door:opening,Двері відчиняються!,The door is opening!,,
+door:glow,Дивись! Ця картка світиться!,Look! This card is glowing!,,
+door:glow_word,,{Word}!,,
+door:glow_done,,This is {a_word}. Well done! The door is opening!,,
+door:retry,Спробуймо ще!,Try again! Where is the {word}?,,
+card:first,Це {uk_word}!,,,
+card:this_is,,This is {a_word}.,,
+card:word,,{word},,
+thing:click,Це {uk_word}!,This is {a_word}. {Word}!,,
+session:warn,"Ще дві хвилинки, і будемо відпочивати.","Two more minutes, then we rest.",,
+session:bye,"Ох, я втомилася. Бувай! До завтра!",I am tired. Bye bye! See you tomorrow!,,
+find:ask,Знайди {uk_word}!,Find the {word}! Where is the {word}?,,
+find:yes,,Yes! The {word}! Well done!,,
+find:retry,Спробуймо ще!,Try again! Find the {word}!,,
+find:glow,"Дивись, ось тут!",Look! Here is the {word}!,,
+find:hint,Шукай {uk_word}!,Find the {word}! Look around!,,
+card:say_it,,Now you! Say: {word}!,,
+praise:yes,,Yes!,,
+praise:super,,Super!,,
+praise:well_done,,Well done!,,
+praise:wow,,Wow!,,
+praise:brilliant,,Brilliant!,,
+praise:hooray,,Hooray!,,
+praise:right,,{Word}! That's right!,,
+praise:clever,,Clever you!,,
+praise:lovely,,Lovely!,,
+praise:good,,Good!,,
+card:your_turn,,Your turn! Say: {word}!,,
+line:walk_tutorial,"Натискай на землю, щоб іти. Іди до вогника!",Click the ground to walk. Walk to the light!,,
+hint:walk,"Натисни на вогник, і ти підеш туди!","Click the light, and you walk there!",,
+line:to_postman,"Дивись, листоноша! Ходімо до нього.","Look, a postman! Let's go to him!",,
+hint:to_postman,Іди до листоноші!,Go to the postman!,,
+talk:hello,,Hello! Hello!,postman,
+talk:say_hello,"Він каже «hello», це «привіт». Скажи і ти!",He says hello! Now you! Say: hello!,,
+talk:letter,,Here is a letter for you! A letter from England!,postman,
+talk:bye,,Bye! Bye bye! See you in England!,postman,
+talk:say_bye,"Він каже «bye», це «бувай». Скажи і ти!",He says bye! Now you! Say: bye!,,
+line:to_ferry,Нас запросили до Англії! Їдьмо до порому!,We are going to England! Drive to the ferry!,,
+hint:to_ferry,"Їдь до порому, до вогника біля річки!",Drive to the ferry! Drive to the light by the river!,,
+ferry:board,,Onto the ferry! Here we go!,,
+ferry:bye,"Бувай, село! Привіт, Англіє!","Bye bye, village! Hello, England!",,
+england:arrive,"Ми в Англії! Привіт, Англіє!","We are in England! Hello, England!",,
+ch1:to_baker,Ходімо до пекарки! Вона нас кличе.,Let's go to the baker! She is calling us.,,
+hint:to_baker,"Іди до пекарки, біля пекарні!","Go to the baker, by the bakery!",,
+ch1:baker_hello,,"Hello! Oh no, oh no! I lost my apples, my eggs, my milk and my flour!",baker,
+ch1:baker_help,,I want to bake a cake. Can you help me? Please find them!,baker,
+ch1:help_baker,Пекарка загубила продукти для торта. Допоможемо їй!,The baker lost her things for the cake. Let's help her!,,
+ch1:find_items,Знайди {uk_word}! Скільки їх?,Find the {word}s! Let's count them!,,topic:food
+ch1:find_one,Знайди {uk_word}!,Find the {word}!,,topic:food
+count:one,,One {word}!,,topic:food
+count:two,,Two {word}s!,,topic:food
+count:three,,Three {word}s!,,topic:food
+count:found,,Here is the {word}! You found it!,,topic:food
+ch1:all_found,,We found them all! Well done!,,
+ch1:back_to_baker,Несемо все пекарці!,Let's bring everything to the baker!,,
+ch1:baker_thanks,,"Thank you! Apples, eggs, milk and flour! Now I can bake my cake!",baker,
+ch1:baker_cake,,"Look! A big cake! Thank you, my friend!",baker,
+ch1:hooray,Ура! Торт!,Hooray! A cake! Yummy!,,
+ch2:to_toy_maker,Ходімо до іграшкарки! Вона засмучена.,Let's go to the toy maker! She is sad.,,
+hint:to_toy_maker,Іди до магазину іграшок!,Go to the toy shop!,,
+ch2:toy_hello,,"Hello! Oh dear! My balloons flew away! Red, blue, yellow and green!",toymaker,
+ch2:toy_help,,Can you find my balloons? Please!,toymaker,
+ch2:help_toy,Кульки полетіли! Знайдімо їх!,The balloons flew away! Let's find them!,,
+ch2:find_balloon,Знайди кульку! Колір: {uk_word}.,Find the {word} balloon!,,topic:colours
+ch2:found_balloon,,A {word} balloon! You found it! {Word}!,,topic:colours
+ch2:back_to_toy_maker,Несемо кульки іграшкарці!,Let's bring the balloons to the toy maker!,,
+ch2:toy_thanks,,"Thank you! Red, blue, yellow and green! My balloons!",toymaker,
+ch2:hooray,Ура! Кульки!,"Hooray! Balloons! Red, blue, yellow, green!",,
+ch3:to_farmer,Ходімо на ферму! Фермер нас кличе.,Let's go to the farm! The farmer is calling us.,,
+hint:to_farmer,"Іди на ферму, до великого червоного сараю!","Go to the farm, to the big red barn!",,
+ch3:farmer_hello,,"Hello! Oh no! My animals ran away! The cow, the sheep, the duck and the pig!",farmer,
+ch3:farmer_help,,Can you find them and bring them home? Thank you!,farmer,
+ch3:help_farmer,Тварини втекли! Знайдімо їх!,The animals ran away! Let's find them!,,
+ch3:find_animal,Де {uk_word}? Знайди!,Where is the {word}? Find the {word}!,,topic:animals
+ch3:found_cow,,"Moo! Moo! The cow says moo! Cow! Go home, cow!",,
+ch3:found_sheep,,"Baa! Baa! The sheep says baa! Sheep! Go home, sheep!",,
+ch3:found_duck,,"Quack! Quack! The duck says quack! Duck! Go home, duck!",,
+ch3:found_pig,,"Oink! Oink! The pig says oink! Pig! Go home, pig!",,
+ch3:back_to_farmer,Усі тварини вдома! Ходімо до фермера.,All the animals are home! Let's go to the farmer.,,
+ch3:farmer_thanks,,"Thank you! The cow, the sheep, the duck and the pig! All home!",farmer,
+ch3:hooray,Ура! Усі вдома!,"Hooray! Moo, baa, quack, oink!",,
+ch4:to_clock_maker,Ходімо до годинникової вежі! Годинник зупинився.,Let's go to the clock tower! The clock stopped.,,
+hint:to_clock_maker,Іди до великої годинникової вежі!,Go to the big clock tower!,,
+ch4:clock_hello,,Hello! Oh no! My clock stopped! The numbers fell off!,clockmaker,
+ch4:clock_help,,"Can you find the numbers? One, two, three, four and five!",clockmaker,
+ch4:help_clock,Цифри впали! Знайдімо їх!,The numbers fell off! Let's find them!,,
+ch4:find_number,Знайди цифру {uk_word}!,Find number {word}!,,topic:numbers
+ch4:found_number,,Number {word}! {Word}! You found it!,,topic:numbers
+ch4:back_to_clock_maker,Несемо цифри годинникареві!,Let's bring the numbers to the clock maker!,,
+ch4:clock_thanks,,"Thank you! One, two, three, four, five! Now let's count to ten together!",clockmaker,
+ch4:count_ten,,One! Two! Three! Four! Five! Six! Seven! Eight! Nine! Ten!,clockmaker,
+ch4:clock_works,Годинник знову йде! Тік-так!,The clock works again! Tick tock! Ding dong!,,
+ch5:to_party,Слухай! Годинник дзвонить! Починається свято! Ходімо на площу!,Listen! Ding dong! The party is starting! Let's go to the square!,,
+hint:to_party,Свято на площі! Ходімо туди!,The party is on the square! Let's go!,,
+ch5:postman,,"Hello again! I brought you the letter, remember? Welcome to the party!",postman,
+ch5:baker,,Thank you for the cake! Yummy!,baker,
+ch5:toy,,"Thank you for the balloons! Red, blue, yellow and green!",toymaker,
+ch5:farmer,,Thank you for my animals! Moo! Baa! Quack! Oink!,farmer,
+ch5:clock,,Thank you for the clock! Tick tock! Now the party can start!,clockmaker,
+ch5:say_hello,Усі друзі кажуть тобі «hello»! Скажи і ти!,Everybody says hello! Now you! Say: hello!,,
+ch5:hooray,"Ура! Свято! Дякуємо, друзі!","Hooray! It's a party! Thank you, friends!",,
+car:go,Поїхали! Машина їде!,Go! The car goes!,,
+car:stop,Стоп! Машина стоїть.,Stop! The car stops.,,
+car:left,Ліворуч! Повертаємо ліворуч.,Left! We turn left.,,
+car:right,Праворуч! Повертаємо праворуч.,Right! We turn right.,,
+car:horn,Біп-біп! Це сигнал.,Beep beep! The horn!,,
+treasure:found,Скарб! Ти знайшов {uk_word}!,A treasure! You found {a_word}!,,teddy kite star umbrella teapot crown
+treasure:all,Ти знайшов усі скарби! Ура!,You found all the treasures! Hooray!,,
+album:open,Подивись! Твої друзі й скарби!,Look! Your friends and your treasures!,,
+weather:rain,Дивись! Іде дощ!,"Look! It's raining! Rain, rain!",,
+weather:sun,Дощ скінчився. Ось сонечко!,The rain stopped. Here is the sun!,,
+paint:done,{uk_word}! Тепер наша машина така!,{Word}! Now our car is {word}!,,topic:colours

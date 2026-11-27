@@ -1370,9 +1370,6 @@ def build_woman():
 
 BUILDERS = {
     "tygrytsa": build_tygrytsa,
-    "hatchback": build_hatchback,
-    "jeep": build_jeep,
-    "van": build_van,
     "hata": build_hata,
     "tree": build_tree,
     "sunflower": build_sunflower,
@@ -1390,9 +1387,6 @@ BUILDERS = {
     "lamp": build_lamp,
     "baker": build_baker,
     "toy_maker": build_toy_maker,
-    "cow": build_cow,
-    "sheep": build_sheep,
-    "pig": build_pig,
     "duck": build_duck,
     "farmer": build_farmer,
     "clock_maker": build_clock_maker,
@@ -1422,7 +1416,6 @@ BUILDERS = {
     "girl": build_girl,
     "man": build_man,
     "woman": build_woman,
-    "dog": build_dog,
     "cat": build_cat,
     "lion": build_lion,
     "hen": build_hen,

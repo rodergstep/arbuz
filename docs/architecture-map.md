@@ -39,7 +39,7 @@ flowchart TB
         Core --> Logs[("user://logs/*.jsonl")]
     end
     Addons["addons/ — GUT · Dialogic 2 · Phantom Camera · Beehave"] -.-> Game
-    AudioGen["audio_gen/ — Piper + Kokoro voice script"] -.->|generates| Voice["audio/voice/*.ogg"]
+    AudioGen["audio_gen/ — Piper + Chatterbox voice script"] -.->|generates| Voice["audio/voice/*.ogg"]
     Blender["tools/ — Blender + build scripts"] -.->|generates| Assets["assets/ — glb, textures, music, sfx"]
     Voice --> Game
     Assets --> Game
@@ -55,7 +55,7 @@ flowchart TB
 | Beehave | 2.9.3 | `addons/beehave/` | behaviour trees for Tygrytsa and NPCs |
 | gdtoolkit | 4.x | `pip3 --user` | `gdlint`, `gdformat` |
 | Git LFS | 3.8 | `.gitattributes` | `glb png jpg ogg wav blend ttf otf` |
-| Python (voice tool) | 3.13 | `audio_gen/` | Piper (Ukrainian), Kokoro (EN/ES/FR) — Phase 2 |
+| Python (voice tool) | 3.11 (`audio_gen/.venv-chatterbox`) | `audio_gen/` | Piper (Ukrainian), Chatterbox TTS (English, voices cloned from `audio_gen/voices_ref/`) |
 | Blender, OBS | installed | — | modeling scripts; playtest recordings (never in git) |
 
 ## Autoloads (core systems)

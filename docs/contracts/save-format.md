@@ -59,3 +59,6 @@ Fixtures: `tests/fixtures/saves/v1.json`, `v2.json`.
 
 - `car_color` (string, HTML colour): the paint he chose for his car.
 - `hat` (string: `cap`, `sun_hat`, `crown`): the hat the boy wears.
+
+- `words.<id>.said` (int, optional, default 0): times the microphone heard him say the word when
+  asked (added 2026-11-27 for the parent's progress view; no version bump).

@@ -17,6 +17,13 @@ func record_heard(word_id: StringName) -> void:
 	_commit(word_id, s)
 
 
+## He said the word when the game asked him to (the microphone heard him; never judged).
+func record_said(word_id: StringName) -> void:
+	var s: Dictionary = _stats(word_id)
+	s["said"] = int(s["said"]) + 1
+	_commit(word_id, s)
+
+
 ## Records his answer when he was asked this word (a password door, a quiz).
 func record_answer(word_id: StringName, correct: bool) -> void:
 	var s: Dictionary = _stats(word_id)
@@ -54,10 +61,16 @@ func _needs_more(a: StringName, b: StringName) -> bool:
 	return float(sa["last_seen"]) < float(sb["last_seen"])
 
 
+## A copy of one word's numbers, for the parent's progress view.
+func stats(word_id: StringName) -> Dictionary:
+	return _stats(word_id)
+
+
 func _stats(word_id: StringName) -> Dictionary:
 	var stored: Dictionary = SaveSystem.words.get(String(word_id), {})
 	return {
 		"heard": int(stored.get("heard", 0)),
+		"said": int(stored.get("said", 0)),
 		"right": int(stored.get("right", 0)),
 		"wrong": int(stored.get("wrong", 0)),
 		"box": int(stored.get("box", MIN_BOX)),

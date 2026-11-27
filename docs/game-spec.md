@@ -128,7 +128,7 @@ The whole build uses free tools only, following the stages professional studios 
 | Story, dialogue, cutscenes | Dialogic 2, Phantom Camera (Godot plugins) | Tygrytsa's lines, story beats, cinematic camera |
 | Townspeople and animals | Beehave (Godot plugin) | Behavior trees for strolling, greeting, reacting |
 | Word database and translations | Godot translation system + Poedit, or CSV | Each word with its picture, audio and translations |
-| Voices | Piper (Ukrainian), Kokoro (EN/ES/FR) | Generated locally on the M4 |
+| Voices | Piper (Ukrainian), Chatterbox TTS (English) | Generated locally on the M4 |
 | Sound effects | Audacity, jsfxr / ChipTone, Freesound (CC0) | Bounces, horn, praise sounds |
 | Music | LMMS, Bosca Ceoil, MuseScore | Cheerful tunes with local flavor |
 | Fonts | Google Fonts (OFL) with Cyrillic, e.g. Nunito | Word labels, parent menu |

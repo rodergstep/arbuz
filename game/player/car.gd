@@ -34,6 +34,8 @@ var _body: Node3D
 var _moving: bool = false
 ## Body paint: [mesh, surface, original colour] for every surface in the body's colour family.
 var _paint_parts: Array[Array] = []
+## The engine hum: plays while he drives, higher and a little louder as the car goes faster.
+var _engine: AudioStreamPlayer3D
 var _body_color: Color = Color.WHITE
 var _turn_time: float = 0.0
 var _last_yaw: float = 0.0
@@ -52,6 +54,11 @@ func _ready() -> void:
 	add_child(_body)
 	_body.add_child(ModelPainter.load_model(model_name))
 	_find_body_paint()
+	_engine = AudioStreamPlayer3D.new()
+	_engine.stream = Sfx.engine_stream()
+	_engine.unit_size = 12.0
+	_engine.volume_db = -16.0
+	add_child(_engine)
 	if SaveSystem.settings.has("car_color"):
 		repaint(Color.html(String(SaveSystem.settings["car_color"])))
 	# Pick area so a click on the car is recognised.
@@ -159,6 +166,19 @@ func _physics_process(delta: float) -> void:
 	if _hit_wall() and absf(_speed) > 2.0 and _bump_timer <= 0.0:
 		_bounce()
 	_watch_motion(delta)
+	_update_engine()
+
+
+func _update_engine() -> void:
+	if not driving:
+		if _engine.playing:
+			_engine.stop()
+		return
+	if not _engine.playing:
+		_engine.play()
+	var k: float = clampf(absf(_speed) / MAX_SPEED, 0.0, 1.0)
+	_engine.pitch_scale = 0.8 + 0.8 * k
+	_engine.volume_db = lerpf(-18.0, -10.0, k)
 
 
 ## Notices starting, stopping and a real turn (half a second of steady turning while moving).

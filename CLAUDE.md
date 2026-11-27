@@ -71,7 +71,7 @@ python3 tools/check_content.py
 tools/build_mac.sh
 /Applications/Godot.app/Contents/MacOS/Godot --headless --path . --export-release "Windows" build/windows/arbuz.exe
 # voices: after changing words.csv or content/voice/lines.csv (setup: audio_gen/README.md)
-audio_gen/.venv/bin/python audio_gen/generate_voices.py
+audio_gen/.venv-chatterbox/bin/python audio_gen/generate_voices.py
 # models: rebuild assets/models/*.glb from the Blender script
 /Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python tools/blender/build_models.py
 # regenerate the input map in project.godot

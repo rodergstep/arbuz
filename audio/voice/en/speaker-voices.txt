@@ -1,1 +1,1 @@
-baker=bf_isabella,clockmaker=bm_fable,farmer=bm_daniel,postman=bm_george,toymaker=bf_lily
+baker=baker.wav,clockmaker=clockmaker.wav,farmer=farmer.wav,postman=postman.wav,toymaker=toymaker.wav
