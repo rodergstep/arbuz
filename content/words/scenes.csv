@@ -126,3 +126,8 @@ The teapot is hot.,kitchen,teapot steam 0 0,0.6
 Tea for you!,kitchen,teapot stand -0.5 0; cup stand 0.6 0.2,0.7
 The king has a crown.,town,crown float 0 0 1.0,0.6
 A golden crown.,town,crown spin 0 0.2,0.5
+The tractor is on the farm.,farm,barn stand -2.5 -4; tractor stand 1.5 0.5,1.6
+The tractor goes slowly.,farm,tractor move -6 0.5 6 0.5 0.8,1.5
+The taxi is yellow.,road,taxi stand 0 0,1.2
+We go by taxi.,road,tygrytsa wave -2.5 -1.6; taxi move -8 0 8 0 2.5,1.4
+The hen says cluck.,farm,hen say 0 0 Cluck!,0.8

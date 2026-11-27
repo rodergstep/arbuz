@@ -129,6 +129,10 @@ func _ready() -> void:
 	_build_grass()
 	_build_actors()
 	_build_clickables()
+	var life: TownLife = TownLife.new()
+	add_child(life)
+	life.setup(self)
+	_populate(life)
 	_build_story_cast()
 	_build_camera()
 	_build_learning()
@@ -899,6 +903,17 @@ func _build_actors() -> void:
 	add_child(companion)
 	companion.global_position = hero_start + Companion.FOLLOW_OFFSET
 	companion.follow = hero
+
+
+## Town life: a tractor on the road, a hen, a pig and a sheep strolling about.
+func _populate(life: TownLife) -> void:
+	var loop: Array[Vector3] = [
+		Vector3(-24, 0, -22), Vector3(24, 0, -22), Vector3(24, 0, 22), Vector3(-24, 0, 22)
+	]
+	life.add_vehicle("tractor", &"tractor", loop, 2.5, 1)
+	life.add_wanderer("hen", &"hen", Vector3(-26, 0, -3), 4.0)
+	life.add_wanderer("pig", &"pig", Vector3(-6, 0, 33.5), 3.0)
+	life.add_wanderer("sheep", &"sheep", Vector3(30, 0, 31), 4.0)
 
 
 ## Things he can click in this town: {id, uk, en, pos}.
