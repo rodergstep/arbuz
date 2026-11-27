@@ -122,3 +122,6 @@ album:open,Подивись! Твої друзі й скарби!,Look! Your fri
 weather:rain,Дивись! Іде дощ!,"Look! It's raining! Rain, rain!",,
 weather:sun,Дощ скінчився. Ось сонечко!,The rain stopped. Here is the sun!,,
 paint:done,{uk_word}! Тепер наша машина така!,{Word}! Now our car is {word}!,,topic:colours
+daynight:evening,"Дивись! Настає вечір. Сонечко сідає.","Look! It's evening. The sun goes down.",,
+daynight:night,"Ніч! Добраніч, місяцю!","It's night! Good night, moon!",,
+daynight:morning,"Доброго ранку! Знову день!","Good morning! It's day!",,

@@ -531,6 +531,10 @@ func _populate(life: TownLife) -> void:
 	life.add_wanderer("dog", &"dog", Vector3(-8, 0, 12), 5.0)
 	life.add_wanderer("man", &"man", Vector3(-14, 0, 2), 6.0)
 	life.add_wanderer("woman", &"woman", Vector3(12, 0, 6), 5.0)
+	var lamp_lights: Array[Vector3] = []
+	for lamp: Vector3 in LAMPS:
+		lamp_lights.append(lamp + Vector3(0, 3.3, 0))
+	life.add_day_night(lamp_lights)
 	life.add_dress_up(Vector3(-17, 0, -27.2), Vector3(4, 0, -27.2))
 	var weather: Weather = Weather.new()
 	add_child(weather)

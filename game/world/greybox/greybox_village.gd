@@ -913,6 +913,7 @@ func _populate(life: TownLife) -> void:
 	life.add_wanderer("sheep", &"sheep", Vector3(30, 0, 31), 4.0)
 	life.add_wanderer("grandma", &"grandma", Vector3(-24, 0, 10), 5.0)
 	life.add_wanderer("girl", &"girl", Vector3(14, 0, 2), 5.0)
+	life.add_day_night(TownLife.VILLAGE_LIGHTS)
 	life.add_dress_up(Vector3(-12, 0, 18), Vector3(-20.5, 0, 18))
 	life.add_butterflies(
 		[
