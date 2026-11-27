@@ -524,6 +524,16 @@ func _grass_blocked(p: Vector2) -> bool:
 	return road
 
 
+## Town life: the red bus and a taxi drive round, a dog strolls in the park.
+func _populate(life: TownLife) -> void:
+	var loop: Array[Vector3] = [
+		Vector3(-24, 0, -22), Vector3(24, 0, -22), Vector3(24, 0, 22), Vector3(-24, 0, 22)
+	]
+	life.add_vehicle("double_decker", &"bus", loop, 3.0, 0)
+	life.add_vehicle("taxi", &"taxi", loop, 4.0, 2)
+	life.add_wanderer("dog", &"dog", Vector3(-8, 0, 12), 5.0)
+
+
 func _clickable_things() -> Array[Dictionary]:
 	return [
 		{"id": &"tree", "uk": "дерево", "en": "tree", "pos": Vector3(-20, 0, 2)},
