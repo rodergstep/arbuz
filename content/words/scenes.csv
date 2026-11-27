@@ -135,3 +135,7 @@ It is raining.,rain,cloud float -1.5 -2 3.4; cloud float 2 -3 3.8,1
 "Drip, drop, rain!",rain,umbrella stand 0 0; tygrytsa stand 0 0.4,1
 The butterfly flies.,grass,butterfly fly 0 0,1
 A butterfly on a flower.,grass,flower stand 0 0; butterfly float 0 0.1 1.0,0.6
+A big sun hat.,grass,sun_hat grow 0 0; sun float 2 -3 3.4,0.7
+I put on my hat.,grass,tygrytsa stand 0 0; sun_hat float 0 0.05 1.3,0.8
+A blue cap.,grass,cap spin 0 0,0.5
+The cap is on my head.,grass,boy stand 0 0; cap float 0 0.05 1.48,0.8

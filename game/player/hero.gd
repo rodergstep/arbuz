@@ -19,6 +19,7 @@ var _has_target: bool = false
 var _model: Node3D
 var _limbs: Dictionary[String, Node3D] = {}
 var _walk_phase: float = 0.0
+var _hat: Node3D
 
 
 func _ready() -> void:
@@ -40,6 +41,8 @@ func _ready() -> void:
 	_body.rotation.y = PI
 	for joint: String in ["LegL", "LegR", "ArmL", "ArmR", "Head"]:
 		_limbs[joint] = _model.find_child(joint, true, false) as Node3D
+	if SaveSystem.settings.has("hat"):
+		set_hat(StringName(String(SaveSystem.settings["hat"])))
 	_agent = NavigationAgent3D.new()
 	_agent.radius = 0.4
 	_agent.path_desired_distance = 0.5
@@ -102,3 +105,17 @@ func _animate(delta: float, moving: bool) -> void:
 	if _limbs["Head"] != null:
 		_limbs["Head"].rotation.z = sin(_walk_phase * 0.5) * (0.05 if moving else 0.03)
 	_model.position.y = absf(sin(_walk_phase)) * (0.06 if moving else 0.0)
+
+
+## Puts a hat on his head (from Props: cap, sun_hat, crown); &"" takes it off.
+func set_hat(id: StringName) -> void:
+	if _hat != null:
+		_hat.queue_free()
+		_hat = null
+	var head: Node3D = _limbs.get("Head")
+	if id == &"" or head == null:
+		return
+	_hat = Props.make(id)
+	_hat.position = Vector3(0, 0.42, 0)
+	_hat.scale = Vector3.ONE * 0.55
+	head.add_child(_hat)

@@ -46,7 +46,7 @@ Our son learns English words for the things around him, food, colours, animals a
 | 24 | Chapter 4: the stopped clock tower, numbers 1–10 | `development-plan.md` §Phase 5 — England chapters 2–4 and the finale | L | building |
 | 25 | Finale: the festival with every friend he helped | `game-spec.md` §Story | M | building |
 | 26 | Town life → see [Not yet specified](#not-yet-specified) | `game-spec.md` §Gameplay | fog | building |
-| 27 | Customization → see [Not yet specified](#not-yet-specified) | `game-spec.md` §Gameplay | fog | idea |
+| 27 | Customization → see [Not yet specified](#not-yet-specified) | `game-spec.md` §Gameplay | fog | building |
 | 28 | Free exploration words: hidden collectibles and the car's words (stop, go, left, right, horn, lights) | `game-spec.md` §Learning design | M | building |
 | 29 | Release: performance pass on the Intel MacBook and scripted macOS + Windows builds with install notes | `development-plan.md` §Phase 6 — Polish and release builds | M | idea |
 

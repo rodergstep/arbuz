@@ -121,3 +121,4 @@ treasure:all,"Ти знайшов усі скарби! Ура!","You found all t
 album:open,"Подивись! Твої друзі й скарби!","Look! Your friends and your treasures!"
 weather:rain,"Дивись! Іде дощ!","Look! It's raining! Rain, rain!"
 weather:sun,"Дощ скінчився. Ось сонечко!","The rain stopped. Here is the sun!"
+paint:done,"{uk_word}! Тепер наша машина така!","{Word}! Now our car is {word}!"
